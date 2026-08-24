@@ -1,0 +1,51 @@
+name: Trading Bot
+
+on:
+  schedule:
+    # 13:00-21:55 UTC, alle 5 Minuten, Mo-Fr. Absichtlich weiter gefasst als
+    # die reguläre Session (09:30-16:00 ET), weil sich der UTC-Versatz durch
+    # Sommer-/Winterzeit zweimal im Jahr verschiebt (13:30-20:00 UTC in EDT,
+    # 14:30-21:00 UTC in EST) - siehe trading-bot-spec.md Abschnitt 9,
+    # "Datenlücke"/GitHub-Actions-Taktung. scripts/run_bot.py prüft selbst
+    # über Alpacas Marktkalender (get_clock), ob gerade Handelszeit ist, und
+    # beendet sich sofort, wenn nicht - unnötige Läufe kosten nur ein paar
+    # Sekunden, kein Risiko für falsche Trades.
+    - cron: "*/5 13-21 * * 1-5"
+  workflow_dispatch: {}  # manuelles Auslösen zum Testen
+
+concurrency:
+  group: trading-bot
+  cancel-in-progress: false  # laufenden Bot-Durchlauf nie mitten in einer Order abbrechen, lieber einreihen
+
+permissions:
+  contents: write  # zum Zurückschreiben von state.json/trades.csv
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4  # deutlich unter dem 5-Minuten-Takt, damit sich Läufe nicht stauen
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Bot-Durchlauf
+        env:
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/run_bot.py
+
+      - name: Zustand und Protokoll zurückschreiben
+        run: |
+          git config user.name "trading-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add state.json trades.csv
+          git diff --staged --quiet || git commit -m "Bot-Lauf $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push

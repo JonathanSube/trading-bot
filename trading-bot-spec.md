@@ -1,0 +1,516 @@
+# Spezifikation: Paper-Trading-Bot "Opening Range Breakout"
+
+**Zweck:** Eine im Backtest geprüfte Strategie über mindestens einen Monat im
+Papierhandel verifizieren. Kein echtes Geld. Ziel ist nicht Gewinn, sondern die
+Frage: liefert die Live-Ausführung dieselben Zahlen wie der Backtest?
+
+**Änderungshinweis:** Diese Spec beschrieb ursprünglich "Wickless Candle
+Retest". Diese Strategie hielt einer Nachprüfung über den vollen,
+durchgehenden Zeitraum 2021–2026 nicht stand (vermutlich
+In-Sample-Overfitting bei der Parameterwahl). Die vollständige Herleitung,
+warum und wie das gefunden wurde, steht am Ende in Abschnitt 9 als
+Änderungsprotokoll. Ersetzt durch Opening Range Breakout, hergeleitet und
+mit sauberer Train/Test-Trennung geprüft in
+[research/FINDINGS.md](research/FINDINGS.md). Ab hier gilt für die neue
+Strategie erneut: exakt so implementieren, nichts hinzufügen.
+
+---
+
+## 1. Die Strategie (exakt so implementieren, nichts hinzufügen)
+
+**Instrument:** QQQ
+**Zeitfenster:** 5-Minuten-Kerzen
+**Handelszeit:** nur reguläre US-Session, 09:30–16:00 ET
+
+### Eröffnungsspanne
+
+- Die ersten **6 abgeschlossenen 5-Min-Kerzen** des Handelstags (09:30–10:00)
+  definieren die Eröffnungsspanne: `spanne_hoch = max(high)`,
+  `spanne_tief = min(low)` dieser 6 Kerzen.
+
+### Einstieg
+
+- Ab der 7. Kerze des Tages (10:00 Uhr): Für jede abgeschlossene Kerze
+  prüfen, ob ihr `close` außerhalb der Eröffnungsspanne liegt.
+  - **Long**, wenn `close > spanne_hoch`
+  - **Short**, wenn `close < spanne_tief`
+- **Höchstens ein Trade pro Tag** — der erste Ausbruch (in welche Richtung
+  auch immer) löst aus, danach an diesem Tag keine weiteren Einstiege mehr,
+  auch nicht bei einem Ausbruch in die Gegenrichtung.
+- Einstieg zur **Eröffnung der auf die Ausbruchskerze folgenden Kerze**
+  (kein Blick in die Zukunft: die Ausbruchskerze muss erst abgeschlossen
+  sein, bevor gehandelt wird). Market-Order zu dieser Eröffnung, kein
+  Limit — anders als bei der alten Strategie wird hier kein exaktes Level
+  erneut angelaufen, sondern der Ausbruch selbst gehandelt.
+
+### Stop und Ziel
+
+- **Stop:** Gegenseite der Eröffnungsspanne (Long: `spanne_tief`, Short:
+  `spanne_hoch`)
+- **Risiko:** `|entry - stop|`
+- **Ziel:** `entry +/- 2.0 * risiko` (festes CRV 2:1)
+- Als **Bracket-Order** bei Alpaca platzieren (Entry + Stop + Take-Profit in
+  einer Order), aus demselben Grund wie zuvor: Alpaca überwacht Stop und
+  Ziel serverseitig, tickgenau, unabhängig davon, ob der Bot gerade läuft.
+
+### Positionsgröße
+
+- Risiko pro Trade: **1 % des Kontostands**, gleiche Formel wie zuvor:
+  `stückzahl = floor((kontostand * 0.01) / risiko_pro_aktie)`
+- **Wichtiger Unterschied zur alten Strategie:** Der Stop-Abstand ist bei
+  dieser Strategie viel größer (Ø 3,26 Punkte über den Backtest-Zeitraum,
+  gegenüber Ø 0,375 bei der alten Strategie), das ergibt bei gleicher
+  1-%-Risiko-Formel im Schnitt das 1,6-fache, im Extremfall bis zum
+  5,9-fachen des Kontostands als Positionsgröße (siehe
+  [research/FINDINGS.md](research/FINDINGS.md), Abschnitt "Lohnt sich ein
+  Bot"). Das ist stillschweigend Margin, keine vollständig gedeckte
+  Position. Deshalb zusätzlich: **Positionsgröße zusätzlich auf die
+  verfügbare Kaufkraft (`buying_power`) des Kontos deckeln**, sonst
+  lehnt Alpaca die Order ab. Für den Papierhandel unkritisch (kein
+  echtes Geld, keine Nachschusspflicht), vor jedem Einsatz mit echtem
+  Geld aber eine bewusste Entscheidung wert, ob dieser Hebel gewollt ist.
+- Wenn Stückzahl < 1 → Trade auslassen und protokollieren.
+
+### Tagesende
+
+- Alle offenen Positionen um **15:55 ET** glattstellen (Market-Order).
+- Keine Übernachtpositionen.
+
+---
+
+## 2. Ausführungsmodell — kein Dauerprozess nötig
+
+Der Bot muss **nicht** durchgehend laufen. Alles, was zeitkritisch ist (Stop-
+und Zielüberwachung während eines offenen Trades), liegt als Bracket-Order
+bereits beim Broker. Der Bot selbst muss nur alle 5 Minuten kurz aktiv werden
+und:
+
+1. Prüfen, ob die zuletzt abgeschlossene Kerze ein neues Setup ist (Regel oben)
+   → falls ja, Limit-Order platzieren
+2. Prüfen, ob eine offene Order ihre 10-Kerzen-Frist überschritten hat
+   → falls ja, Order stornieren
+3. Um 15:55 ET: offene Positionen schließen
+
+Das passt zu einem **geplanten Skript statt einem Dauerprozess** (siehe
+Deployment unten) — es muss zwischen den Läufen nichts "mitbekommen", weil
+die eigentliche Trade-Überwachung nicht bei ihm liegt.
+
+---
+
+## 3. Sicherheitsschalter (nicht optional)
+
+Der Bot muss sich selbst abschalten können. Alle Grenzen als Config-Werte:
+
+| Auslöser | Standardwert | Reaktion |
+|---|---|---|
+| Tagesverlust | −3 % des Kontostands | Handel für den Tag einstellen |
+| Gesamtverlust | −15 % vom Startkapital | Bot dauerhaft stoppen, manuelles Reset nötig |
+| Verlustserie | 8 Verlusttrades hintereinander | Handel für den Tag einstellen |
+| Trades pro Tag | max. 15 | keine neuen Einstiege mehr |
+| API-Fehler | 5 Fehler in Folge | Bot stoppen, Alarm |
+| Datenlücke | > 10 Min ohne neue Kerze | keine neuen Einstiege, warnen |
+
+Bei jedem Stopp: offene Positionen schließen, Grund protokollieren,
+Benachrichtigung senden (Telegram-Bot oder E-Mail — simpel halten).
+
+**Kill-Switch:** Eine Datei oder ein Repository-Secret `STOP` beendet den
+Handel — bei GitHub Actions z. B. ein Flag, das der Workflow zu Beginn jedes
+Laufs prüft und bei dem er sich sofort beendet, bevor irgendeine Order
+angefasst wird.
+
+---
+
+## 4. Technischer Aufbau
+
+- **Sprache:** Python 3.11+
+- **Broker/Daten:** Alpaca Paper Trading API (`alpaca-py`), REST reicht —
+  kein WebSocket-Stream nötig, da kein Dauerprozess (siehe Abschnitt 2).
+  Bars per REST abrufen, letzte abgeschlossene 5-Min-Kerze auswerten.
+- **Zustand persistent halten** (Datei im Repository oder externer Storage,
+  z. B. ein simples JSON/SQLite, das bei jedem Lauf gelesen und geschrieben
+  wird): offene Setups mit Entstehungs-Kerzenindex, offene Trades, Tages-PnL,
+  Zähler für die Sicherheitsschalter. Da jeder Lauf ein neuer Prozess ist
+  (siehe Deployment), **muss** der Zustand explizit gespeichert werden —
+  nichts darf nur im Arbeitsspeicher stehen.
+- **Zeitzonen:** Intern alles in UTC, Session-Logik in `America/New_York`.
+  US-Feiertage und verkürzte Handelstage über den Alpaca-Marktkalender abfragen,
+  nicht selbst hartkodieren.
+
+### Protokollierung (der eigentliche Zweck des Projekts)
+
+Jeder Trade in eine CSV/Log-Datei im Repository mit:
+`zeitstempel, richtung, level, entry_geplant, entry_tatsächlich, slippage,
+stop, ziel, stückzahl, risiko, exit_grund, exit_preis, pnl, pnl_in_R, dauer,
+lauf_verspätung` (Differenz zwischen geplanter und tatsächlicher Ausführung
+des Workflow-Laufs — siehe Deployment-Hinweis zur Taktungsgenauigkeit)
+
+**`slippage` und `lauf_verspätung` sind die wichtigsten Spalten.** Der
+Backtest unterstellt Ausführung exakt am Level und exakte 5-Minuten-Taktung.
+Bei durchschnittlich 0,375 Punkten Risiko pro Trade frisst schon eine
+Slippage von 0,03 Punkten spürbar vom erwarteten Vorteil — und eine
+verzögerte Erkennung eines Setups wirkt genauso wie Slippage. Genau diese
+beiden Zahlen entscheiden, ob die Strategie real haltbar ist.
+
+---
+
+## 5. Auswertung nach einem Monat
+
+Automatisch berechnen und ausgeben:
+
+- Anzahl Trades, Trefferquote, Ø R pro Trade, Gesamt-R
+- Ø Slippage in Punkten und in R, Ø Lauf-Verspätung
+- Verteilung: Median-Trade, Anteil der besten 3 Trades am Gesamtgewinn
+- Vergleich gegen die Backtest-Erwartung (siehe unten)
+- Anzahl übersprungener/verfallener Setups und die Gründe
+
+### Erwartungswerte aus dem Backtest (1.390 Trades, durchgehend 2021–2026,
+Twelve-Data-5-Min-Bars, siehe [research/FINDINGS.md](research/FINDINGS.md))
+
+Im Unterschied zur alten Tabelle: durchgehender Zeitraum statt Stichproben,
+mit sauberer Train/Test-Trennung geprüft (Training 2021–2024, Test
+2025–2026, siehe FINDINGS.md für beide Werte getrennt).
+
+| Kennzahl | Backtest (gesamt 2021–2026) |
+|---|---|
+| Trefferquote | 51,1 % (Breakeven bei 2:1 CRV: 33,3 %) |
+| Ø Risiko | 3,257 Punkte |
+| brutto Punkte/Trade | +0,184 |
+| brutto R/Trade | +0,069 |
+| Gesamt (netto, 0,02 Pkt Kosten) | +228,63 Punkte |
+| Gesamt (netto, 0,05 Pkt Kosten) | +186,93 Punkte |
+| Trades pro Tag | ~0,98 (max. 1) |
+
+**Abweichungen, die ernst zu nehmen wären:** deutlich weniger Trades als
+erwartet (Erkennung der Eröffnungsspanne oder des Ausbruchs stimmt nicht,
+oder der Workflow läuft nicht zuverlässig), Trefferquote unter 40 %
+(deutlich näher an der 33,3-%-Gewinnschwelle als im Backtest, Ausführung
+weicht ab), oder Slippage über 0,1 Punkte (mehr als die Hälfte des
+durchschnittlichen Vorteils pro Trade aufgebraucht).
+
+**Wichtig zur Einordnung, aus [research/FINDINGS.md](research/FINDINGS.md):**
+Ohne Hebel (Positionsgröße auf eigenes Kapital gedeckelt statt reiner
+1-%-Risiko-Formel) hätte diese Strategie über 2021–2026 mit +79,9 % (11,0 %
+p. a.) schlechter abgeschnitten als einfaches Buy-and-Hold von QQQ (+128,3 %,
+15,8 % p. a.), allerdings bei deutlich kleinerem maximalen Rückgang (8,2 %
+gegen 37,6 %). Erst mit dem oben beschriebenen Hebel (Ø 1,6-fach) übertrifft
+der Bot Buy-and-Hold (+145,0 %, 17,3 % p. a.) bei weiterhin kleinerem
+Rückgang (12,5 %) — allerdings ohne Berücksichtigung von Margin-Zinsen. Der
+Sinn dieses Bots ist damit in erster Linie Risikoreduktion mit ähnlicher
+oder (gehebelt) leicht besserer Rendite als Buy-and-Hold, kein
+Wundermittel für außergewöhnliche Gewinne.
+
+---
+
+## 6. Deployment: GitHub Actions statt Dauer-Server
+
+**Keine Kreditkarte nötig, kein eigener Rechner muss laufen.** Passt zum
+Ausführungsmodell aus Abschnitt 2, weil der Bot ohnehin keinen Dauerprozess
+braucht.
+
+- Workflow mit `on: schedule: cron:` — alle 5 Minuten während der US-Session
+  auslösen (in UTC umrechnen, inkl. Sommer-/Winterzeit-Verschiebung beachten)
+- **Repository ist öffentlich** (Entscheidung): Die Strategie stammt aus
+  einer öffentlichen Quelle und wurde nur in der Parameterwahl selbst
+  getestet, ein späterer Umstieg auf echtes Geld würde ohnehin eine andere
+  Umsetzung brauchen (kein Alpaca). Öffentliche Repositories haben
+  unbegrenzt kostenlose Actions-Minuten, das Minutenbudget ist damit kein
+  Thema. Enthält keine sensiblen Daten außer den API-Keys, die als
+  **GitHub Secrets** hinterlegt werden (nie im Code oder in Commits)
+- Zustand (offene Setups, Tages-PnL, Sicherheitsschalter-Zähler) wird am Ende
+  jedes Laufs zurück ins Repository committet oder in einen externen Storage
+  geschrieben — sonst weiß der nächste Lauf nichts vom vorherigen
+- **Wichtiger Kompromiss, den der Monatstest sichtbar machen soll:** GitHub
+  garantiert die 5-Minuten-Taktung nicht exakt — bei hoher Auslastung der
+  Actions-Infrastruktur kann ein Lauf mehrere Minuten später starten. Das ist
+  der Hauptgrund für die `lauf_verspätung`-Spalte im Log. Falls sich das im
+  Test als relevantes Problem zeigt, ist der Umstieg auf einen Dauerprozess
+  (z. B. Oracle Cloud Always Free) die Rückfalloption — dafür wäre dann aber
+  eine Kartenverifizierung nötig.
+- Täglicher Statusbericht per Telegram/E-Mail (z. B. als letzter Schritt im
+  letzten Lauf des Tages): Anzahl Trades, Tages-PnL, aktive
+  Sicherheitsschalter, Ø Slippage, Ø Lauf-Verspätung
+
+---
+
+## 7. Ausdrücklich NICHT bauen
+
+- Keine automatische Parameteroptimierung. Die Konfiguration ist eingefroren
+  (5-Min-Kerzen, 0,5× Stop, 1,5:1 Ziel, 10-Kerzen-Verfallsfrist). Nachjustieren
+  während des Live-Tests macht das Ergebnis wertlos.
+- Keine zusätzlichen Filter, Indikatoren oder "Verbesserungen" (auch kein
+  Trend-Filter — der wurde separat getestet und hat das Ergebnis verschlechtert).
+- Keine Anbindung an ein echtes Geldkonto. Ausschließlich Paper-API-Endpunkte.
+  Die Live-URL gehört nicht in den Code.
+- Keine Skalierung der Positionsgröße nach Gewinnserien.
+
+---
+
+## 8. Reihenfolge der Umsetzung
+
+1. Setup-Erkennung gegen historische Bars, Ergebnis mit den Backtest-Zahlen
+   abgleichen (muss ungefähr 5,5 Trades/Tag finden)
+2. Zustandsspeicherung zwischen Workflow-Läufen (ohne die geht nichts anderes)
+3. Sicherheitsschalter und Kill-Switch
+4. Order-Platzierung gegen die Paper-API, erst manuell ausgelöst
+5. GitHub-Actions-Workflow mit Zeitplan
+6. Protokollierung und Auswertung inkl. Lauf-Verspätung
+
+Schritt 1 vor allen anderen. Wenn die Erkennung nicht dieselben Setups findet
+wie im Backtest, testet der Bot etwas anderes als das, was geprüft wurde.
+
+---
+
+## 9. Änderungsprotokoll: Review, Datenfeed-Untersuchung, Strategiewechsel
+
+**Historisches Protokoll.** Dieser Abschnitt entstand während der
+Entwicklung der ursprünglichen Strategie "Wickless Candle Retest" und
+dokumentiert den Weg von der ersten Review über die Datenfeed-Untersuchung
+bis zum Befund, der zum Wechsel auf Opening Range Breakout geführt hat
+(siehe Änderungshinweis oben und [research/FINDINGS.md](research/FINDINGS.md)
+für die neue Strategie). Bleibt stehen als Nachvollzug der Entscheidung,
+ist aber nicht mehr die aktuelle Handlungsgrundlage. Infrastruktur-Punkte
+weiter unten (Kill-Switch, Tages-Reset, parallele Läufe usw.) gelten
+weiterhin, unabhängig von der Strategie.
+
+### Pattern-Day-Trader-Regel — geprüft
+
+Die Strategie erzeugt bei ~5,5 Trades/Tag ausschließlich Day-Trades. Die alte
+FINRA-PDT-Regel wurde laut Alpaca zum 4. Juni 2026 plattformweit abgeschafft
+und durch ein "Intraday Margin Framework" ersetzt (siehe
+[Alpaca-Blog](https://alpaca.markets/blog/finra-retires-the-pdt-rule-introducing-alpacas-new-intraday-margin-framework/)),
+alte PDT-Felder in der API laut Blog bis zum 6. Juli 2026 entfernt. Der
+eigene Paper-Account bestätigt das: `pattern_day_trader` liefert `None`
+statt `true`/`false` (Abfrage vom 19.08.2026 über
+`TradingClient.get_account()`, Cash 100.000 $, Status aktiv), das Feld ist
+also nicht mehr befüllt. Das Risiko ist damit erledigt, nicht nur
+wahrscheinlich gering.
+
+### Nachholen verpasster Kerzen
+
+Abschnitt 2 sieht vor, bei jedem Lauf "die zuletzt abgeschlossene Kerze" zu
+prüfen. Fällt ein GitHub-Actions-Lauf aus oder verspätet er sich über eine
+ganze Kerze hinaus, wird die dazwischenliegende Kerze nie ausgewertet — kein
+Logeintrag, kein Fehler, einfach ein verpasstes Setup. Der Bot sollte bei
+jedem Lauf alle Kerzen seit dem zuletzt verarbeiteten Kerzenindex nachholen,
+nicht nur die letzte.
+
+### Log für nicht ausgelöste Setups
+
+Abschnitt 5 soll am Monatsende die Anzahl übersprungener/verfallener Setups
+und die Gründe ausgeben. Das Trade-Log aus Abschnitt 4 enthält aber nur
+tatsächlich ausgeführte Trades — ein Setup, das nie auslöst, taucht darin
+nicht auf. Braucht ein zweites Log oder ein Statusfeld je Setup (ausgelöst /
+verfallen / übersprungen-zu-klein / …), sonst lässt sich diese Auswertung
+nicht berechnen.
+
+### Parallele Workflow-Läufe
+
+Falls ein Lauf einmal länger braucht als die 5-Minuten-Lücke bis zum
+nächsten, fehlt eine Absicherung gegen überlappende Läufe (in GitHub Actions
+über `concurrency:` lösbar). Ohne das könnten zwei Läufe gleichzeitig
+denselben Zustand lesen/schreiben und im schlimmsten Fall doppelt Orders
+auslösen.
+
+### Tages-Reset der Sicherheitsschalter-Zähler
+
+Die Zähler für Tagesverlust, Trades/Tag und Verlustserie werden persistent
+gespeichert (Abschnitt 4), aber wann sie auf null zurückgesetzt werden, steht
+nicht im Dokument. Braucht einen expliziten Reset zu Handelstagbeginn, sonst
+bleibt entweder ein Tagesstopp über Nacht hängen oder die Zähler laufen
+tagelang mit. Der Gesamtverlust-Zähler aus Abschnitt 3 bleibt davon
+ausgenommen, der ist bewusst dauerhaft.
+
+### Kill-Switch-Mechanismus festlegen
+
+Abschnitt 3 lässt offen, ob der Kill-Switch eine Datei im Repository oder ein
+Repository-Secret ist. Beides hat unterschiedliche Handhabung unterwegs, eine
+Datei lässt sich z. B. über die GitHub-App vom Handy in Sekunden ändern. Vor
+Schritt 3 im Bauplan (Abschnitt 8) festlegen, welches der beiden es wird.
+
+### Öffentliches vs. privates Repository — entschieden
+
+Repository ist öffentlich, Begründung siehe Abschnitt 6. Die recherchierten
+Zahlen dazu ([GitHub-Doku](https://docs.github.com/en/billing/concepts/product-billing/github-actions)):
+private Repos im Free-Plan bekommen 2.000 Actions-Minuten/Monat, bei 78
+Läufen/Handelstag über ~21 Handelstage wären das ~1.638 Minuten geschätzter
+Bedarf, knapp aber ausreichend gewesen. Mit dem öffentlichen Repository ist
+das Minutenbudget ohnehin kein Thema mehr.
+
+### Technischer Schutz gegen Live-Endpunkt
+
+Abschnitt 7 verbietet die Live-URL im Code als Regel. Ließe sich zusätzlich
+technisch erzwingen, etwa mit einem Check beim Start, der die konfigurierte
+Basis-URL gegen den bekannten Paper-Endpunkt von Alpaca prüft und sonst
+abbricht, statt sich allein auf Disziplin zu verlassen.
+
+### Statistische Aussagekraft der Monatsauswertung
+
+Bei ~5,5 Trades/Tag kommen in einem Monat ~115 Trades zusammen. Das ist bei
+50,6 % Trefferquote eine kleine Stichprobe: Allein durch normale Schwankung
+kann die Trefferquote in diesem Zeitraum leicht mehrere Prozentpunkte in
+beide Richtungen abweichen, auch wenn Setup-Erkennung und Ausführung
+einwandfrei laufen. Der erste Monat zeigt eher, ob grob etwas schiefläuft,
+als dass er die Strategie endgültig bestätigt oder widerlegt.
+
+### Datenfeed weicht vom Backtest ab, und kostet auf IEX die Edge
+
+Validierung mit echten Alpaca-Daten (IEX-Feed, Free-Tier, siehe
+[scripts/validate_setup_detection.py](scripts/validate_setup_detection.py)):
+Die Setup-Erkennung findet 11,9-12,7 Trades/Tag, mehr als doppelt so viel
+wie die Backtest-Erwartung (~5,5/Tag). Geprüft und ausgeschlossen: kein
+Einzeltag-Ausreißer (stabil über 41-252 Handelstage in mehreren
+Stichproben) und keine Setup/Trade-Verwechslung (die genannten Zahlen sind
+bereits die durch `simulate_entries()` gefilterten ausgelösten Trades, die
+Rohzählung der Setups liegt nochmal höher). Im direkten Vergleich über
+identischen Zeitraum (1.6.-19.8., 41 gemeinsame Handelstage): yfinance
+4,86 Trades/Tag, Alpaca IEX 12,71 Trades/Tag. Gleicher Code, exakt
+derselbe Zeitraum, unterschiedliche Datenquelle, der Unterschied liegt am
+Feed. Stichprobe zur selben Kerze (29.06., 09:30) belegt das auf
+Bar-Ebene: yfinance O/H/L/C 713,99/716,96/711,88/716,79 gegen Alpaca
+714,04/716,81/711,97/716,81, nah beieinander, aber nicht identisch, weil
+beide aus unterschiedlichen zugrundeliegenden Trades gebaut sind. Genau an
+der 2%-Docht-Schwelle reichen solche Differenzen, um eine Kerze mal als
+Setup zu werten und mal nicht.
+
+IEX deckt nur einen kleinen Teil des gesamten QQQ-Handelsvolumens ab
+(im Schnitt 83-107 Trades je 5-Min-Bar in der Stichprobe, für ein so
+liquides Symbol dünn). Bei weniger zugrundeliegenden Trades pro Kerze
+steigt die Chance, dass Hoch/Tief zufällig mit Open/Close zusammenfallen,
+also mehr scheinbar dochtlose Kerzen durch Stichprobenrauschen statt durch
+ein echtes Muster.
+
+Das trifft den Kern des Projekts: Abschnitt 4 sieht Alpacas REST-API als
+Datenquelle für den Live-Bot vor, im Free-Tier ist das genau dieser
+IEX-Feed. Wenn schon die Setup-Erkennung auf einer anderen Datengrundlage
+läuft als der Backtest, misst der Monatstest nicht mehr nur
+Ausführungsqualität (Slippage, Lauf-Verspätung), sondern zusätzlich eine
+andere Signalhäufigkeit, und genau diese Vermischung soll der Test laut
+Abschnitt 5 eigentlich vermeiden.
+
+Zwei bereits angebundene Alternativ-Datenquellen (Alpha Vantage, Financial
+Modeling Prep) wurden geprüft, beide verlangen für Intraday-Daten ein
+bezahltes Abo, keine davon lieferte einen Testwert.
+
+**Vollständiger Backtest auf IEX-Daten (nicht nur Setup-Zählung), siehe
+[scripts/backtest_strategy.py](scripts/backtest_strategy.py):** Mit exakt
+denselben Regeln aus Abschnitt 1 (Entry, Stop, Ziel, Tagesende, nichts
+verändert) über 252 Handelstage, 2999 Trades:
+
+| Kennzahl | IEX-Backtest | Spec-Backtest |
+|---|---|---|
+| Trefferquote | 36,4 % | 50,6 % |
+| Ø Risiko | 0,386 Punkte | 0,375 Punkte |
+| brutto Punkte/Trade | −0,035 | +0,100 |
+| brutto R/Trade | −0,091 | +0,266 |
+| Gesamt R | −271,93 | (positiv, siehe oben) |
+
+36,4 % liegt unter der Breakeven-Trefferquote bei 1,5:1 CRV (40 %) und
+unter der Schwelle, die Abschnitt 5 selbst als ernstzunehmende Abweichung
+nennt. Gegengeprüft: Bei Kerzen, die im selben 5-Min-Bar sowohl Stop als
+auch Ziel berühren (5,1 % aller Trades, 153 von 2999), wurde bislang
+konservativ "Stop zuerst" angenommen, mangels Tick-Daten nicht anders
+entscheidbar. Mit der optimistischen Gegenprobe ("Ziel zuerst") steigt die
+Trefferquote auf 41,5 % und Gesamt-R auf +110,57, aber selbst das ist nur
++0,037 R/Trade, ein Bruchteil der erwarteten +0,266. Die Modellannahme
+verändert also das Ausmaß, nicht die Richtung: Auf IEX-Daten ist die vom
+Backtest behauptete Edge weitgehend weg, nicht nur die Trade-Frequenz
+anders. Erkennung, Entry- und Exit-Logik sind unit-getestet und
+entsprechen Abschnitt 1, das Ergebnis ist also kein Implementierungsfehler.
+
+Twelve Data ebenfalls geprüft (ohne Account, nur deren Support-Doku):
+Auch dort deckt der Standard-Feed, inklusive Free-Tier und sogar dem
+bezahlten Basic-Plan, nur ~5 % des US-Handelsvolumens ab, aus Börsen ohne
+Lizenzpflicht statt vollem Konsolidierungstape. Echte konsolidierte Daten
+gäbe es dort nur über eine Sondervereinbarung mit dem Vertrieb. Damit
+vermutlich kein besserer Ausgangspunkt als der bestehende IEX-Feed.
+
+**Nachtrag, Twelve Data direkt getestet (echter API-Key, siehe
+[scripts/compare_data_sources.py](scripts/compare_data_sources.py) und
+`tradingbot/data.py:load_twelvedata_bars`):** Über volle 251 Handelstage
+trifft Twelve Data die Backtest-Frequenz fast exakt (5,36 Trades/Tag ggü.
+5,5 erwartet, mit Abstand die beste Übereinstimmung bisher), aber
+Trefferquote (36,9 %) und Ø R/Trade (−0,082) sind fast identisch schlecht
+wie bei Alpaca IEX (36,4 % / −0,091 über 252 Tage), obwohl die Frequenz bei
+IEX mehr als doppelt so hoch liegt (11,90/Tag). Zwei Quellen mit fast
+gegensätzlicher Frequenz-Abweichung landen bei fast demselben, klar
+negativen Ergebnis.
+
+Das ändert die Diagnose: Es sieht nicht mehr in erster Linie nach einem
+Datenfeed-Problem aus. Über ein ganzes Jahr und mit einer Quelle, deren
+Frequenz fast exakt passt, bleibt die Trefferquote klar unter der
+40-%-Gewinnschwelle bei 1,5:1 CRV. Das lässt sich mit besseren Daten allein
+vermutlich nicht beheben. Naheliegendste Erklärung: Die Strategie hat im
+letzten Jahr real nicht die im Backtest (2021-2026, 5-Jahres-Schnitt)
+ausgewiesene Edge gezeigt, das könnte normale Schwankung über die
+Jahre sein oder ein Hinweis, dass sich die zugrundeliegende Marktstruktur
+seit dem Backtest-Zeitraum verändert hat. Offen und nur vom Nutzer zu
+beantworten: Auf welchem Zeitraum/welcher Datengrundlage beruhte die
+eigene Voruntersuchung, mit der die 10-Kerzen-Frist und die übrigen
+Parameter gewählt wurden, und deckt sie das letzte Jahr mit ab?
+
+**Nachtrag, komplette 2021-2026-Spanne auf Twelve Data getestet** (Nutzer
+bestätigt: eigene Voruntersuchung lief ebenfalls 2021 bis heute, siehe
+[scripts/backtest_by_year.py](scripts/backtest_by_year.py)), 109.691 Bars,
+8010 Trades:
+
+| Jahr | Tage | Trades/Tag | Trefferquote | Ø R/Trade | Gesamt R |
+|---|---|---|---|---|---|
+| 2021 | 252 | 6,16 | 36,8 % | −0,084 | −130,38 |
+| 2022 | 251 | 5,31 | 39,1 % | −0,031 | −41,42 |
+| 2023 | 250 | 5,28 | 40,0 % | −0,006 | −8,35 |
+| 2024 | 252 | 6,04 | 40,6 % | +0,013 | +19,59 |
+| 2025 | 250 | 5,88 | 36,8 % | −0,086 | −125,96 |
+| 2026 (bis Aug.) | 157 | 5,18 | 36,1 % | −0,096 | −78,40 |
+| **Gesamt** | | | **38,3 %** | **−0,046** | **−364,92** |
+
+Kein einziges Jahr kommt in die Nähe der behaupteten 50,6 % Trefferquote
+oder +0,266 R/Trade, das beste Jahr (2024) liegt bei +0,013 R/Trade,
+praktisch Nullsummenspiel, alle anderen sind klar negativ. Damit sind
+beide bisherigen Erklärungen widerlegt: Es ist weder ein reines
+Datenfeed-Problem (Twelve Data trifft die Frequenz gut, siehe oben), noch
+eine ungewöhnlich schwache jüngste Phase innerhalb eines sonst starken
+Zeitraums (jedes Jahr seit 2021 liegt in einem engen 36-41-%-Band, keine
+Verschlechterung erkennbar, es war nie in der Nähe der 50,6 %).
+
+Trade-Anzahl liegt mit 8010 über den 5,6 Jahren zudem mehr als doppelt so
+hoch wie die 3602 Trades, die der Spec-Backtest über "10 Zeiträume
+2021-2026" nennt, ein Hinweis, dass die "10 Zeiträume" möglicherweise
+keine durchgehende Abdeckung des gesamten Zeitraums waren, sondern eine
+Auswahl daraus.
+
+**Geklärt (Nutzerangabe):** Der Original-Backtest lief über dieselbe
+Twelve-Data-API, dieselben Parameter (Symbol, Intervall, Zeitzone,
+reguläre Session) wie meine Tests hier, kein Datenquellen-Unterschied. Der
+Unterschied liegt in der Stichprobe: 10 Fenster à ca. 3,5 Monate, verteilt
+über Juni 2021 bis August 2026, nicht durchgehend, sondern Stichproben,
+wegen der Limits im kostenlosen Twelve-Data-Plan (649 Handelstage, 3602
+Trades insgesamt).
+
+Damit erklärt sich die Abweichung: Laut Abschnitt 1 wurde die
+10-Kerzen-Verfallsfrist "getestet (1 bis 200 Kerzen, auf 10 Zeiträumen
+2021–2026) und ist das Gesamtgewinn-Optimum" - also aus 200 Kandidaten
+gezielt der Wert gewählt, der auf genau diesen 10 Fenstern den größten
+Gewinn zeigt. Ein so gewählter Parameter muss auf der Stichprobe, auf der
+er gesucht wurde, gut aussehen, das ist kein Beleg für eine echte Edge,
+sondern das erwartbare Ergebnis der Suche selbst (klassisches
+In-Sample-Overfitting, kein Out-of-Sample-Test). Der Test hier lief mit
+demselben eingefrorenen Parameter über den vollen durchgehenden Zeitraum
+(8010 statt 3602 Trades) und zeigt in allen sechs Jahren ein negatives bis
+bestenfalls neutrales Ergebnis, nie in der Nähe der 50,6 %. Genau das
+Muster, das bei überangepassten Parametern zu erwarten ist: stark auf der
+Stichprobe, auf der optimiert wurde, schwach außerhalb davon. Nicht mit
+letzter Sicherheit bewiesen (die exakten 10 Original-Fenster wurden hier
+nicht nachgestellt), aber die Konsistenz über alle sechs Jahre macht Zufall
+als Erklärung unwahrscheinlich.
+
+Entscheidung damit final: Kein Datenfeed-Problem, kein "letztes Jahr war
+schwach", sondern vermutlich In-Sample-Overfitting bei der
+Parameterwahl (10-Kerzen-Frist über 200 Kandidaten auf genau den 10
+Fenstern optimiert, die auch die Erwartungswerte in Abschnitt 5 liefern).
+Ein bezahltes Datenupgrade würde daran nichts ändern. Die Empfehlung
+an dieser Stelle: vor Schritt 3 und einem Live-Test mit dem Nutzer klären,
+ob die Strategie in dieser eingefrorenen Parametrisierung überhaupt noch
+weiterverfolgt werden soll, ein sauberer Out-of-Sample-/Walk-Forward-Test
+wäre die eigentlich nötige Nachbesserung, aber das ist eine neue
+Backtest-Aufgabe, kein Bot-Bau-Schritt, und geht über den Rahmen dieser
+Spec hinaus.
