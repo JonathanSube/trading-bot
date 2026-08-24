@@ -20,5 +20,5 @@
   "halted_for_day": false,
   "stopped_permanently": false,
   "daily_report_sent": false,
-  "telegram_update_offset": null
+  "telegram_update_offset": 700987107
 }
