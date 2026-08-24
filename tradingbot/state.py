@@ -37,6 +37,7 @@ class BotState:
     start_of_day_equity: float | None = None
     daily_pnl: float = 0.0
     total_pnl: float = 0.0
+    total_trades: int = 0  # seit Bot-Start, im Unterschied zu counters.trades_today
     counters: SafetyCounters = field(default_factory=SafetyCounters)
     last_processed_candle: datetime | None = None
     # Hoechstens ein Trade pro Tag (Abschnitt 1): traded_today haelt fest,
@@ -59,6 +60,9 @@ class BotState:
     # Handelsschluss (der Workflow ist absichtlich weiter getaktet als die
     # Session, siehe .github/workflows/trading-bot.yml).
     daily_report_sent: bool = False
+    # Telegram-Updates (z. B. /status) werden per Poll abgeholt, offset
+    # merkt sich, welche schon verarbeitet wurden (siehe tradingbot/notify.py).
+    telegram_update_offset: int | None = None
 
 
 def _signal_to_dict(signal: Signal) -> dict:
@@ -91,6 +95,7 @@ def _state_to_dict(state: BotState) -> dict:
         "start_of_day_equity": state.start_of_day_equity,
         "daily_pnl": state.daily_pnl,
         "total_pnl": state.total_pnl,
+        "total_trades": state.total_trades,
         "counters": {
             "trades_today": state.counters.trades_today,
             "consecutive_losses": state.counters.consecutive_losses,
@@ -107,6 +112,7 @@ def _state_to_dict(state: BotState) -> dict:
         "halted_for_day": state.halted_for_day,
         "stopped_permanently": state.stopped_permanently,
         "daily_report_sent": state.daily_report_sent,
+        "telegram_update_offset": state.telegram_update_offset,
     }
 
 
@@ -117,6 +123,7 @@ def _state_from_dict(data: dict) -> BotState:
         start_of_day_equity=data.get("start_of_day_equity"),
         daily_pnl=data.get("daily_pnl", 0.0),
         total_pnl=data.get("total_pnl", 0.0),
+        total_trades=data.get("total_trades", 0),
         counters=SafetyCounters(**data.get("counters", {})),
         last_processed_candle=(
             datetime.fromisoformat(data["last_processed_candle"])
@@ -131,6 +138,7 @@ def _state_from_dict(data: dict) -> BotState:
         halted_for_day=data.get("halted_for_day", False),
         stopped_permanently=data.get("stopped_permanently", False),
         daily_report_sent=data.get("daily_report_sent", False),
+        telegram_update_offset=data.get("telegram_update_offset"),
     )
 
 
@@ -201,6 +209,7 @@ def record_trade_result(state: BotState, pnl: float) -> None:
     Schritt 3 (Sicherheitsschalter), nicht diese Funktion."""
     state.daily_pnl += pnl
     state.total_pnl += pnl
+    state.total_trades += 1
     state.counters.trades_today += 1
     state.counters.consecutive_losses = 0 if pnl >= 0 else state.counters.consecutive_losses + 1
 

@@ -33,9 +33,10 @@ load_dotenv(ROOT / ".env")
 from alpaca.trading.client import TradingClient
 
 from tradingbot.data import load_alpaca_bars
-from tradingbot.notify import send_notification
+from tradingbot.notify import get_telegram_commands, send_notification
 from tradingbot.orb_strategy import build_signal, check_breakout, detect_opening_range
 from tradingbot.orders import place_bracket_order, position_size
+from tradingbot.reporting import build_status_report
 from tradingbot.safety import check_kill_switch, check_safety_switches
 from tradingbot.setup_detection import Bar, Direction
 from tradingbot.state import (
@@ -94,6 +95,14 @@ def log_and_clear(state: BotState, now: datetime, run_delay: float,
     )
     append_trade(TRADE_LOG_PATH, row)
     record_trade_result(state, pnl)
+
+    exit_labels = {"stop": "Stop getroffen", "target": "Ziel getroffen",
+                   "eod": "Tagesende-Schluss", "safety_stop": "Sicherheitsschalter-Schluss"}
+    send_notification(
+        f"Trade geschlossen: {signal.direction.value.upper()} {SYMBOL}, "
+        f"{exit_labels.get(exit_reason, exit_reason)}\n"
+        f"Ergebnis: {'+' if pnl >= 0 else ''}{pnl:.2f} $ ({row.pnl_in_r:+.2f} R)"
+    )
 
     state.open_trade = None
     state.open_order_id = None
@@ -213,35 +222,24 @@ def try_new_entry(client: TradingClient, state: BotState, bars_today: list[Bar],
         break
 
 
-def send_daily_report(state: BotState) -> None:
+def send_daily_report(client: TradingClient, state: BotState) -> None:
     """Abschnitt 6: taeglicher Statusbericht, einmal pro Tag, wenn der
-    Markt fuer heute geschlossen hat."""
-    lines = [
-        f"Tagesbericht {state.trading_date}:",
-        f"Trades heute: {state.counters.trades_today}",
-        f"Tages-PnL: {state.daily_pnl:.2f}",
-        f"Gesamt-PnL: {state.total_pnl:.2f}",
-    ]
+    Markt fuer heute geschlossen hat. Gleicher Inhalt wie /status."""
+    report = build_status_report(client, state, TRADE_LOG_PATH, SYMBOL)
+    send_notification(f"Tagesbericht {state.trading_date}\n{report}")
 
-    if TRADE_LOG_PATH.exists():
-        import csv as csv_module
-        with open(TRADE_LOG_PATH, "r", encoding="utf-8") as f:
-            today_rows = [
-                row for row in csv_module.DictReader(f)
-                if row["zeitstempel"].startswith(str(state.trading_date))
-            ]
-        if today_rows:
-            avg_slippage = sum(float(r["slippage"]) for r in today_rows) / len(today_rows)
-            avg_delay = sum(float(r["lauf_verspaetung_minuten"]) for r in today_rows) / len(today_rows)
-            lines.append(f"Ø Slippage heute: {avg_slippage:.4f}")
-            lines.append(f"Ø Lauf-Verspaetung heute: {avg_delay:.2f} Min.")
 
-    if state.halted_for_day:
-        lines.append("Hinweis: Handel heute per Sicherheitsschalter gestoppt.")
-    if state.stopped_permanently:
-        lines.append("ACHTUNG: Bot dauerhaft gestoppt, manuelles Reset noetig.")
+def handle_telegram_commands(client: TradingClient, state: BotState) -> None:
+    commands, new_offset = get_telegram_commands(state.telegram_update_offset)
+    state.telegram_update_offset = new_offset
 
-    send_notification("\n".join(lines))
+    for command in commands:
+        cmd = command.split()[0].lower()
+        if cmd == "/status":
+            report = build_status_report(client, state, TRADE_LOG_PATH, SYMBOL)
+            send_notification(report)
+        elif cmd == "/help":
+            send_notification("Verfuegbare Befehle:\n/status - aktueller Stand\n/help - diese Uebersicht")
 
 
 def main() -> None:
@@ -255,6 +253,10 @@ def main() -> None:
 
     state = load_state(STATE_PATH)
     client = TradingClient(os.environ["ALPACA_API_KEY"], os.environ["ALPACA_SECRET_KEY"], paper=True)
+
+    # /status soll auch ausserhalb der Handelszeit funktionieren, deshalb
+    # vor der Markt-Pruefung unten.
+    handle_telegram_commands(client, state)
 
     # Der Workflow ist bewusst grosszuegiger getaktet als die Session
     # (siehe .github/workflows/trading-bot.yml, wegen Sommer-/Winterzeit),
@@ -274,11 +276,14 @@ def main() -> None:
 
     if not clock.is_open and state.open_trade is None:
         if state.trading_date == now.date() and not state.daily_report_sent:
-            send_daily_report(state)
+            send_daily_report(client, state)
             state.daily_report_sent = True
-            save_state(state, STATE_PATH)
         else:
             print("Markt aktuell geschlossen (Feiertag/ausserhalb der Session), nichts zu tun.")
+        # Immer speichern, nicht nur im Tagesbericht-Zweig: handle_telegram_commands
+        # weiter oben kann telegram_update_offset veraendert haben, sonst wird
+        # dieselbe /status-Nachricht bei jedem Lauf erneut beantwortet.
+        save_state(state, STATE_PATH)
         return
 
     try:
