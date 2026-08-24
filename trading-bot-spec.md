@@ -514,3 +514,27 @@ weiterverfolgt werden soll, ein sauberer Out-of-Sample-/Walk-Forward-Test
 wäre die eigentlich nötige Nachbesserung, aber das ist eine neue
 Backtest-Aufgabe, kein Bot-Bau-Schritt, und geht über den Rahmen dieser
 Spec hinaus.
+
+---
+
+## 10. Kriterium für den Umstieg auf echtes Geld
+
+**Entscheidung (24.08.2026):** Umstieg auf echtes Geld, wenn die Methode
+(Opening Range Breakout, Abschnitt 1) im Papierhandel bis März 2027
+positiv ist, also kumulierter Gewinn (Gesamt-PnL, per `/status` oder
+[scripts/monthly_evaluation.py](scripts/monthly_evaluation.py) abrufbar)
+über den gesamten Zeitraum seit Live-Schaltung des Bots.
+
+Das verlängert den in Zeile 3 genannten Mindestzeitraum von einem Monat auf
+rund sieben Monate. Nach der Erfahrung mit der Original-Strategie
+(Abschnitt 9: ein einzelner Monat oder sogar ein einzelnes Jahr hätte ein
+falsches Bild geben können, siehe die Jahr-für-Jahr-Tabelle dort) ist das
+methodisch die richtige Richtung, ein längerer Zeitraum ist weniger anfällig
+für Zufallsschwankungen als ein kurzer.
+
+Vor dem eigentlichen Umstieg zusätzlich zu klären, unabhängig vom
+PnL-Ergebnis: reales Geldkonto bei Alpaca einrichten (Abschnitt 7 schließt
+das für den Bot in seiner jetzigen Form ausdrücklich aus, "nur
+Paper-API-Endpunkte"), Positionsgrößen-Hebel-Frage aus Abschnitt 1 bewusst
+entscheiden, und Kill-Switch/Sicherheitsschalter aus Abschnitt 3 nochmal
+gegen echtes Geld statt Papierkapital durchdenken.
