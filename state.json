@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "trading_date": "2026-08-24",
+  "trading_date": "2026-08-25",
   "initial_equity": 100000.0,
   "start_of_day_equity": 100000.0,
   "daily_pnl": 0.0,
@@ -11,7 +11,7 @@
     "consecutive_losses": 0,
     "consecutive_api_errors": 0
   },
-  "last_processed_candle": "2026-08-24T15:45:00-04:00",
+  "last_processed_candle": "2026-08-25T09:40:00-04:00",
   "traded_today": false,
   "open_trade": null,
   "open_order_id": null,
@@ -19,6 +19,6 @@
   "open_entry_fill": null,
   "halted_for_day": false,
   "stopped_permanently": false,
-  "daily_report_sent": true,
+  "daily_report_sent": false,
   "telegram_update_offset": 700987107
 }
