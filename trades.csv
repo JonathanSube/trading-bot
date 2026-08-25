@@ -1,0 +1,2 @@
+zeitstempel,richtung,level,entry_geplant,entry_tatsaechlich,slippage,stop,ziel,stueckzahl,risiko,exit_grund,exit_preis,pnl,pnl_in_r,dauer_minuten,lauf_verspaetung_minuten
+2026-08-25T10:05:00-04:00,short,713.93,710.48,709.970969,0.50903100000005,713.93,703.5800000000002,289,3.449999999999932,eod,710.48,-147.10995900001444,-0.14754521739132176,385.5711186,0.5711186
