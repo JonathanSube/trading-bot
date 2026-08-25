@@ -152,3 +152,30 @@ Live-Test nach Abschnitt 4/6 der Spec zeigen würde. Aber: ORB hat genau
 die Nachprüfung bestanden, an der die Original-Strategie gescheitert ist,
 mit größerem Sicherheitsabstand und ohne erkennbares Zeichen von
 Überanpassung.
+
+## Nachträglich geprüfte Varianten (nach Live-Start, 25.08.2026)
+
+Anlass: ein laufender Live-Trade blieb über 4 Stunden offen, ohne das
+2:1-Ziel zu erreichen (Details siehe Chat-Verlauf), Frage war, ob engerer
+Stop/Ziel, ein an der tatsächlichen Tagesbewegung ausgerichtetes Ziel,
+oder mehrtägiges Halten besser abschneiden. Alle drei mit derselben
+Train/Test-Trennung geprüft (Code:
+[research/strategies.py](strategies.py):`opening_range_breakout_tight_stop`,
+`opening_range_breakout_adaptive_target`,
+[research/orb_multiday.py](orb_multiday.py)).
+
+| Variante | Training Ø R | Test Ø R | Befund |
+|---|---|---|---|
+| Original 2:1 | 0,078 | 0,048 | Referenz |
+| Enger Stop (halbe Distanz, weiter 2:1) | 0,077 | 0,028 | Auf Training neutral, auf Test schlechter, verworfen |
+| Adaptives Ziel (Ø 10-Tage-Spanne) | 0,068 | 0,050 | Trefferquote steigt, Ertrag pro Trade praktisch unverändert, keine echte Verbesserung |
+| Mehrtägig halten (kein Tagesende-Zwang) | 0,117 | 0,170 | Auf Test sogar besser als im Training, aber nur 182 Test-Trades (weniger belastbar) und mit echtem Übernacht-Gap-Risiko, das der Backtest nicht abbildet (Stop-Fill wird als exakt unterstellt) |
+
+**Entscheidung des Nutzers (25.08.2026):** Bei der Original-2:1-Konfiguration
+bleiben, mehrtägiges Halten nicht live nehmen, trotz der besseren
+Test-Zahlen, wegen des ungetesteten Übernachtrisikos und weil das den
+Charakter der Strategie von Day-Trading zu Swing-Trading verschieben
+würde, keine kleine Parameteränderung mehr. Der Live-Bot
+([tradingbot/orb_strategy.py](../tradingbot/orb_strategy.py)) läuft
+unverändert weiter, diese drei Varianten bleiben reiner Recherche-Code,
+nicht verdrahtet.
