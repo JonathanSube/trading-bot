@@ -143,6 +143,21 @@ def force_close_open_position(client: TradingClient, state: BotState, now: datet
     if state.open_trade is None:
         return
 
+    # Die Bracket-Order haelt die Stueckzahl fuer ihre offenen Legs (Stop,
+    # Ziel) reserviert, auch nachdem der Entry gefuellt ist. Ohne diese
+    # Legs zuerst zu canceln, lehnt Alpaca eine zusaetzliche Schliess-Order
+    # mit "insufficient qty available" ab (live beobachtet am 25.08.2026,
+    # Position blieb dadurch ungeplant ueber Nacht offen). Deshalb erst
+    # canceln, dann schliessen, nicht andersrum.
+    if state.open_order_id:
+        try:
+            order = client.get_order_by_id(state.open_order_id)
+            for leg in (order.legs or []):
+                if leg.status not in ("filled", "canceled", "expired"):
+                    client.cancel_order_by_id(leg.id)
+        except Exception as e:
+            print(f"Konnte Bracket-Legs nicht abfragen/canceln, versuche Schluss trotzdem: {e}")
+
     positions = client.get_all_positions()
     if any(p.symbol == SYMBOL for p in positions):
         order = client.close_position(SYMBOL)
@@ -254,6 +269,22 @@ def main() -> None:
     state = load_state(STATE_PATH)
     client = TradingClient(os.environ["ALPACA_API_KEY"], os.environ["ALPACA_SECRET_KEY"], paper=True)
 
+    try:
+        _run(client, state, now, run_delay)
+    except Exception as e:
+        # Zustand IMMER sichern, auch bei einem unerwarteten Fehler - sonst
+        # dauert die Erholung wie am 25./26.08.2026 unnoetig lange (Position
+        # blieb ungeplant ueber Nacht offen, weil der Absturz das Speichern
+        # verhinderte, siehe trading-bot-spec.md Abschnitt 9). Danach erneut
+        # auslösen, damit der GitHub-Actions-Lauf trotzdem als fehlgeschlagen
+        # markiert wird, nicht stillschweigend uebergangen.
+        print(f"Unerwarteter Fehler: {e}")
+        send_notification(f"Bot-Fehler: {e}")
+        save_state(state, STATE_PATH)
+        raise
+
+
+def _run(client: TradingClient, state: BotState, now: datetime, run_delay: float) -> None:
     # /status soll auch ausserhalb der Handelszeit funktionieren, deshalb
     # vor der Markt-Pruefung unten.
     handle_telegram_commands(client, state)
