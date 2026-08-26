@@ -538,3 +538,35 @@ das für den Bot in seiner jetzigen Form ausdrücklich aus, "nur
 Paper-API-Endpunkte"), Positionsgrößen-Hebel-Frage aus Abschnitt 1 bewusst
 entscheiden, und Kill-Switch/Sicherheitsschalter aus Abschnitt 3 nochmal
 gegen echtes Geld statt Papierkapital durchdenken.
+
+---
+
+## 11. Betriebsvorfälle (laufend ergänzt)
+
+**25./26.08.2026: Position ungeplant über Nacht offen.** Der
+Tagesende-Zwangsschluss schlug fehl, weil Alpaca eine zusätzliche
+Schließ-Order ablehnte, solange die Bracket-Order (Stop/Ziel) die
+Stückzahl noch für ihre offenen Legs reserviert hatte ("insufficient qty
+available"). Der Fehler war im Bot-Code unbehandelt, das Skript stürzte
+ab, bevor `state.json` gespeichert wurde. Die Position blieb dadurch
+ungeschützt (Stop und Ziel liefen zum Handelsschluss reguär per
+Tages-Order ab) bis zum nächsten Handelsstart offen, wurde dort
+automatisch geschlossen. Realer Verlust überschaubar (−113,18 $, kleine
+Kurslücke über Nacht), aber ein echtes, unkontrolliertes Risiko, keine
+Frage von Glück gewesen zu sein reicht als Absicherung nicht.
+
+Behoben (Commit `9666e29`): `force_close_open_position` storniert jetzt
+zuerst alle noch offenen Bracket-Legs, bevor die Position geschlossen
+wird. `run_bot.py` fängt außerdem jeden unerwarteten Fehler zentral ab
+und sichert `state.json` in jedem Fall, bevor der Fehler erneut
+ausgelöst wird (der GitHub-Actions-Lauf zeigt weiterhin rot, aber der
+nächste Lauf verliert den Überblick nicht mehr). Der schon geloggte
+Trade wurde nachträglich auf den echten Füllpreis korrigiert (Alpacas
+Order-Historie), `exit_preis`/`pnl` in
+[trades.csv](trades.csv) und `total_pnl` in `state.json` angepasst.
+
+**25.08.2026: GitHub Actions taktet deutlich langsamer als geplant.**
+Siehe Abschnitt 6/9 weiter oben, hier nur der Verweis: gemessener
+Abstand zwischen Läufen 18-50 Minuten statt der geplanten 5, betrifft
+Signal-Timing und Tagesende-Schluss gleichermaßen. Lösung in Arbeit:
+externer Cron-Trigger statt GitHubs eigenem `schedule`-Event.
