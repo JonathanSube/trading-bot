@@ -12,10 +12,17 @@
     "consecutive_api_errors": 0
   },
   "last_processed_candle": "2026-08-26T12:50:00-04:00",
-  "traded_today": false,
-  "open_trade": null,
-  "open_order_id": null,
-  "open_qty": null,
+  "traded_today": true,
+  "open_trade": {
+    "direction": "short",
+    "entry_price": 708.5,
+    "stop": 712.18,
+    "target": 701.1400000000001,
+    "risk": 3.67999999999995,
+    "entry_timestamp": "2026-08-26T12:45:00-04:00"
+  },
+  "open_order_id": "49069b42-b06c-4fb3-9221-6fc2e056c919",
+  "open_qty": 271,
   "open_entry_fill": null,
   "halted_for_day": false,
   "stopped_permanently": false,
