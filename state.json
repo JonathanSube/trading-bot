@@ -19,6 +19,6 @@
   "open_entry_fill": null,
   "halted_for_day": false,
   "stopped_permanently": false,
-  "daily_report_sent": false,
+  "daily_report_sent": true,
   "telegram_update_offset": 700987111
 }
