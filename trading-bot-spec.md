@@ -744,3 +744,33 @@ Stattdessen umgesetzt, als beste Annäherung an die Nutzerbeschreibung:
 
 Live verifiziert: der neue Cron-Job löst zuverlässig minütlich aus, ein
 dadurch ausgelöster `signal-bot.yml`-Lauf ist erfolgreich durchgelaufen.
+
+**Nachtrag 26.08.2026: `gemini-3.6-flash` durch `gemini-flash-lite-latest`
+ersetzt - Freikontingent-Falle gefunden, plus Beispiele in den Prompt.**
+Nutzerfrage "läuft die LLM auch, können wir ihr alte Nachrichten geben,
+damit sie lernt" - dazu zwei Dinge:
+
+1. Ein API-Aufruf ist zustandslos, das Modell "lernt" nichts zwischen
+   getrennten Aufrufen (kein Fine-Tuning im Einsatz). Was tatsächlich
+   wirkt: gute Beispiele direkt im System-Prompt, der bei jedem Aufruf
+   erneut mitgeschickt wird. `signalbot/parser.py::SYSTEM_PROMPT` enthält
+   jetzt fünf echte, beim Testen aus dem Kanal geholte Beispiele (Signal
+   mit Levels, "CLOSE TRADE ALERT" als Nicht-Signal, Status-/PnL-Updates
+   als Nicht-Signal) - im Test 11/11 Fälle korrekt erkannt (vorher nicht
+   systematisch geprüft).
+2. Beim Prüfen dabei entdeckt: `gemini-3.6-flash` hat im kostenlosen
+   Freikontingent nur **20 Anfragen pro Tag** (`quotaId:
+   GenerateRequestsPerDayPerProjectPerModel-FreeTier`, live per 429-Fehler
+   aufgedeckt) - durch das eigene Testen am 26.08. mehrfach ausgeschöpft,
+   für einen Live-Bot völlig unzureichend. `gemini-3.5-flash-lite` (das
+   Modell, das beim allerersten Test mit striktem `responseSchema`
+   fehlerhafte Antworten lieferte, siehe oben) funktioniert ohne Schema
+   (aktueller Code) korrekt und fehlerfrei - die Ursache war also
+   tatsächlich das Schema, nicht das Modell. Jetzt fest auf
+   `gemini-flash-lite-latest` (Alias, zeigt auf das jeweils aktuelle
+   Lite-Modell - schützt vor der "not available to new users"-Falle bei
+   fest benannten Modellversionen, die schon zweimal aufgetreten ist).
+
+Zusätzlich: `_try_new_signals` protokolliert jetzt auch den Fall "Kanal
+abgefragt, keine neuen Nachrichten" (vorher stumm, was den ersten
+Live-Läufen einen leeren, missverständlichen Log gab).

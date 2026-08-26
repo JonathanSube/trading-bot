@@ -227,6 +227,10 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
                   f"(Basislinie gesetzt), reagiere erst auf neue Nachrichten.")
         return
 
+    if not messages:
+        print("Kanal abgefragt, keine neuen Nachrichten seit dem letzten Lauf.")
+        return
+
     for i, (message_id, text, _msg_date) in enumerate(messages):
         state.last_message_id = message_id
 

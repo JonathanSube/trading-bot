@@ -15,7 +15,7 @@ import os
 
 import requests
 
-GEMINI_MODEL = "gemini-3.6-flash"  # 3.5-flash-lite erfand teils falsche/fehlende Felder im Test, siehe unten
+GEMINI_MODEL = "gemini-flash-lite-latest"  # siehe trading-bot-spec.md Abschnitt 12 fuer die Modell-Historie
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 SYSTEM_PROMPT = """Du wertest Nachrichten aus einem oeffentlichen Telegram-Kanal fuer \
@@ -42,7 +42,26 @@ stehen. Erfinde NIEMALS Kurswerte oder Punktestaende - steht keine konkrete Zahl
 in der Nachricht, setze entry_level, stop_level und target_level auf null (nicht \
 raten oder einen plausibel klingenden Marktwert einsetzen). Bei Unsicherheit \
 ueber is_signal lieber false setzen, statt zu raten - ein ausgelassenes Signal ist \
-weniger schlimm als ein falsch interpretiertes."""
+weniger schlimm als ein falsch interpretiertes.
+
+Beispiele aus genau diesem Kanal (echte Nachrichten, 26.08.2026 abgerufen):
+
+Nachricht: "NASDAQ INDEX\nBOUGHT LONG === = 100%\n\nENTRY = 29247.8\n\nSTOP = 29180.6"
+Antwort: {"is_signal": true, "index": "NASDAQ", "direction": "long", "entry_level": 29247.8, "stop_level": 29180.6, "target_level": null}
+
+Nachricht: "CLOSE TRADE ALERT \n\nCLOSING NASDAQ INDEX trade now"
+Antwort: {"is_signal": false, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+(Grund: das ist ein Hinweis, dass der KANAL seinen eigenen Trade schliesst, kein neues Einstiegssignal - der Bot verwaltet offene Positionen ausschliesslich ueber die eigene Stop/Ziel-Order, nicht ueber solche Nachrichten.)
+
+Nachricht: "no open orders, no open positions"
+Antwort: {"is_signal": false, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+
+Nachricht: "STATUS"
+Antwort: {"is_signal": false, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+
+Nachricht: "-8,3"
+Antwort: {"is_signal": false, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+(Grund: eine blosse Zahl ohne Kontext ist vermutlich ein Ergebnis-/PnL-Update, kein neues Einstiegssignal.)"""
 
 def parse_signal_message(text: str) -> dict | None:
     """Nutzt bewusst KEIN responseSchema: im Test (26.08.2026) liess das
