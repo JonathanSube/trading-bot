@@ -15,12 +15,24 @@ from zoneinfo import ZoneInfo
 import requests
 from alpaca.data.enums import DataFeed
 from alpaca.data.historical import StockHistoricalDataClient
-from alpaca.data.requests import StockBarsRequest
+from alpaca.data.requests import StockBarsRequest, StockLatestTradeRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 
 from tradingbot.setup_detection import Bar
 
 NY = ZoneInfo("America/New_York")
+
+
+def get_latest_price(symbol: str) -> float:
+    """Letzter gehandelter Preis (IEX-Feed), Basis fuer den Entry-Kurs
+    beim Signal-Bot (siehe signalbot/mapping.py) - dort gibt es keine
+    Kerze wie beim ORB-Bot, sondern einen einzelnen aktuellen Kurs."""
+    client = StockHistoricalDataClient(
+        os.environ["ALPACA_API_KEY"], os.environ["ALPACA_SECRET_KEY"]
+    )
+    request = StockLatestTradeRequest(symbol_or_symbols=symbol, feed=DataFeed.IEX)
+    trade = client.get_stock_latest_trade(request)[symbol]
+    return float(trade.price)
 
 
 def load_alpaca_bars(

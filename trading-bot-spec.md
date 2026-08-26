@@ -570,3 +570,86 @@ Siehe Abschnitt 6/9 weiter oben, hier nur der Verweis: gemessener
 Abstand zwischen Läufen 18-50 Minuten statt der geplanten 5, betrifft
 Signal-Timing und Tagesende-Schluss gleichermaßen. Lösung in Arbeit:
 externer Cron-Trigger statt GitHubs eigenem `schedule`-Event.
+
+---
+
+## 12. Telegram-Signal-Ausführung (neues Feature, 26.08.2026)
+
+Zweiter, komplett getrennter Bot neben dem ORB-Bot: liest Handelssignale aus
+einem öffentlichen Telegram-Kanal ("KaraokeAndi", Live-Day-Trading, Signale
+für NASDAQ INDEX und DOW JONES INDEX), lässt sie per LLM auswerten und führt
+sie automatisch aus, auf demselben Alpaca-Paper-Konto wie der ORB-Bot.
+
+**Warum getrennt vom ORB-Bot:** eigener Zustand
+([signal_state.json](signal_state.json)), eigenes Protokoll
+([signal_trades.csv](signal_trades.csv)), eigener Workflow
+([.github/workflows/signal-bot.yml](.github/workflows/signal-bot.yml)).
+Geteilt wird nur die Kill-Switch-Datei (`STOP`) und das Konto selbst - ein
+Sicherheitsschalter-Stopp im einen Bot stoppt nicht automatisch den anderen,
+außer über die gemeinsame Kill-Switch-Datei oder den (je Bot eigenen)
+Gesamtverlust-Schalter, der über den tatsächlichen Kontostand ohnehin die
+kombinierte Wirkung beider Bots sieht.
+
+**Kanalzugang:** ein Bot kann über die normale Telegram-Bot-API keinem
+Kanal selbstständig beitreten. Lösung: Pyrogram (MTProto) mit dem
+vorhandenen Bot-Token plus `api_id`/`api_hash` (von
+[my.telegram.org](https://my.telegram.org)) - damit kann sich der Bot per
+`join_chat` selbst in den öffentlichen Kanal einklinken, ganz ohne
+Nutzer-Account. Läuft `in_memory` (kein Session-File), weil jeder Lauf
+ohnehin ein neuer Prozess ist (Abschnitt 2).
+
+**Instrument-Mapping (`signalbot/mapping.py`):** Alpaca bietet die Indizes
+selbst nicht zum Handel an. NASDAQ INDEX → QQQ, DOW JONES INDEX → DIA (die
+liquidesten 1:1-Tracking-ETFs). Levels aus dem Signal stehen in
+Index-Punkten, nicht im ETF-Kurs - eine direkte Übernahme wäre falsch.
+Stattdessen: prozentualer Abstand zwischen Entry- und Stop-Level im Index
+berechnen, auf den tatsächlichen ETF-Kurs beim Einstieg anwenden. Fehlt ein
+Stop-Level in der Nachricht (häufig, der Kanal ist eher Freitext als
+strukturierte Daten), greift ein fester Fallback von 0,5 %. Ziel folgt,
+falls nicht selbst genannt, der gleichen 2:1-CRV-Konvention wie beim
+ORB-Bot. Positionsgröße: gleiche 1-%-Risiko-Regel, gleicher Code
+(`tradingbot/orders.py`, wiederverwendet statt dupliziert).
+
+**LLM-Auswahl (`signalbot/parser.py`):** kostenlos gewünscht → Google
+Gemini (Freikontingent ohne Kreditkarte). Modellwahl mehrfach angepasst,
+weil ältere Modellnamen zur Laufzeit "no longer available to new users"
+lieferten (`gemini-2.0-flash`, `gemini-2.5-flash-lite`, `gemini-2.5-flash`
+alle mit 404 abgelehnt) - aktuell `gemini-3.6-flash`.
+
+Wichtiger Befund beim Testen (26.08.2026): mit striktem `responseSchema`
+(erzwungene JSON-Struktur) ließ das Modell wiederholt Felder wie
+`direction` komplett weg, obwohl die Nachricht sie eindeutig enthielt
+("NASDAQ INDEX long" → kein `direction`-Feld in der Antwort) - das hätte
+echte Signale still unter den Tisch fallen lassen. Ohne Schema, nur mit
+`responseMimeType=application/json` und dem Format als Text im
+System-Prompt, lieferte dasselbe Modell in denselben Testfällen
+vollständige und korrekte Antworten. Deshalb bewusst kein `responseSchema`
+im Code. Zusätzlich im Prompt verschärft: Zahlen (Kurslevel) nur
+übernehmen, wenn sie wörtlich in der Nachricht stehen, niemals raten oder
+einen plausibel klingenden Marktwert erfinden - ein früherer Test hatte
+sonst frei erfundene Indexstände geliefert.
+
+**Ausführung: vollautomatisch, keine Bestätigung.** Ausdrücklicher Wunsch
+(26.08.2026), abweichend von meiner ursprünglichen Empfehlung
+(Bestätigung per Telegram vor Ausführung, wegen der zusätzlichen
+Fehlerquelle LLM-Auswertung + Instrument-Mapping). Vertretbar, weil
+weiterhin reines Paper-Trading (Abschnitt 7/10 gelten unverändert auch für
+dieses Feature).
+
+**Sicherheitsschalter (`scripts/run_signal_bot.py`):** eigene, bewusst
+schlankere Fassung als Abschnitt 3 (kein Tages-Trade-Limit, keine
+Datenlücken-Prüfung - beides ergibt bei signalgetriebener statt
+kerzengetriebener Auslösung wenig Sinn). Vorhanden: gemeinsamer
+Kill-Switch, Gesamtverlust-Schalter (−15 %, wie Abschnitt 3, eigene
+`initial_equity`-Referenz), API-Fehler-Zähler, Tagesende-Zwangsschluss
+(15:55 ET, gleiche Bracket-Leg-Cancel-Reihenfolge wie der Fix aus
+Abschnitt 11 vom 25./26.08.2026 - hier von Anfang an eingebaut statt erst
+nach einem Vorfall). Je Instrument höchstens eine offene Position
+gleichzeitig (neues Signal für ein Instrument mit bereits offener Position
+wird übersprungen, nicht in eine Warteschlange gestellt).
+
+**Offen:** genauer Kanal-Nutzername/Link (`SIGNAL_CHANNEL`) folgt noch,
+Workflow ist bis dahin lauffähig, aber ohne Kanalzugriff wirkungslos
+(überspringt den Kanal-Abruf und loggt das). Taktung: gleicher externer
+Cron-Trigger-Ansatz wie beim ORB-Bot vorgesehen (Abschnitt 9/11), idealerweise
+dichter als 5 Minuten für zeitnahe Signalreaktion - Einrichtung noch offen.
