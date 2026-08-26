@@ -648,8 +648,38 @@ nach einem Vorfall). Je Instrument höchstens eine offene Position
 gleichzeitig (neues Signal für ein Instrument mit bereits offener Position
 wird übersprungen, nicht in eine Warteschlange gestellt).
 
-**Offen:** genauer Kanal-Nutzername/Link (`SIGNAL_CHANNEL`) folgt noch,
-Workflow ist bis dahin lauffähig, aber ohne Kanalzugriff wirkungslos
-(überspringt den Kanal-Abruf und loggt das). Taktung: gleicher externer
-Cron-Trigger-Ansatz wie beim ORB-Bot vorgesehen (Abschnitt 9/11), idealerweise
-dichter als 5 Minuten für zeitnahe Signalreaktion - Einrichtung noch offen.
+**Nachtrag 26.08.2026: Kanal nur per Einladungslink erreichbar, kein
+Bot-Zugriff möglich.** Der Zielkanal hat keinen öffentlichen Nutzernamen,
+nur einen Einladungslink (`t.me/+...`). Live getestet: Bots dürfen
+Einladungslinks grundsätzlich nicht verwenden, weder zum Beitreten
+(`join_chat` → `BOT_METHOD_INVALID`) noch zum bloßen Auflösen
+(`messages.CheckChatInvite` → derselbe Fehler) - eine harte
+Telegram-Einschränkung, unabhängig von Pyrogram. Die ursprüngliche Prämisse
+("Bot tritt öffentlichen Kanälen selbstständig bei, ganz ohne den privaten
+Account") gilt also nur für Kanäle mit öffentlichem Nutzernamen, nicht für
+diesen.
+
+Entscheidung (26.08.2026, ausdrücklich vom Nutzer): stattdessen der eigene
+Telegram-Account statt des Bots, da bereits Mitglied des Kanals. Dafür
+[signalbot/generate_session.py](signalbot/generate_session.py) - ein
+separates, manuell und einmalig auszuführendes Skript (nicht Teil des
+automatisierten Bots), das über Pyrograms eigenen interaktiven Login-Ablauf
+eine Session-Zeichenkette erzeugt. Telefonnummer, Login-Code und ein
+eventuelles Cloud-Passwort werden dabei ausschließlich lokal im eigenen
+Terminal des Nutzers eingegeben, nie von Claude - nur die resultierende
+Session-Zeichenkette (`TELEGRAM_USER_SESSION`) wird weitergereicht und als
+Secret hinterlegt. `signalbot/telegram_signals.py` unterstützt jetzt beide
+Modi (Nutzer-Session, falls gesetzt, sonst Bot-Token) - Letzteres bleibt
+für eventuelle künftige Kanäle mit öffentlichem Namen nutzbar.
+
+Sicherheitsunterschied zum Bot-Token: eine Session-Zeichenkette hat vollen
+Zugriff auf den gesamten privaten Account (nicht nur den einen Kanal) -
+bei einem Leck entsprechend größerer Schaden als bei einem kompromittierten
+Bot-Token. Bewusst in Kauf genommen (Nutzerentscheidung), da GitHub Secrets
+verschlüsselt und nicht in Logs sichtbar sind und der Zugriff rein lesend
+ist (kein `send_message` über diese Session).
+
+**Weiterhin offen:** `TELEGRAM_USER_SESSION` folgt, sobald das Skript
+ausgeführt wurde. Taktung: gleicher externer Cron-Trigger-Ansatz wie beim
+ORB-Bot vorgesehen (Abschnitt 9/11), idealerweise dichter als 5 Minuten für
+zeitnahe Signalreaktion - Einrichtung noch offen.
