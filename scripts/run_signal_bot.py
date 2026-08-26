@@ -150,10 +150,15 @@ def _close_all_open(client: TradingClient, state: SignalBotState, now: datetime,
         _log_and_clear(state, symbol, now, exit_price, reason)
 
 
+GEMINI_CALL_DELAY_SECONDS = 4  # Freikontingent-Ratenlimit, siehe trading-bot-spec.md Abschnitt 12
+
+
 def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float, buying_power: float) -> None:
     if not CHANNEL:
         print("SIGNAL_CHANNEL nicht gesetzt, ueberspringe Kanal-Abruf.")
         return
+
+    is_first_run = state.last_message_id is None
 
     try:
         messages = asyncio.run(fetch_new_messages(CHANNEL, state.last_message_id))
@@ -162,9 +167,24 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
         print(f"API-Fehler beim Telegram-Abruf: {e}")
         return
 
-    for message_id, text in messages:
+    # Allererster Lauf: nur die Basislinie setzen (last_message_id), keine
+    # der schon vorhandenen Kanal-Nachrichten als aktuelles Signal handeln -
+    # ohne das wuerde der Bot beim Start tagealte "BOUGHT LONG"-Nachrichten
+    # aus dem Verlauf als jetzige Einstiege interpretieren (live beobachtet
+    # 26.08.2026: ~35 Alt-Nachrichten wurden beim ersten Lauf sofort an
+    # Gemini geschickt, siehe auch das Ratenlimit-Problem unten).
+    if is_first_run:
+        if messages:
+            state.last_message_id = messages[-1][0]
+            print(f"Erster Lauf: {len(messages)} vorhandene Kanal-Nachrichten uebersprungen "
+                  f"(Basislinie gesetzt), reagiere erst auf neue Nachrichten.")
+        return
+
+    for i, (message_id, text) in enumerate(messages):
         state.last_message_id = message_id
 
+        if i > 0:
+            time_module.sleep(GEMINI_CALL_DELAY_SECONDS)
         parsed = parse_signal_message(text)
         if parsed is None or not parsed.get("is_signal"):
             continue
