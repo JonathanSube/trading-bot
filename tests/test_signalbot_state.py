@@ -47,6 +47,8 @@ class RoundTripTests(unittest.TestCase):
                 "QQQ": OpenSignalTrade(make_signal(Direction.LONG), "order-1", 10, 42, entry_fill=500.1),
                 "DIA": OpenSignalTrade(make_signal(Direction.SHORT), "order-2", 5, 43, entry_fill=None),
             },
+            last_channel_message_at=datetime(2026, 1, 2, 9, 58),
+            last_poll_at=datetime(2026, 1, 2, 10, 0),
         )
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "signal_state.json"
@@ -60,6 +62,8 @@ class RoundTripTests(unittest.TestCase):
         self.assertEqual(loaded.open_trades["DIA"].signal.direction, Direction.SHORT)
         self.assertEqual(loaded.last_message_id, 42)
         self.assertEqual(loaded.total_trades, 3)
+        self.assertEqual(loaded.last_channel_message_at, datetime(2026, 1, 2, 9, 58))
+        self.assertEqual(loaded.last_poll_at, datetime(2026, 1, 2, 10, 0))
 
 
 if __name__ == "__main__":

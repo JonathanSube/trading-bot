@@ -706,6 +706,41 @@ Bracket-Order (Stop/Ziel/EOD). Das ist eine bewusste Vereinfachung, kein
 Versehen - abweichend vom Vorbild-Kanal, aber konsistent mit der
 eigenen 1-%-Risiko/2:1-Konvention.
 
-**Weiterhin offen:** Taktung - gleicher externer Cron-Trigger-Ansatz wie
-beim ORB-Bot vorgesehen (Abschnitt 9/11), idealerweise dichter als 5
-Minuten für zeitnahe Signalreaktion - Einrichtung noch offen.
+**Nachtrag 26.08.2026: Taktung eingerichtet, mit einer wichtigen
+Klarstellung.** Nutzerwunsch war "sofort reagieren, wenn eine Nachricht
+kommt", zuletzt sogar "alle 5 Sekunden". Technisch nicht erreichbar mit
+diesem Aufbau: cron-job.org unterstützt keine Intervalle unter 1 Minute,
+und ein GitHub-Actions-Lauf braucht selbst schon 45-90 Sekunden
+(Checkout, Python-Setup, Ausführung) - ein 5-Sekunden-Trigger würde nur
+zu einem Rückstau wartender Läufe führen (`concurrency: cancel-in-progress:
+false`), nicht zu echter 5-Sekunden-Reaktion. Echtes Sofort-Reagieren
+bräuchte einen dauerhaft laufenden Prozess statt einzelner
+GitHub-Actions-Läufe - ein größerer architektonischer Umbau, der hier
+bewusst nicht gemacht wurde (nicht angefragt).
+
+Stattdessen umgesetzt, als beste Annäherung an die Nutzerbeschreibung:
+
+- **Zweiter cron-job.org-Job** (`signalbot`, Job-ID 8333098, per API
+  angelegt - gleicher GitHub-PAT wie beim ersten Job, siehe dort), löst
+  `signal-bot.yml` per `workflow_dispatch` aus, **jede Minute** (die
+  technische Untergrenze), 06:00-21:00 UTC, Mo-Fr. Das Fenster ist
+  bewusst breiter als noetig (deckt EU- und US-Handelszeiten inklusive
+  Sommer-/Winterzeit-Unschärfe ab) - gleiches Prinzip wie beim
+  ORB-Bot-Workflow ("Workflow bewusst weiter getaktet als die Session,
+  Skript prüft selbst", Abschnitt 9).
+- **Feingranulare Steuerung im Skript selbst** (`scripts/run_signal_bot.py`),
+  weil cron-job.org das nicht kann:
+  - `_is_eu_hours`/`_is_us_market_open`: nur wenn EU- ODER US-Markt
+    offen ist (US über Alpacas Marktkalender wie beim ORB-Bot, EU grob
+    per festem UTC-Fenster 06:00-17:00, da es dafür keine
+    Alpaca-äquivalente Quelle gibt) wird der Kanal überhaupt abgefragt.
+  - `_should_poll_channel`: die vom Nutzer gewünschte Drosselung - 30
+    Minuten ohne neue Kanal-Nachricht → nur noch alle 5 Minuten
+    tatsächlich abfragen (statt bei jedem minütlichen Lauf), bis wieder
+    eine neue Nachricht kommt oder der Markt schließt. Neue Zustandsfelder
+    dafür in `signalbot/state.py`: `last_channel_message_at` (Telegrams
+    eigener Sendezeitpunkt, nicht der lokale Abrufzeitpunkt),
+    `last_poll_at`.
+
+Live verifiziert: der neue Cron-Job löst zuverlässig minütlich aus, ein
+dadurch ausgelöster `signal-bot.yml`-Lauf ist erfolgreich durchgelaufen.

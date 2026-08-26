@@ -42,6 +42,13 @@ class SignalBotState:
     stopped_permanently: bool = False
     open_trades: dict[str, OpenSignalTrade] = field(default_factory=dict)
     telegram_update_offset: int | None = None
+    # Fuer die Ruhe-Drosselung (30 Min. ohne neue Nachricht -> nur noch alle
+    # 5 Min. tatsaechlich abfragen, siehe scripts/run_signal_bot.py):
+    # last_channel_message_at ist Telegrams eigener Sendezeitpunkt der
+    # zuletzt gesehenen Nachricht, last_poll_at der Zeitpunkt des letzten
+    # tatsaechlichen Kanal-Abrufs (nicht jeder Lauf fragt wirklich ab).
+    last_channel_message_at: datetime | None = None
+    last_poll_at: datetime | None = None
 
 
 def _signal_to_dict(signal: Signal) -> dict:
@@ -97,6 +104,10 @@ def _state_to_dict(state: SignalBotState) -> dict:
         "stopped_permanently": state.stopped_permanently,
         "open_trades": {symbol: _open_trade_to_dict(t) for symbol, t in state.open_trades.items()},
         "telegram_update_offset": state.telegram_update_offset,
+        "last_channel_message_at": (
+            state.last_channel_message_at.isoformat() if state.last_channel_message_at else None
+        ),
+        "last_poll_at": state.last_poll_at.isoformat() if state.last_poll_at else None,
     }
 
 
@@ -112,6 +123,12 @@ def _state_from_dict(data: dict) -> SignalBotState:
             symbol: _open_trade_from_dict(t) for symbol, t in data.get("open_trades", {}).items()
         },
         telegram_update_offset=data.get("telegram_update_offset"),
+        last_channel_message_at=(
+            datetime.fromisoformat(data["last_channel_message_at"])
+            if data.get("last_channel_message_at")
+            else None
+        ),
+        last_poll_at=datetime.fromisoformat(data["last_poll_at"]) if data.get("last_poll_at") else None,
     )
 
 

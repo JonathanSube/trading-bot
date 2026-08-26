@@ -22,6 +22,7 @@ authentifizieren, statt ein Session-File zwischen Laeufen zu pflegen.
 """
 
 import os
+from datetime import datetime
 
 from pyrogram import Client
 from pyrogram.errors import UserAlreadyParticipant
@@ -77,10 +78,15 @@ async def _resolve_invite_link(app: Client, invite_hash: str) -> int:
     return marked_id
 
 
-async def fetch_new_messages(channel: str, since_message_id: int | None, limit: int = 50) -> list[tuple[int, str]]:
-    """Liefert (message_id, text) fuer alle Nachrichten neuer als
-    since_message_id, chronologisch aufsteigend (aeltere zuerst) - so
-    verarbeitet der Aufrufer sie in der richtigen Reihenfolge."""
+async def fetch_new_messages(
+    channel: str, since_message_id: int | None, limit: int = 50
+) -> list[tuple[int, str, datetime]]:
+    """Liefert (message_id, text, zeitstempel_utc) fuer alle Nachrichten
+    neuer als since_message_id, chronologisch aufsteigend (aeltere zuerst) -
+    so verarbeitet der Aufrufer sie in der richtigen Reihenfolge. Der
+    Zeitstempel ist Telegrams eigener Sendezeitpunkt (nicht der lokale
+    Abrufzeitpunkt) - Basis fuer die "seit X Minuten keine neue Nachricht"-
+    Drosselung in scripts/run_signal_bot.py."""
     app = _client()
     async with app:
         match = app.INVITE_LINK_RE.match(channel)
@@ -93,13 +99,13 @@ async def fetch_new_messages(channel: str, since_message_id: int | None, limit: 
             except UserAlreadyParticipant:
                 chat_id = channel
 
-        messages: list[tuple[int, str]] = []
+        messages: list[tuple[int, str, datetime]] = []
         async for message in app.get_chat_history(chat_id, limit=limit):
             if since_message_id is not None and message.id <= since_message_id:
                 break
             text = message.text or message.caption
             if text:
-                messages.append((message.id, str(text)))
+                messages.append((message.id, str(text), message.date))
 
         messages.reverse()
         return messages

@@ -25,7 +25,7 @@ import asyncio
 import os
 import sys
 import time as time_module
-from datetime import datetime, time
+from datetime import datetime, time, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -57,6 +57,17 @@ EOD_CUTOFF = time(15, 55)
 CHANNEL = os.environ.get("SIGNAL_CHANNEL", "")
 TOTAL_LOSS_LIMIT = -0.15
 API_ERROR_LIMIT = 5
+
+# Grobes, bewusst grosszuegiges EU-Handelsfenster in UTC (deckt Xetra/Euronext
+# etc. inklusive Sommer-/Winterzeit-Schwankung ab, siehe Docstring von
+# _is_eu_hours) - der externe Cron-Trigger selbst deckt ein noch breiteres
+# Fenster ab (siehe trading-bot-spec.md), das eigentliche Ein-/Ausschalten
+# passiert hier im Skript, gleiches Prinzip wie beim ORB-Bot (Abschnitt 9,
+# "Workflow bewusst weiter getaktet als die Session").
+EU_HOURS_START_UTC = time(6, 0)
+EU_HOURS_END_UTC = time(17, 0)
+QUIET_THRESHOLD_MINUTES = 30  # ab hier gilt der Kanal als "ruhig"
+QUIET_POLL_INTERVAL_MINUTES = 5  # und wird nur noch in diesem Abstand abgefragt
 
 
 def _log_and_clear(state: SignalBotState, symbol: str, now: datetime,
@@ -153,7 +164,39 @@ def _close_all_open(client: TradingClient, state: SignalBotState, now: datetime,
 GEMINI_CALL_DELAY_SECONDS = 4  # Freikontingent-Ratenlimit, siehe trading-bot-spec.md Abschnitt 12
 
 
-def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float, buying_power: float) -> None:
+def _is_eu_hours(now_utc: datetime) -> bool:
+    """Grobe Naeherung, keine exakte Boersenkalender-Pruefung wie beim
+    US-Markt (dafuer gibt es hier keine Alpaca-aequivalente Quelle) -
+    bewusst grosszuegig, siehe EU_HOURS_START_UTC/-END_UTC oben."""
+    return now_utc.weekday() < 5 and EU_HOURS_START_UTC <= now_utc.time() <= EU_HOURS_END_UTC
+
+
+def _is_us_market_open(client: TradingClient) -> bool:
+    try:
+        return bool(client.get_clock().is_open)
+    except Exception as e:
+        print(f"Konnte US-Marktkalender nicht abrufen, nehme Markt vorsichtshalber als offen an: {e}")
+        return True
+
+
+def _should_poll_channel(state: SignalBotState, now_utc: datetime) -> bool:
+    """Drosselung auf Nutzerwunsch (26.08.2026): solange der Kanal aktiv
+    ist, bei jedem Lauf abfragen (Takt macht der externe Trigger, siehe
+    trading-bot-spec.md); nach QUIET_THRESHOLD_MINUTES ohne neue Nachricht
+    nur noch alle QUIET_POLL_INTERVAL_MINUTES tatsaechlich abfragen. Der
+    Cron-Trigger selbst kann diese Drosselung nicht - deshalb hier im
+    Skript, nicht in der Cron-Konfiguration."""
+    if state.last_channel_message_at is None or state.last_poll_at is None:
+        return True
+    quiet_minutes = (now_utc - state.last_channel_message_at).total_seconds() / 60
+    if quiet_minutes < QUIET_THRESHOLD_MINUTES:
+        return True
+    since_last_poll = (now_utc - state.last_poll_at).total_seconds() / 60
+    return since_last_poll >= QUIET_POLL_INTERVAL_MINUTES
+
+
+def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float,
+                      buying_power: float, now_utc: datetime) -> None:
     if not CHANNEL:
         print("SIGNAL_CHANNEL nicht gesetzt, ueberspringe Kanal-Abruf.")
         return
@@ -166,6 +209,10 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
         state.consecutive_api_errors += 1
         print(f"API-Fehler beim Telegram-Abruf: {e}")
         return
+
+    state.last_poll_at = now_utc
+    if messages:
+        state.last_channel_message_at = messages[-1][2]
 
     # Allererster Lauf: nur die Basislinie setzen (last_message_id), keine
     # der schon vorhandenen Kanal-Nachrichten als aktuelles Signal handeln -
@@ -180,7 +227,7 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
                   f"(Basislinie gesetzt), reagiere erst auf neue Nachrichten.")
         return
 
-    for i, (message_id, text) in enumerate(messages):
+    for i, (message_id, text, _msg_date) in enumerate(messages):
         state.last_message_id = message_id
 
         if i > 0:
@@ -283,7 +330,13 @@ def _run(client: TradingClient, state: SignalBotState, now: datetime) -> None:
         save_state(state, STATE_PATH)
         return
 
-    _try_new_signals(client, state, equity, buying_power)
+    now_utc = datetime.now(timezone.utc)
+    market_window_open = _is_eu_hours(now_utc) or _is_us_market_open(client)
+    if market_window_open and _should_poll_channel(state, now_utc):
+        _try_new_signals(client, state, equity, buying_power, now_utc)
+    else:
+        reason = "ausserhalb EU-/US-Handelsfenster" if not market_window_open else "Ruhe-Drosselung aktiv"
+        print(f"Kein Kanal-Abruf diesen Lauf ({reason}).")
     save_state(state, STATE_PATH)
 
 
