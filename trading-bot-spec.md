@@ -679,7 +679,33 @@ Bot-Token. Bewusst in Kauf genommen (Nutzerentscheidung), da GitHub Secrets
 verschlüsselt und nicht in Logs sichtbar sind und der Zugriff rein lesend
 ist (kein `send_message` über diese Session).
 
-**Weiterhin offen:** `TELEGRAM_USER_SESSION` folgt, sobald das Skript
-ausgeführt wurde. Taktung: gleicher externer Cron-Trigger-Ansatz wie beim
-ORB-Bot vorgesehen (Abschnitt 9/11), idealerweise dichter als 5 Minuten für
-zeitnahe Signalreaktion - Einrichtung noch offen.
+**Nachtrag 26.08.2026: Kanal-Zugriff live verifiziert, ein weiterer
+Pyrogram-Stolperstein gelöst.** `TELEGRAM_USER_SESSION` liegt vor
+(Kanal heißt tatsächlich "TraderTom Live Day Trading"). Beim ersten
+End-to-End-Test zeigte sich: `get_chat_history` kann mit dem
+Einladungslink selbst nichts anfangen (versucht ihn wie einen
+Nutzernamen aufzulösen, `USERNAME_INVALID`), und `join_chat()` liefert
+ab dem zweiten Lauf nur noch `UserAlreadyParticipant` statt des
+Chat-Objekts - erwartbar, weil jeder Lauf ein neuer, leerer Prozess ohne
+Pyrograms sonst üblichen Peer-Cache aus Vorläufen ist (Abschnitt 2).
+Gelöst über `messages.CheckChatInvite` (klappt mit dem eigenen Account,
+anders als beim Bot-Token-Test oben): liefert unabhängig vom
+Mitgliedsstatus das volle Kanal-Objekt inklusive `access_hash`, der wird
+in `signalbot/telegram_signals.py::_resolve_invite_link` manuell in
+Pyrograms Peer-Speicher eingetragen. Damit im Live-Test erfolgreich
+echte Nachrichten aus dem Kanal geholt und durch die volle Kette
+(Parser → Mapping → Signal) geschickt - Format passt zur Erwartung
+("NASDAQ INDEX", "BOUGHT LONG", "ENTRY = ...", "STOP = ..."), korrekt
+als Long-Signal mit prozentual übersetztem Stop erkannt. Der Kanal
+schickt auch "CLOSE TRADE ALERT"-Nachrichten (Hinweis, dass der
+Kanal-Urheber seinen eigenen Trade schließt) - die erkennt der Parser
+bewusst NICHT als eigenes Signal (Abschnitt 12 oben, "Kommentare/
+Ergebnis-Updates zählen nicht"); der Signal-Bot reagiert darauf nicht,
+sondern verwaltet offene Positionen ausschließlich über die eigene
+Bracket-Order (Stop/Ziel/EOD). Das ist eine bewusste Vereinfachung, kein
+Versehen - abweichend vom Vorbild-Kanal, aber konsistent mit der
+eigenen 1-%-Risiko/2:1-Konvention.
+
+**Weiterhin offen:** Taktung - gleicher externer Cron-Trigger-Ansatz wie
+beim ORB-Bot vorgesehen (Abschnitt 9/11), idealerweise dichter als 5
+Minuten für zeitnahe Signalreaktion - Einrichtung noch offen.
