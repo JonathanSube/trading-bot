@@ -11,11 +11,18 @@
     "consecutive_losses": 0,
     "consecutive_api_errors": 0
   },
-  "last_processed_candle": "2026-08-27T10:20:00-04:00",
-  "traded_today": false,
-  "open_trade": null,
-  "open_order_id": null,
-  "open_qty": null,
+  "last_processed_candle": "2026-08-27T10:30:00-04:00",
+  "traded_today": true,
+  "open_trade": {
+    "direction": "long",
+    "entry_price": 718.735,
+    "stop": 714.59,
+    "target": 727.025,
+    "risk": 4.144999999999982,
+    "entry_timestamp": "2026-08-27T10:30:00-04:00"
+  },
+  "open_order_id": "32388ca2-2a8e-45ed-ab97-db96a429aa6a",
+  "open_qty": 236,
   "open_entry_fill": null,
   "halted_for_day": false,
   "stopped_permanently": false,
