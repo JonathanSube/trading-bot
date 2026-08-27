@@ -307,6 +307,12 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
 
         symbol = symbol_for_index(parsed.get("index"))
         if symbol is None:
+            # Bisher komplett stillschweigend uebersprungen - dadurch war im
+            # Nachhinein nicht erkennbar, ob ein Lauf gar kein Signal sah
+            # oder eines fuer einen nicht unterstuetzten Index (z. B. DAX,
+            # siehe trading-bot-spec.md: nur NASDAQ/DOW werden gehandelt).
+            print(f"Signal fuer Index '{parsed.get('index')}' erkannt, aber nicht unterstuetzt "
+                  f"(nur NASDAQ/DOW werden gehandelt) - uebersprungen.")
             continue
         if symbol in state.open_trades:
             print(f"Signal fuer {symbol}, aber bereits eine offene Position - uebersprungen.")
