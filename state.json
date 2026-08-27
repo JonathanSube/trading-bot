@@ -11,7 +11,7 @@
     "consecutive_losses": 0,
     "consecutive_api_errors": 0
   },
-  "last_processed_candle": "2026-08-27T10:05:00-04:00",
+  "last_processed_candle": "2026-08-27T10:20:00-04:00",
   "traded_today": false,
   "open_trade": null,
   "open_order_id": null,
