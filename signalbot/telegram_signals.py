@@ -22,7 +22,7 @@ authentifizieren, statt ein Session-File zwischen Laeufen zu pflegen.
 """
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 from pyrogram import Client
 from pyrogram.errors import UserAlreadyParticipant
@@ -105,7 +105,14 @@ async def fetch_new_messages(
                 break
             text = message.text or message.caption
             if text:
-                messages.append((message.id, str(text), message.date))
+                msg_date = message.date
+                if msg_date.tzinfo is None:
+                    # Pyrogram liefert message.date als offset-naiven datetime,
+                    # der Wert selbst ist aber UTC - ohne tzinfo fuehrt der
+                    # Vergleich mit now_utc in _should_poll_channel() sonst zu
+                    # "can't subtract offset-naive and offset-aware datetimes".
+                    msg_date = msg_date.replace(tzinfo=timezone.utc)
+                messages.append((message.id, str(text), msg_date))
 
         messages.reverse()
         return messages

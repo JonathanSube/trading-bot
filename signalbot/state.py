@@ -14,7 +14,7 @@ import json
 import os
 import tempfile
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from tradingbot.orb_strategy import Signal
@@ -111,6 +111,19 @@ def _state_to_dict(state: SignalBotState) -> dict:
     }
 
 
+def _parse_utc_timestamp(value: str) -> datetime:
+    """Aeltere Zustandsdateien koennen offset-naive Zeitstempel enthalten
+    (z.B. durch Pyrograms naiven message.date, siehe telegram_signals.py) -
+    solche Werte sind immer UTC und werden hier nachtraeglich mit tzinfo
+    versehen, damit spaetere Vergleiche mit tz-aware datetimes (now_utc)
+    nicht mit "can't subtract offset-naive and offset-aware datetimes"
+    fehlschlagen."""
+    parsed = datetime.fromisoformat(value)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed
+
+
 def _state_from_dict(data: dict) -> SignalBotState:
     return SignalBotState(
         last_message_id=data.get("last_message_id"),
@@ -124,11 +137,11 @@ def _state_from_dict(data: dict) -> SignalBotState:
         },
         telegram_update_offset=data.get("telegram_update_offset"),
         last_channel_message_at=(
-            datetime.fromisoformat(data["last_channel_message_at"])
+            _parse_utc_timestamp(data["last_channel_message_at"])
             if data.get("last_channel_message_at")
             else None
         ),
-        last_poll_at=datetime.fromisoformat(data["last_poll_at"]) if data.get("last_poll_at") else None,
+        last_poll_at=_parse_utc_timestamp(data["last_poll_at"]) if data.get("last_poll_at") else None,
     )
 
 
