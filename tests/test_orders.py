@@ -40,6 +40,14 @@ class PositionSizeTests(unittest.TestCase):
         qty = position_size(signal, equity=100_000.0, buying_power=1_000_000.0)
         self.assertEqual(qty, 333)
 
+    def test_custom_risk_pct_used_by_signal_bot(self):
+        # 3% von 100.000 / Risiko 2.0 = 1500 Stueck (Signal-Bot, Nutzerwunsch
+        # 27.08.2026 - der ORB-Bot ruft weiterhin ohne risk_pct auf und
+        # bleibt damit bei 1%, siehe test_risk_based_size_when_affordable).
+        signal = Signal(Direction.LONG, 100.0, 98.0, 104.0, 2.0, datetime(2026, 1, 1))
+        qty = position_size(signal, equity=100_000.0, buying_power=1_000_000.0, risk_pct=0.03)
+        self.assertEqual(qty, 1500)
+
 
 if __name__ == "__main__":
     unittest.main()

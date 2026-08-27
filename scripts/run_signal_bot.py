@@ -86,6 +86,12 @@ PRE_SESSION_LEAD_MINUTES = 5
 ACTIVE_POLLING_WINDOW_MINUTES = 60
 QUIET_THRESHOLD_MINUTES = 30  # ab hier gilt der Kanal als "ruhig"
 QUIET_POLL_INTERVAL_MINUTES = 5  # und wird nur noch in diesem Abstand abgefragt
+# Risiko pro Trade fuer position_size() (tradingbot/orders.py) - bewusst
+# hoeher als der ORB-Bot-Standard von 1% (Nutzerwunsch 27.08.2026: die
+# bisherigen Positionen waren angesichts der beobachteten Kursausschlaege
+# zu klein, nur der Signal-Bot soll aggressiver dimensionieren, der
+# ORB-Bot bleibt unangetastet bei 1%).
+SIGNAL_RISK_PCT = 0.03
 
 
 def _log_and_clear(state: SignalBotState, symbol: str, now: datetime,
@@ -328,7 +334,7 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
         if signal is None:
             continue
 
-        qty = position_size(signal, equity, buying_power)
+        qty = position_size(signal, equity, buying_power, risk_pct=SIGNAL_RISK_PCT)
         if qty < 1:
             print(f"Signal fuer {symbol} erkannt, aber Stueckzahl < 1 - ausgelassen.")
             continue
