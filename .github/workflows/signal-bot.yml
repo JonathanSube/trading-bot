@@ -59,5 +59,23 @@ jobs:
           for f in signal_state.json signal_trades.csv; do
             [ -f "$f" ] && git add "$f"
           done
-          git diff --staged --quiet || git commit -m "Signal-Bot-Lauf $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push
+          git diff --staged --quiet && exit 0
+          git commit -m "Signal-Bot-Lauf $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # Bei minuetlichem Takt kollidiert das haeufig mit dem parallel auf
+          # master committenden ORB-Bot (trading-bot.yml) - "fetch first"-
+          # Fehler, die ohne Retry den kompletten Zustand dieses Laufs
+          # verwerfen (git push schlaegt fehl, der lokale Commit existiert
+          # nur im verworfenen Runner-Workspace). Bei einer offenen Position
+          # kann das dazu fuehren, dass der Bot sie "vergisst" und nie mehr
+          # aktiv schliesst. Deshalb: bei Ablehnung neu holen, per Rebase
+          # obendrauf setzen (die eigene state-Datei gewinnt bei Konflikt -
+          # sie ist der aktuellere Stand), erneut versuchen.
+          for attempt in 1 2 3 4 5; do
+            git push && exit 0
+            echo "Push abgelehnt (Versuch $attempt), hole aktuellen Stand und versuche erneut..."
+            git fetch origin master
+            git rebase -X ours origin/master
+            sleep 2
+          done
+          echo "::error::Push nach 5 Versuchen weiterhin fehlgeschlagen - Zustand dieses Laufs wurde NICHT gesichert."
+          exit 1
