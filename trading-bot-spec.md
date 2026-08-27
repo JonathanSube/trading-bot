@@ -577,8 +577,11 @@ externer Cron-Trigger statt GitHubs eigenem `schedule`-Event.
 
 Zweiter, komplett getrennter Bot neben dem ORB-Bot: liest Handelssignale aus
 einem öffentlichen Telegram-Kanal ("KaraokeAndi", Live-Day-Trading, Signale
-für NASDAQ INDEX und DOW JONES INDEX), lässt sie per LLM auswerten und führt
-sie automatisch aus, auf demselben Alpaca-Paper-Konto wie der ORB-Bot.
+für NASDAQ INDEX, DOW JONES INDEX, GERMAN DAX INDEX und FTSE 100 INDEX),
+lässt sie per LLM auswerten und führt sie automatisch aus - ursprünglich auf
+demselben Alpaca-Paper-Konto wie der ORB-Bot (QQQ/DIA-ETF-Proxys), seit
+27.08.2026 auf einem eigenen OANDA-Practice-Konto mit echten Index-CFDs
+(siehe Nachtrag unten, "Broker-Umstieg").
 
 **Warum getrennt vom ORB-Bot:** eigener Zustand
 ([signal_state.json](signal_state.json)), eigenes Protokoll
@@ -774,3 +777,46 @@ damit sie lernt" - dazu zwei Dinge:
 Zusätzlich: `_try_new_signals` protokolliert jetzt auch den Fall "Kanal
 abgefragt, keine neuen Nachrichten" (vorher stumm, was den ersten
 Live-Läufen einen leeren, missverständlichen Log gab).
+
+**Nachtrag 27.08.2026: Broker-Umstieg von Alpaca (QQQ/DIA-ETF-Proxys) auf
+OANDA (echte Index-CFDs NAS100/US30/UK100/DAX).**
+
+Nutzerwunsch: Kurse, die 1:1 den im Kanal genannten Index-Punkten
+entsprechen, nicht ETF-Proxys, deren absoluter Kurs strukturell nie
+übereinstimmt. Alpaca (reiner US-Aktien-/ETF-/Krypto-Broker) bietet dafür
+keine Lösung - nur CFDs/Futures zeigen echte Indexpunkte. Nach Abwägung
+(bei Alpaca bleiben vs. neuer Broker) auf **OANDA Practice** umgestiegen,
+**nur für den Signal-Bot** - der ORB-Bot bleibt unverändert auf Alpaca
+(eigener Workflow, eigenes Konto, siehe oben "Warum getrennt").
+
+- **Neue Instrumente:** NAS100_USD, US30_USD, UK100_GBP, DE30_EUR (statt
+  QQQ/DIA) - der Kanal signalisiert neben NASDAQ/DOW JONES auch "GERMAN
+  DAX INDEX" und "FTSE 100 INDEX" (bestätigt per Kanal-Historien-Abruf der
+  letzten 7 Tage, siehe `scripts/dump_channel_history.py`), beide jetzt im
+  Gemini-Prompt (`signalbot/parser.py`) mit echten Beispielnachrichten
+  ergänzt.
+- **Neues Modul `tradingbot/oanda.py`:** Ersatz für `tradingbot/orders.py` +
+  den Preis-Teil von `tradingbot/data.py::get_latest_price`, reiner
+  `requests`-Aufruf gegen OANDAs v20-REST-API (Practice-Base-URL fest
+  verdrahtet, kein Live-Konto), kein SDK - konsistent mit dem Rest des
+  Projekts.
+- **Sessionende jetzt pro Instrument** statt eines einzelnen globalen
+  EOD-Zeitpunkts (bisher 15:55 ET für alle): NAS100/US30 → US-Session,
+  UK100 → London-Session, DE30 → Xetra-Session, jeweils DST-sicher per
+  `ZoneInfo` (`SESSIONS`-Tabelle in `scripts/run_signal_bot.py`) und mit
+  demselben 5-Minuten-Vorlauf/-Zwangsschluss-Prinzip wie zuvor bei EU/US.
+- **Risikomanagement:** `position_size()` in `tradingbot/oanda.py` deckelt
+  bewusst NICHT per Hebel-/Margin-Annahme (ESMA-Marginsätze sind je nach
+  Instrument/Konto unterschiedlich) - OANDA lehnt eine zu große Order bei
+  zu wenig Margin selbst mit klarer Fehlermeldung ab, der Aufrufer fängt
+  das wie jeden anderen API-Fehler ab, statt hart kodierte Annahmen zu
+  riskieren.
+- **Wichtig, noch zu verifizieren:** die exakten OANDA-Instrument-Ticker
+  (v. a. ob DAX nach dem DAX-40-Rebrand weiterhin `DE30_EUR` heißt) sind
+  nicht per API-Dokumentation geprüft worden (Netzwerk-Policy dieser
+  Umgebung blockierte den Zugriff auf `developer.oanda.com`) - vor dem
+  ersten Live-Lauf über `scripts/place_test_oanda_order.py` bzw. `GET
+  /v3/accounts/{id}/instruments` zu bestätigen.
+- Secrets: `OANDA_API_TOKEN`/`OANDA_ACCOUNT_ID` neu in
+  `.github/workflows/signal-bot.yml`, `ALPACA_API_KEY`/`ALPACA_SECRET_KEY`
+  dort entfernt (der ORB-Bot-Workflow braucht sie weiterhin).

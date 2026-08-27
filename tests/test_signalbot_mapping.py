@@ -1,5 +1,5 @@
 """Tests fuer signalbot/mapping.py: Uebersetzung von Index-Signalen auf
-ETF-Proxys und Stop/Ziel-Berechnung."""
+OANDA-CFD-Instrumente und Stop/Ziel-Berechnung."""
 
 import sys
 import unittest
@@ -15,11 +15,17 @@ NOW = datetime(2026, 1, 2, 10, 0)
 
 
 class SymbolForIndexTests(unittest.TestCase):
-    def test_nasdaq_maps_to_qqq(self):
-        self.assertEqual(symbol_for_index("NASDAQ"), "QQQ")
+    def test_nasdaq_maps_to_nas100(self):
+        self.assertEqual(symbol_for_index("NASDAQ"), "NAS100_USD")
 
-    def test_dow_maps_to_dia(self):
-        self.assertEqual(symbol_for_index("DOW"), "DIA")
+    def test_dow_maps_to_us30(self):
+        self.assertEqual(symbol_for_index("DOW"), "US30_USD")
+
+    def test_ftse_maps_to_uk100(self):
+        self.assertEqual(symbol_for_index("FTSE"), "UK100_GBP")
+
+    def test_dax_maps_to_de30(self):
+        self.assertEqual(symbol_for_index("DAX"), "DE30_EUR")
 
     def test_unknown_index_returns_none(self):
         self.assertIsNone(symbol_for_index("SP500"))
@@ -54,7 +60,7 @@ class BuildSignalFromParsedTests(unittest.TestCase):
 
     def test_short_with_explicit_levels_translates_percentage(self):
         # Index-Stop 150 Punkte (=1%) oberhalb des Index-Entrys -> gleicher
-        # Prozentsatz auf den tatsaechlichen ETF-Kurs angewendet.
+        # Prozentsatz auf den tatsaechlichen OANDA-Kurs angewendet.
         parsed = {"is_signal": True, "index": "DOW", "direction": "short",
                    "entry_level": 15000.0, "stop_level": 15150.0, "target_level": None}
         signal = build_signal_from_parsed(parsed, 100.0, NOW)
@@ -63,6 +69,28 @@ class BuildSignalFromParsedTests(unittest.TestCase):
         self.assertAlmostEqual(signal.stop, 101.0)
         self.assertAlmostEqual(signal.risk, 1.0)
         self.assertAlmostEqual(signal.target, 100.0 - TARGET_R * 1.0)
+
+    def test_ftse_long_with_real_channel_levels(self):
+        # Echte Kanal-Nachricht (27.08.2026): "FTSE 100 INDEX / BOUGHT LONG
+        # / ENTRY = 10826.9 / STOP = 10821.9" -> Stop-Distanz ~0,046 %.
+        parsed = {"is_signal": True, "index": "FTSE", "direction": "long",
+                   "entry_level": 10826.9, "stop_level": 10821.9, "target_level": None}
+        signal = build_signal_from_parsed(parsed, 8000.0, NOW)
+        self.assertIsNotNone(signal)
+        self.assertEqual(signal.direction, Direction.LONG)
+        stop_pct = (10826.9 - 10821.9) / 10826.9
+        self.assertAlmostEqual(signal.stop, 8000.0 * (1 - stop_pct))
+
+    def test_dax_short_with_real_channel_levels(self):
+        # Echte Kanal-Nachricht (27.08.2026): "GERMAN DAX INDEX / SOLD
+        # SHORT / ENTRY = 26334.8 / STOP = 26380" -> Stop-Distanz ~0,172 %.
+        parsed = {"is_signal": True, "index": "DAX", "direction": "short",
+                   "entry_level": 26334.8, "stop_level": 26380.0, "target_level": None}
+        signal = build_signal_from_parsed(parsed, 19000.0, NOW)
+        self.assertIsNotNone(signal)
+        self.assertEqual(signal.direction, Direction.SHORT)
+        stop_pct = (26380.0 - 26334.8) / 26334.8
+        self.assertAlmostEqual(signal.stop, 19000.0 * (1 + stop_pct))
 
     def test_zero_risk_returns_none(self):
         parsed = {"is_signal": True, "index": "NASDAQ", "direction": "long",
