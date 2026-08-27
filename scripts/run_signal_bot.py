@@ -311,6 +311,18 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
         if parsed is None or not parsed.get("is_signal"):
             continue
 
+        # Rohdaten mitloggen (Nutzerwunsch 27.08.2026, nach einer Nachfrage
+        # zu Index-Punkten aus dem Kanal, die sich ohne Originaltext und
+        # geparste Level nicht nachrechnen liess) - damit sich die spaeter
+        # berechneten ETF-Werte (Entry/Stop/Ziel) jederzeit gegen die
+        # tatsaechliche Kanal-Nachricht nachvollziehen lassen, auch wenn
+        # DEFAULT_STOP_PCT als Fallback gegriffen hat (kein Stop-Level in
+        # der Nachricht erkannt).
+        print(f"Signal erkannt (Nachricht {message_id}): {parsed.get('index')} "
+              f"{parsed.get('direction')}, Index-Level Entry={parsed.get('entry_level')} "
+              f"Stop={parsed.get('stop_level')} Ziel={parsed.get('target_level')} | "
+              f"Originaltext: {text!r}")
+
         symbol = symbol_for_index(parsed.get("index"))
         if symbol is None:
             # Bisher komplett stillschweigend uebersprungen - dadurch war im
