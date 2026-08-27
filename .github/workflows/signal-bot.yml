@@ -6,8 +6,16 @@ on:
     # native GitHub-Schedules laufen unzuverlaessig nach (siehe
     # trading-bot-spec.md, Betriebsvorfaelle), Haupt-Auslöser ist der
     # externe cron-job.org-Trigger auf workflow_dispatch, idealerweise
-    # dichter getaktet fuer zeitnahe Signalreaktion.
-    - cron: "*/5 13-21 * * 1-5"
+    # dichter getaktet fuer zeitnahe Signalreaktion. Minuetlich, 06:55-21:00
+    # UTC deckt beide Sessions inkl. 5-Minuten-Vorlauf ab (Nutzerwunsch
+    # 27.08.2026): EU-Vorlauf ab 06:55 UTC (5 Min. vor 09:00 Europe/Berlin im
+    # Sommer, im Winter entsprechend frueher lokal aber innerhalb dieses
+    # UTC-Fensters), US-Vorlauf ab 13:25 UTC (5 Min. vor 09:30 America/
+    # New_York im Sommer) bis zur bisherigen grosszuegigen Pauschale um
+    # 21:00 UTC - siehe EU_SESSION_START_LOCAL/US_SESSION_START_LOCAL/
+    # PRE_SESSION_LEAD_MINUTES in scripts/run_signal_bot.py, die das
+    # tatsaechliche Ein-/Ausschalten pro Lauf DST-sicher entscheiden.
+    - cron: "* 6-21 * * 1-5"
   workflow_dispatch: {}
 
 concurrency:

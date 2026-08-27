@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from scripts.run_signal_bot import _is_eu_hours, _should_poll_channel
+from scripts.run_signal_bot import _is_eu_hours, _is_us_pre_session, _should_poll_channel
 from signalbot.state import SignalBotState
 
 UTC = timezone.utc
@@ -21,11 +21,14 @@ def utc(y, m, d, h, mi=0) -> datetime:
 
 
 class IsEuHoursTests(unittest.TestCase):
+    # 26.08.2026 (Mittwoch) liegt in der Sommerzeit (CEST, UTC+2): Xetra-
+    # Handelsbeginn 09:00 Europe/Berlin = 07:00 UTC, 5 Min. Vorlauf ab
+    # 06:55 UTC.
     def test_within_window_on_weekday(self):
         self.assertTrue(_is_eu_hours(utc(2026, 8, 26, 10, 0)))  # Mittwoch
 
-    def test_before_window(self):
-        self.assertFalse(_is_eu_hours(utc(2026, 8, 26, 5, 59)))
+    def test_before_pre_session_lead(self):
+        self.assertFalse(_is_eu_hours(utc(2026, 8, 26, 6, 54)))
 
     def test_after_window(self):
         self.assertFalse(_is_eu_hours(utc(2026, 8, 26, 17, 1)))
@@ -34,8 +37,35 @@ class IsEuHoursTests(unittest.TestCase):
         self.assertFalse(_is_eu_hours(utc(2026, 8, 29, 10, 0)))  # Samstag
 
     def test_window_boundaries_inclusive(self):
-        self.assertTrue(_is_eu_hours(utc(2026, 8, 26, 6, 0)))
+        self.assertTrue(_is_eu_hours(utc(2026, 8, 26, 6, 55)))  # 5 Min. vor Handelsbeginn
         self.assertTrue(_is_eu_hours(utc(2026, 8, 26, 17, 0)))
+
+    def test_winter_time_shifts_boundary(self):
+        # 27.01.2026 (Dienstag) liegt in der Winterzeit (CET, UTC+1):
+        # Handelsbeginn 09:00 Europe/Berlin = 08:00 UTC, Vorlauf ab 07:55 UTC -
+        # eine Stunde spaeter als im Sommer, DST-sicher per ZoneInfo.
+        self.assertFalse(_is_eu_hours(utc(2026, 1, 27, 7, 54)))
+        self.assertTrue(_is_eu_hours(utc(2026, 1, 27, 7, 55)))
+
+
+class IsUsPreSessionTests(unittest.TestCase):
+    # 26.08.2026 liegt in der US-Sommerzeit (EDT, UTC-4): NYSE/NASDAQ-
+    # Handelsbeginn 09:30 America/New_York = 13:30 UTC, 5 Min. Vorlauf ab
+    # 13:25 UTC.
+    def test_before_pre_session_lead(self):
+        self.assertFalse(_is_us_pre_session(utc(2026, 8, 26, 13, 24)))
+
+    def test_within_pre_session_lead(self):
+        self.assertTrue(_is_us_pre_session(utc(2026, 8, 26, 13, 25)))
+        self.assertTrue(_is_us_pre_session(utc(2026, 8, 26, 13, 29)))
+
+    def test_at_actual_open_is_false(self):
+        # Ab dem tatsaechlichen Handelsbeginn uebernimmt
+        # _is_us_market_open() (Alpaca-Clock), nicht mehr der Vorlauf.
+        self.assertFalse(_is_us_pre_session(utc(2026, 8, 26, 13, 30)))
+
+    def test_weekend_excluded(self):
+        self.assertFalse(_is_us_pre_session(utc(2026, 8, 29, 13, 25)))  # Samstag
 
 
 class ShouldPollChannelTests(unittest.TestCase):

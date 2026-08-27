@@ -25,7 +25,7 @@ import asyncio
 import os
 import sys
 import time as time_module
-from datetime import datetime, time, timezone
+from datetime import datetime, time, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -58,14 +58,23 @@ CHANNEL = os.environ.get("SIGNAL_CHANNEL", "")
 TOTAL_LOSS_LIMIT = -0.15
 API_ERROR_LIMIT = 5
 
-# Grobes, bewusst grosszuegiges EU-Handelsfenster in UTC (deckt Xetra/Euronext
-# etc. inklusive Sommer-/Winterzeit-Schwankung ab, siehe Docstring von
-# _is_eu_hours) - der externe Cron-Trigger selbst deckt ein noch breiteres
-# Fenster ab (siehe trading-bot-spec.md), das eigentliche Ein-/Ausschalten
-# passiert hier im Skript, gleiches Prinzip wie beim ORB-Bot (Abschnitt 9,
-# "Workflow bewusst weiter getaktet als die Session").
-EU_HOURS_START_UTC = time(6, 0)
+# EU-Handelsfenster: Start ist der tatsaechliche Xetra/Euronext-Handelsbeginn
+# (09:00 Europe/Berlin, DST-sicher per ZoneInfo statt fixer UTC-Stunde -
+# sonst verschiebt sich die Grenze mit Sommer-/Winterzeit) minus
+# PRE_SESSION_LEAD_MINUTES Vorlauf, auf Nutzerwunsch (27.08.2026: "5 Minuten
+# vor Beginn der Trading-Sessions minuetlich gucken"). Ende bleibt die
+# bisherige grosszuegige UTC-Pauschale - der externe Cron-Trigger selbst
+# deckt ein noch breiteres Fenster ab (siehe trading-bot-spec.md), das
+# eigentliche Ein-/Ausschalten passiert hier im Skript, gleiches Prinzip wie
+# beim ORB-Bot (Abschnitt 9, "Workflow bewusst weiter getaktet als die
+# Session").
+EU_TZ = ZoneInfo("Europe/Berlin")
+EU_SESSION_START_LOCAL = time(9, 0)
 EU_HOURS_END_UTC = time(17, 0)
+# US-Handelsbeginn (NYSE/NASDAQ): 09:30 America/New_York, ebenfalls DST-sicher
+# per ZoneInfo (NY-Konstante oben) statt fixer UTC-Stunde.
+US_SESSION_START_LOCAL = time(9, 30)
+PRE_SESSION_LEAD_MINUTES = 5
 QUIET_THRESHOLD_MINUTES = 30  # ab hier gilt der Kanal als "ruhig"
 QUIET_POLL_INTERVAL_MINUTES = 5  # und wird nur noch in diesem Abstand abgefragt
 
@@ -165,10 +174,31 @@ GEMINI_CALL_DELAY_SECONDS = 4  # Freikontingent-Ratenlimit, siehe trading-bot-sp
 
 
 def _is_eu_hours(now_utc: datetime) -> bool:
-    """Grobe Naeherung, keine exakte Boersenkalender-Pruefung wie beim
-    US-Markt (dafuer gibt es hier keine Alpaca-aequivalente Quelle) -
-    bewusst grosszuegig, siehe EU_HOURS_START_UTC/-END_UTC oben."""
-    return now_utc.weekday() < 5 and EU_HOURS_START_UTC <= now_utc.time() <= EU_HOURS_END_UTC
+    """Keine exakte Boersenkalender-Pruefung wie beim US-Markt (dafuer gibt
+    es hier keine Alpaca-aequivalente Quelle) - Feiertage werden nicht
+    beruecksichtigt, bewusst grosszuegiges Ende, siehe EU_HOURS_END_UTC
+    oben. Start ist PRE_SESSION_LEAD_MINUTES vor EU_SESSION_START_LOCAL."""
+    now_eu = now_utc.astimezone(EU_TZ)
+    if now_eu.weekday() >= 5:
+        return False
+    session_start = datetime.combine(now_eu.date(), EU_SESSION_START_LOCAL, tzinfo=EU_TZ)
+    poll_start = session_start - timedelta(minutes=PRE_SESSION_LEAD_MINUTES)
+    return poll_start <= now_eu and now_utc.time() <= EU_HOURS_END_UTC
+
+
+def _is_us_pre_session(now_utc: datetime) -> bool:
+    """Alpacas Clock (_is_us_market_open) kennt nur den tatsaechlichen
+    Marktstatus, keinen Vorlauf - deshalb hier separat: die
+    PRE_SESSION_LEAD_MINUTES vor US_SESSION_START_LOCAL. Feiertage werden
+    nicht beruecksichtigt (dafuer muesste die Alpaca-Clock/-Kalender befragt
+    werden) - unschaedlich, fuehrt hoechstens zu ein paar ungenutzten
+    Kanal-Abfragen an einem Boersenfeiertag."""
+    now_ny = now_utc.astimezone(NY)
+    if now_ny.weekday() >= 5:
+        return False
+    session_start = datetime.combine(now_ny.date(), US_SESSION_START_LOCAL, tzinfo=NY)
+    poll_start = session_start - timedelta(minutes=PRE_SESSION_LEAD_MINUTES)
+    return poll_start <= now_ny < session_start
 
 
 def _is_us_market_open(client: TradingClient) -> bool:
@@ -335,7 +365,9 @@ def _run(client: TradingClient, state: SignalBotState, now: datetime) -> None:
         return
 
     now_utc = datetime.now(timezone.utc)
-    market_window_open = _is_eu_hours(now_utc) or _is_us_market_open(client)
+    market_window_open = (
+        _is_eu_hours(now_utc) or _is_us_market_open(client) or _is_us_pre_session(now_utc)
+    )
     if market_window_open and _should_poll_channel(state, now_utc):
         _try_new_signals(client, state, equity, buying_power, now_utc)
     else:
