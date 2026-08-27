@@ -1,0 +1,38 @@
+name: Dump Channel History
+
+# Einmaliges Diagnose-Werkzeug (siehe scripts/dump_channel_history.py),
+# nicht Teil des automatisierten Signal-Bot-Takts - nur per Hand/API
+# ausgeloest, kein Schedule.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Kanal-Historie abrufen
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          TELEGRAM_USER_SESSION: ${{ secrets.TELEGRAM_USER_SESSION }}
+          SIGNAL_CHANNEL: ${{ secrets.SIGNAL_CHANNEL }}
+        run: python scripts/dump_channel_history.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: channel-history
+          path: channel_history.json
+          retention-days: 7
