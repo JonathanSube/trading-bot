@@ -111,6 +111,38 @@ class ShouldPollChannelTests(unittest.TestCase):
         )
         self.assertFalse(_should_poll_channel(state, now))
 
+    def test_quiet_channel_still_polls_every_run_in_eu_active_window(self):
+        # 06:55-08:00 UTC: 5 Min. Vorlauf bis 60 Min. nach EU-Sessionstart
+        # (07:00 UTC) - Ruhe-Drosselung wird hier ignoriert (Nutzerwunsch
+        # 27.08.2026: "erste Stunde nach Open immer reagieren").
+        state = SignalBotState(
+            last_channel_message_at=utc(2026, 8, 25, 16, 0),  # Vortag, lange still
+            last_poll_at=utc(2026, 8, 26, 6, 59),
+        )
+        self.assertTrue(_should_poll_channel(state, utc(2026, 8, 26, 6, 55)))
+        self.assertTrue(_should_poll_channel(state, utc(2026, 8, 26, 7, 30)))
+        self.assertTrue(_should_poll_channel(state, utc(2026, 8, 26, 8, 0)))
+
+    def test_throttle_resumes_after_eu_active_window(self):
+        # Ab 08:01 UTC (> 60 Min. nach EU-Sessionstart) greift die normale
+        # Ruhe-Drosselung wieder.
+        state = SignalBotState(
+            last_channel_message_at=utc(2026, 8, 26, 7, 5),  # 56 Min. still
+            last_poll_at=utc(2026, 8, 26, 8, 0),  # vor 1 Minute abgefragt
+        )
+        self.assertFalse(_should_poll_channel(state, utc(2026, 8, 26, 8, 1)))
+
+    def test_quiet_channel_still_polls_every_run_in_us_active_window(self):
+        # 13:25-14:30 UTC: 5 Min. Vorlauf bis 60 Min. nach US-Sessionstart
+        # (13:30 UTC).
+        state = SignalBotState(
+            last_channel_message_at=utc(2026, 8, 25, 20, 0),  # Vortag, lange still
+            last_poll_at=utc(2026, 8, 26, 13, 24),
+        )
+        self.assertTrue(_should_poll_channel(state, utc(2026, 8, 26, 13, 25)))
+        self.assertTrue(_should_poll_channel(state, utc(2026, 8, 26, 14, 0)))
+        self.assertTrue(_should_poll_channel(state, utc(2026, 8, 26, 14, 30)))
+
 
 if __name__ == "__main__":
     unittest.main()

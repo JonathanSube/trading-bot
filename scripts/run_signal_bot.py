@@ -75,6 +75,13 @@ EU_HOURS_END_UTC = time(17, 0)
 # per ZoneInfo (NY-Konstante oben) statt fixer UTC-Stunde.
 US_SESSION_START_LOCAL = time(9, 30)
 PRE_SESSION_LEAD_MINUTES = 5
+# Rund um den Sessionstart kommt erfahrungsgemaess zuerst eine laengere
+# Ansage-Nachricht im Kanal (Nutzerwunsch 27.08.2026) - deshalb wird die
+# Ruhe-Drosselung unten in diesem Fenster (Vorlauf bis
+# ACTIVE_POLLING_WINDOW_MINUTES nach Sessionstart) komplett ignoriert und
+# jeder Lauf fragt den Kanal ab; erst danach greift die normale
+# Ruhe-Drosselung (30 Min. still -> alle 5 Min.).
+ACTIVE_POLLING_WINDOW_MINUTES = 60
 QUIET_THRESHOLD_MINUTES = 30  # ab hier gilt der Kanal als "ruhig"
 QUIET_POLL_INTERVAL_MINUTES = 5  # und wird nur noch in diesem Abstand abgefragt
 
@@ -201,6 +208,21 @@ def _is_us_pre_session(now_utc: datetime) -> bool:
     return poll_start <= now_ny < session_start
 
 
+def _is_in_active_polling_window(now_utc: datetime, session_start_local: time, tz: ZoneInfo) -> bool:
+    """True von PRE_SESSION_LEAD_MINUTES vor bis ACTIVE_POLLING_WINDOW_MINUTES
+    nach Sessionstart (EU oder US) - in diesem Fenster ignoriert
+    _should_poll_channel() die Ruhe-Drosselung komplett, siehe deren
+    Docstring. Feiertage werden wie bei _is_us_pre_session() nicht
+    beruecksichtigt."""
+    now_local = now_utc.astimezone(tz)
+    if now_local.weekday() >= 5:
+        return False
+    session_start = datetime.combine(now_local.date(), session_start_local, tzinfo=tz)
+    window_start = session_start - timedelta(minutes=PRE_SESSION_LEAD_MINUTES)
+    window_end = session_start + timedelta(minutes=ACTIVE_POLLING_WINDOW_MINUTES)
+    return window_start <= now_local <= window_end
+
+
 def _is_us_market_open(client: TradingClient) -> bool:
     try:
         return bool(client.get_clock().is_open)
@@ -215,7 +237,17 @@ def _should_poll_channel(state: SignalBotState, now_utc: datetime) -> bool:
     trading-bot-spec.md); nach QUIET_THRESHOLD_MINUTES ohne neue Nachricht
     nur noch alle QUIET_POLL_INTERVAL_MINUTES tatsaechlich abfragen. Der
     Cron-Trigger selbst kann diese Drosselung nicht - deshalb hier im
-    Skript, nicht in der Cron-Konfiguration."""
+    Skript, nicht in der Cron-Konfiguration.
+
+    Ausnahme (Nutzerwunsch 27.08.2026): rund um den Sessionstart kommt
+    zuerst zuverlaessig eine laengere Ansage-Nachricht im Kanal - deshalb
+    wird die Ruhe-Drosselung im aktiven Polling-Fenster
+    (_is_in_active_polling_window) komplett ausgesetzt, unabhaengig davon
+    wie lange der Kanal vorher still war. Erst danach greift die normale
+    Drosselung wieder."""
+    if _is_in_active_polling_window(now_utc, EU_SESSION_START_LOCAL, EU_TZ) or \
+       _is_in_active_polling_window(now_utc, US_SESSION_START_LOCAL, NY):
+        return True
     if state.last_channel_message_at is None or state.last_poll_at is None:
         return True
     quiet_minutes = (now_utc - state.last_channel_message_at).total_seconds() / 60
