@@ -18,14 +18,17 @@ from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
 
-def position_size(signal: Signal, equity: float, buying_power: float) -> int:
-    """Stueckzahl nach der 1%-Risiko-Regel (Abschnitt 1, "Positionsgroesse"),
-    zusaetzlich auf die verfuegbare Kaufkraft gedeckelt - ohne den Deckel
-    lehnt Alpaca die Order ab, siehe die Hebel-Anmerkung dort."""
+def position_size(signal: Signal, equity: float, buying_power: float, risk_pct: float = 0.01) -> int:
+    """Stueckzahl nach der Risiko-Regel (Abschnitt 1, "Positionsgroesse":
+    1% fuer den ORB-Bot, Standardwert hier), zusaetzlich auf die verfuegbare
+    Kaufkraft gedeckelt - ohne den Deckel lehnt Alpaca die Order ab, siehe
+    die Hebel-Anmerkung dort. Der Signal-Bot ruft mit risk_pct=0.03 auf
+    (Nutzerwunsch 27.08.2026: Positionen bisher zu klein fuer die
+    beobachteten Kursausschlaege - 3% statt 1% Risiko pro Trade)."""
     if signal.risk <= 0 or equity <= 0:
         return 0
 
-    risk_based = (equity * 0.01) / signal.risk
+    risk_based = (equity * risk_pct) / signal.risk
     affordable = buying_power / signal.entry_price
     return math.floor(min(risk_based, affordable))
 
