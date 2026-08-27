@@ -42,6 +42,14 @@ async def main() -> None:
     print(f"{len(recent)} Nachrichten der letzten {LOOKBACK_DAYS} Tage nach {OUTPUT_PATH} geschrieben "
           f"(von insgesamt {len(messages)} abgerufenen).")
 
+    # Zusaetzlich direkt ins Job-Log drucken: das per Artefakt hochgeladene
+    # channel_history.json liegt in Azure Blob Storage, das aus manchen
+    # Umgebungen (z. B. Netzwerk-Policy-Restriktionen) nicht herunterladbar
+    # ist - die Log-Ausgabe hier ist der zuverlaessigere Zugriffsweg.
+    print("\n--- BEGIN CHANNEL HISTORY JSON ---")
+    print(json.dumps(recent, ensure_ascii=False))
+    print("--- END CHANNEL HISTORY JSON ---")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
