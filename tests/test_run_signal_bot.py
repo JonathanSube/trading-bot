@@ -16,9 +16,14 @@ from scripts.run_signal_bot import (
     _session_end_approaching,
     _should_poll_channel,
 )
+from signalbot.mapping import INDEX_TO_SYMBOL
 from signalbot.state import SignalBotState
 
 UTC = timezone.utc
+NASDAQ = INDEX_TO_SYMBOL["NASDAQ"]
+DOW = INDEX_TO_SYMBOL["DOW"]
+FTSE = INDEX_TO_SYMBOL["FTSE"]
+DAX = INDEX_TO_SYMBOL["DAX"]
 
 
 def utc(y, m, d, h, mi=0) -> datetime:
@@ -29,30 +34,30 @@ class IsInSessionDaxTests(unittest.TestCase):
     # 26.08.2026 (Mittwoch) liegt in der Sommerzeit (CEST, UTC+2): Xetra
     # 09:00-17:30 Europe/Berlin = 07:00-15:30 UTC, 5 Min. Vorlauf ab 06:55 UTC.
     def test_within_window_on_weekday(self):
-        self.assertTrue(_is_in_session(utc(2026, 8, 26, 10, 0), "DE30_EUR"))  # Mittwoch
+        self.assertTrue(_is_in_session(utc(2026, 8, 26, 10, 0), DAX))  # Mittwoch
 
     def test_before_pre_session_lead(self):
-        self.assertFalse(_is_in_session(utc(2026, 8, 26, 6, 54), "DE30_EUR"))
+        self.assertFalse(_is_in_session(utc(2026, 8, 26, 6, 54), DAX))
 
     def test_after_window(self):
-        self.assertFalse(_is_in_session(utc(2026, 8, 26, 15, 31), "DE30_EUR"))
+        self.assertFalse(_is_in_session(utc(2026, 8, 26, 15, 31), DAX))
 
     def test_weekend_excluded_even_within_hours(self):
-        self.assertFalse(_is_in_session(utc(2026, 8, 29, 10, 0), "DE30_EUR"))  # Samstag
+        self.assertFalse(_is_in_session(utc(2026, 8, 29, 10, 0), DAX))  # Samstag
 
     def test_window_boundaries_inclusive(self):
-        self.assertTrue(_is_in_session(utc(2026, 8, 26, 6, 55), "DE30_EUR"))  # 5 Min. vor Handelsbeginn
-        self.assertTrue(_is_in_session(utc(2026, 8, 26, 15, 30), "DE30_EUR"))  # Handelsschluss, kein Nachlauf
+        self.assertTrue(_is_in_session(utc(2026, 8, 26, 6, 55), DAX))  # 5 Min. vor Handelsbeginn
+        self.assertTrue(_is_in_session(utc(2026, 8, 26, 15, 30), DAX))  # Handelsschluss, kein Nachlauf
 
     def test_winter_time_shifts_boundary(self):
         # 27.01.2026 (Dienstag) liegt in der Winterzeit (CET, UTC+1):
         # Xetra 09:00-17:30 Europe/Berlin = 08:00-16:30 UTC, Vorlauf ab
         # 07:55 UTC - eine Stunde spaeter als im Sommer, DST-sicher per
         # ZoneInfo.
-        self.assertFalse(_is_in_session(utc(2026, 1, 27, 7, 54), "DE30_EUR"))
-        self.assertTrue(_is_in_session(utc(2026, 1, 27, 7, 55), "DE30_EUR"))
-        self.assertTrue(_is_in_session(utc(2026, 1, 27, 16, 30), "DE30_EUR"))
-        self.assertFalse(_is_in_session(utc(2026, 1, 27, 16, 31), "DE30_EUR"))
+        self.assertFalse(_is_in_session(utc(2026, 1, 27, 7, 54), DAX))
+        self.assertTrue(_is_in_session(utc(2026, 1, 27, 7, 55), DAX))
+        self.assertTrue(_is_in_session(utc(2026, 1, 27, 16, 30), DAX))
+        self.assertFalse(_is_in_session(utc(2026, 1, 27, 16, 31), DAX))
 
 
 class IsInSessionNasdaqTests(unittest.TestCase):
@@ -60,21 +65,21 @@ class IsInSessionNasdaqTests(unittest.TestCase):
     # 09:30-16:00 America/New_York = 13:30-20:00 UTC, 5 Min. Vorlauf ab
     # 13:25 UTC.
     def test_before_pre_session_lead(self):
-        self.assertFalse(_is_in_session(utc(2026, 8, 26, 13, 24), "NAS100_USD"))
+        self.assertFalse(_is_in_session(utc(2026, 8, 26, 13, 24), NASDAQ))
 
     def test_within_pre_session_lead(self):
-        self.assertTrue(_is_in_session(utc(2026, 8, 26, 13, 25), "NAS100_USD"))
-        self.assertTrue(_is_in_session(utc(2026, 8, 26, 13, 29), "NAS100_USD"))
+        self.assertTrue(_is_in_session(utc(2026, 8, 26, 13, 25), NASDAQ))
+        self.assertTrue(_is_in_session(utc(2026, 8, 26, 13, 29), NASDAQ))
 
     def test_at_actual_open(self):
-        self.assertTrue(_is_in_session(utc(2026, 8, 26, 13, 30), "NAS100_USD"))
+        self.assertTrue(_is_in_session(utc(2026, 8, 26, 13, 30), NASDAQ))
 
     def test_after_close_no_grace_period(self):
-        self.assertTrue(_is_in_session(utc(2026, 8, 26, 20, 0), "US30_USD"))
-        self.assertFalse(_is_in_session(utc(2026, 8, 26, 20, 1), "US30_USD"))
+        self.assertTrue(_is_in_session(utc(2026, 8, 26, 20, 0), DOW))
+        self.assertFalse(_is_in_session(utc(2026, 8, 26, 20, 1), DOW))
 
     def test_weekend_excluded(self):
-        self.assertFalse(_is_in_session(utc(2026, 8, 29, 13, 25), "NAS100_USD"))  # Samstag
+        self.assertFalse(_is_in_session(utc(2026, 8, 29, 13, 25), NASDAQ))  # Samstag
 
 
 class IsInSessionUk100Tests(unittest.TestCase):
@@ -82,37 +87,37 @@ class IsInSessionUk100Tests(unittest.TestCase):
     # 08:00-16:30 Europe/London = 07:00-15:30 UTC, 5 Min. Vorlauf ab
     # 06:55 UTC.
     def test_before_pre_session_lead(self):
-        self.assertFalse(_is_in_session(utc(2026, 8, 26, 6, 54), "UK100_GBP"))
+        self.assertFalse(_is_in_session(utc(2026, 8, 26, 6, 54), FTSE))
 
     def test_within_window(self):
-        self.assertTrue(_is_in_session(utc(2026, 8, 26, 6, 55), "UK100_GBP"))
-        self.assertTrue(_is_in_session(utc(2026, 8, 26, 15, 30), "UK100_GBP"))
+        self.assertTrue(_is_in_session(utc(2026, 8, 26, 6, 55), FTSE))
+        self.assertTrue(_is_in_session(utc(2026, 8, 26, 15, 30), FTSE))
 
     def test_after_window(self):
-        self.assertFalse(_is_in_session(utc(2026, 8, 26, 15, 31), "UK100_GBP"))
+        self.assertFalse(_is_in_session(utc(2026, 8, 26, 15, 31), FTSE))
 
     def test_winter_time_shifts_boundary(self):
         # 27.01.2026: UK-Winterzeit ist GMT (UTC+0, keine Verschiebung
         # gegenueber Sommerzeit-UTC-Stunde -1) - FTSE 08:00-16:30 London =
         # 08:00-16:30 UTC, Vorlauf ab 07:55 UTC.
-        self.assertFalse(_is_in_session(utc(2026, 1, 27, 7, 54), "UK100_GBP"))
-        self.assertTrue(_is_in_session(utc(2026, 1, 27, 7, 55), "UK100_GBP"))
-        self.assertTrue(_is_in_session(utc(2026, 1, 27, 16, 30), "UK100_GBP"))
-        self.assertFalse(_is_in_session(utc(2026, 1, 27, 16, 31), "UK100_GBP"))
+        self.assertFalse(_is_in_session(utc(2026, 1, 27, 7, 54), FTSE))
+        self.assertTrue(_is_in_session(utc(2026, 1, 27, 7, 55), FTSE))
+        self.assertTrue(_is_in_session(utc(2026, 1, 27, 16, 30), FTSE))
+        self.assertFalse(_is_in_session(utc(2026, 1, 27, 16, 31), FTSE))
 
 
 class SessionEndApproachingTests(unittest.TestCase):
-    # NAS100_USD schliesst 16:00 America/New_York = 20:00 UTC im Sommer
+    # NASDAQ-Epic schliesst 16:00 America/New_York = 20:00 UTC im Sommer
     # (EDT) - Zwangsschluss ab 5 Min. davor.
     def test_before_threshold(self):
-        self.assertFalse(_session_end_approaching(utc(2026, 8, 26, 19, 54), "NAS100_USD"))
+        self.assertFalse(_session_end_approaching(utc(2026, 8, 26, 19, 54), NASDAQ))
 
     def test_at_and_after_threshold(self):
-        self.assertTrue(_session_end_approaching(utc(2026, 8, 26, 19, 55), "NAS100_USD"))
-        self.assertTrue(_session_end_approaching(utc(2026, 8, 26, 20, 0), "NAS100_USD"))
+        self.assertTrue(_session_end_approaching(utc(2026, 8, 26, 19, 55), NASDAQ))
+        self.assertTrue(_session_end_approaching(utc(2026, 8, 26, 20, 0), NASDAQ))
 
     def test_weekend_never_approaching(self):
-        self.assertFalse(_session_end_approaching(utc(2026, 8, 29, 20, 0), "NAS100_USD"))
+        self.assertFalse(_session_end_approaching(utc(2026, 8, 29, 20, 0), NASDAQ))
 
 
 class ShouldPollChannelTests(unittest.TestCase):

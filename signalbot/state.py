@@ -2,15 +2,15 @@
 ORB-Bot-Zustand (state.json) - eigene Datei signal_state.json, eigenes
 Protokoll signal_trades.csv. Siehe trading-bot-spec.md, Feature
 "Telegram-Signal-Ausfuehrung": komplett getrennter Workflow, teilt sich
-mit dem ORB-Bot nur die Kill-Switch-Datei (STOP) - eigenes OANDA-Konto
+mit dem ORB-Bot nur die Kill-Switch-Datei (STOP) - eigenes IG-Demo-Konto
 seit dem Broker-Umstieg (Aenderungsprotokoll 27.08.2026), der ORB-Bot
 bleibt auf Alpaca.
 
 Im Unterschied zum ORB-Bot (hoechstens ein Trade pro Tag, ein Instrument)
 kann hier gleichzeitig je eine offene Position in mehreren Instrumenten
-bestehen (NAS100_USD, US30_USD, UK100_GBP, DE30_EUR - verschiedene
-Signalquellen-Instrumente) - deshalb open_trades als dict statt
-einzelnem Feld.
+bestehen (die vier Epics aus signalbot/mapping.py::INDEX_TO_SYMBOL -
+verschiedene Signalquellen-Instrumente) - deshalb open_trades als dict
+statt einzelnem Feld.
 """
 
 import json

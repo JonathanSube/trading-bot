@@ -6,22 +6,22 @@ Kill-Switch-Datei (STOP).
 
 Liest neue Nachrichten aus dem externen Signal-Kanal (KaraokeAndi, Live
 Day Trading), laesst sie per LLM (Gemini) auswerten, uebersetzt
-NASDAQ-/DOW-/DAX-/FTSE-Index-Signale auf echte OANDA-CFD-Instrumente
+NASDAQ-/DOW-/DAX-/FTSE-Index-Signale auf echte IG-CFD-Instrumente
 (signalbot/mapping.py) und fuehrt automatisch aus - ohne Rueckfrage, auf
 ausdruecklichen Wunsch (siehe trading-bot-spec.md, Aenderungsprotokoll:
-"Telegram-Signal-Ausfuehrung"). Laeuft auf einem OANDA-Practice-Konto
-(nicht mehr Alpaca - siehe Aenderungsprotokoll zum Umstieg von
-ETF-Proxys auf echte Index-CFDs). Der ORB-Bot bleibt unveraendert auf
-Alpaca.
+"Telegram-Signal-Ausfuehrung"). Laeuft auf einem IG-Demo-Konto (nicht
+Alpaca, urspruenglich auch nicht OANDA - siehe Aenderungsprotokoll zum
+zweifachen Broker-Wechsel). Der ORB-Bot bleibt unveraendert auf Alpaca.
 
 Ablauf pro Lauf:
 1. Kill-Switch pruefen
-2. Zustand laden, Konto abfragen
+2. Einmalig bei IG einloggen (Session pro Lauf, kein Bearer-Token wie bei
+   OANDA/Alpaca), Zustand laden, Konto abfragen
 3. Offene Trades abgleichen (Fill nachtragen, geschlossene protokollieren)
 4. Sicherheitsschalter pruefen (Gesamtverlust, API-Fehler)
 5. Sessionende je Instrument (5 Min. vorher): betroffene offene Position
    zwangsschliessen - jedes Instrument hat seine eigene Handelszeit
-   (US/London/Xetra), kein einzelner globaler EOD-Zeitpunkt mehr
+   (US/London/Xetra), kein einzelner globaler EOD-Zeitpunkt
 6. Neue Kanal-Nachrichten holen, per LLM auswerten, ggf. Order platzieren
 7. Zustand speichern
 """
@@ -41,21 +41,22 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
-from signalbot.mapping import build_signal_from_parsed, symbol_for_index
+from signalbot.mapping import INDEX_TO_SYMBOL, build_signal_from_parsed, symbol_for_index
 from signalbot.parser import parse_signal_message
 from signalbot.state import OpenSignalTrade, SignalBotState, load_state, save_state
 from signalbot.telegram_signals import fetch_new_messages
 from signalbot.trade_log import SignalTradeLogRow, append_trade
-from tradingbot.notify import send_notification
-from tradingbot.oanda import (
-    close_trade,
-    get_account_summary,
-    get_closed_trade,
+from tradingbot.ig import (
+    close_position,
+    find_closed_position_exit_price,
+    get_account,
     get_latest_price,
-    get_open_trades,
+    get_open_positions,
+    login,
     place_bracket_order,
     position_size,
 )
+from tradingbot.notify import send_notification
 from tradingbot.safety import check_kill_switch
 from tradingbot.setup_detection import Direction
 
@@ -69,19 +70,20 @@ CHANNEL = os.environ.get("SIGNAL_CHANNEL", "")
 TOTAL_LOSS_LIMIT = -0.15
 API_ERROR_LIMIT = 5
 
-# Handelszeiten je OANDA-Instrument (Zeitzone, Sessionbeginn lokal,
-# Sessionende lokal) - DST-sicher per ZoneInfo statt fixer UTC-Stunden,
-# sonst verschiebt sich die Grenze mit Sommer-/Winterzeit. Kein
-# Feiertagskalender (dafuer gibt es bei OANDA fuer Indizes keine
-# aequivalente Quelle wie Alpacas Marktuhr fuer US-Aktien) - unschaedlich,
-# fuehrt hoechstens zu ein paar ungenutzten Kanal-Abfragen an einem
-# Feiertag. NAS100_USD/US30_USD: NYSE-Handelszeit (Kassamarkt). UK100_GBP:
-# London-Session. DE30_EUR: Xetra-Session.
+# Handelszeiten je Instrument (Zeitzone, Sessionbeginn lokal, Sessionende
+# lokal) - DST-sicher per ZoneInfo statt fixer UTC-Stunden, sonst
+# verschiebt sich die Grenze mit Sommer-/Winterzeit. Kein Feiertagskalender
+# (dafuer gibt es bei IG fuer Indizes keine aequivalente Quelle wie
+# Alpacas Marktuhr fuer US-Aktien) - unschaedlich, fuehrt hoechstens zu
+# ein paar ungenutzten Kanal-Abfragen an einem Feiertag. Ueber
+# INDEX_TO_SYMBOL referenziert statt Epics hier zu duplizieren, damit eine
+# Korrektur der Epics in signalbot/mapping.py (siehe dortiger
+# Verifikations-Hinweis) automatisch mitzieht.
 SESSIONS: dict[str, tuple[ZoneInfo, time, time]] = {
-    "NAS100_USD": (NY, time(9, 30), time(16, 0)),
-    "US30_USD": (NY, time(9, 30), time(16, 0)),
-    "UK100_GBP": (LONDON_TZ, time(8, 0), time(16, 30)),
-    "DE30_EUR": (EU_TZ, time(9, 0), time(17, 30)),
+    INDEX_TO_SYMBOL["NASDAQ"]: (NY, time(9, 30), time(16, 0)),
+    INDEX_TO_SYMBOL["DOW"]: (NY, time(9, 30), time(16, 0)),
+    INDEX_TO_SYMBOL["FTSE"]: (LONDON_TZ, time(8, 0), time(16, 30)),
+    INDEX_TO_SYMBOL["DAX"]: (EU_TZ, time(9, 0), time(17, 30)),
 }
 PRE_SESSION_LEAD_MINUTES = 5
 # Rund um den Sessionstart kommt erfahrungsgemaess zuerst eine laengere
@@ -93,7 +95,7 @@ PRE_SESSION_LEAD_MINUTES = 5
 ACTIVE_POLLING_WINDOW_MINUTES = 60
 QUIET_THRESHOLD_MINUTES = 30  # ab hier gilt der Kanal als "ruhig"
 QUIET_POLL_INTERVAL_MINUTES = 5  # und wird nur noch in diesem Abstand abgefragt
-# Risiko pro Trade fuer position_size() (tradingbot/oanda.py) - bewusst
+# Risiko pro Trade fuer position_size() (tradingbot/ig.py) - bewusst
 # hoeher als der ORB-Bot-Standard von 1% (Nutzerwunsch 27.08.2026: die
 # bisherigen Positionen waren angesichts der beobachteten Kursausschlaege
 # zu klein, nur der Signal-Bot soll aggressiver dimensionieren, der
@@ -139,24 +141,23 @@ def _log_and_clear(state: SignalBotState, symbol: str, now: datetime,
     )
 
 
-def _check_filled_trades(account_id: str, state: SignalBotState, now: datetime) -> None:
-    """OANDA fuellt Market-Orders synchron (kein Filled-Polling wie bei
-    Alpaca noetig), aber die Bracket-Legs (Stop/Ziel) laufen serverseitig
-    weiter - ein Trade, der bei OANDA nicht mehr unter den offenen Trades
-    auftaucht, wurde durch Stop oder Ziel geschlossen."""
-    open_at_broker = get_open_trades(account_id)
+def _check_filled_trades(session: dict, state: SignalBotState, now: datetime) -> None:
+    """IG fuellt Market-Orders synchron (kein Filled-Polling wie bei
+    Alpaca noetig), aber Stop/Ziel laufen serverseitig weiter - ein
+    Trade, der bei IG nicht mehr unter den offenen Positionen auftaucht,
+    wurde durch Stop oder Ziel geschlossen."""
+    open_at_broker = get_open_positions(session)
     for symbol in list(state.open_trades.keys()):
         trade = state.open_trades[symbol]
 
         if symbol in open_at_broker:
-            trade.entry_fill = float(open_at_broker[symbol]["price"])
+            trade.entry_fill = float(open_at_broker[symbol]["level"])
             continue
 
-        try:
-            closed = get_closed_trade(account_id, trade.order_id)
-            exit_price = float(closed["averageClosePrice"])
-        except Exception as e:
-            print(f"Konnte geschlossenen Trade fuer {symbol} nicht abfragen: {e}")
+        exit_price = find_closed_position_exit_price(session, symbol)
+        if exit_price is None:
+            print(f"Trade fuer {symbol} nicht mehr offen, aber Schlusskurs nicht auffindbar "
+                  f"(siehe tradingbot/ig.py::find_closed_position_exit_price) - naechster Lauf versucht erneut.")
             continue
 
         signal = trade.signal
@@ -164,32 +165,32 @@ def _check_filled_trades(account_id: str, state: SignalBotState, now: datetime) 
         _log_and_clear(state, symbol, now, exit_price, "stop" if is_stop else "target")
 
 
-def _close_one_open(account_id: str, state: SignalBotState, symbol: str,
+def _close_one_open(session: dict, state: SignalBotState, symbol: str,
                      now: datetime, reason: str) -> None:
     trade = state.open_trades[symbol]
+    direction = "BUY" if trade.signal.direction is Direction.LONG else "SELL"
     try:
-        close_trade(account_id, trade.order_id)
-        closed = get_closed_trade(account_id, trade.order_id)
-        exit_price = float(closed["averageClosePrice"])
+        confirmed = close_position(session, trade.order_id, direction, trade.qty)
+        exit_price = float(confirmed["level"])
     except Exception as e:
         print(f"Konnte Trade fuer {symbol} nicht schliessen: {e}")
         exit_price = trade.signal.entry_price
     _log_and_clear(state, symbol, now, exit_price, reason)
 
 
-def _close_all_open(account_id: str, state: SignalBotState, now: datetime, reason: str) -> None:
+def _close_all_open(session: dict, state: SignalBotState, now: datetime, reason: str) -> None:
     for symbol in list(state.open_trades.keys()):
-        _close_one_open(account_id, state, symbol, now, reason)
+        _close_one_open(session, state, symbol, now, reason)
 
 
-def _close_expiring_positions(account_id: str, state: SignalBotState,
+def _close_expiring_positions(session: dict, state: SignalBotState,
                                now: datetime, now_utc: datetime) -> None:
     """Zwangsschluss 5 Min. vor Sessionende - pro Instrument statt eines
-    einzelnen globalen EOD-Zeitpunkts, da NAS100/US30/UK100/DE30 jeweils
+    einzelnen globalen EOD-Zeitpunkts, da NASDAQ/DOW/UK100/DAX jeweils
     eigene Handelszeiten haben (siehe SESSIONS oben)."""
     for symbol in list(state.open_trades.keys()):
         if _session_end_approaching(now_utc, symbol):
-            _close_one_open(account_id, state, symbol, now, "eod")
+            _close_one_open(session, state, symbol, now, "eod")
 
 
 GEMINI_CALL_DELAY_SECONDS = 4  # Freikontingent-Ratenlimit, siehe trading-bot-spec.md Abschnitt 12
@@ -276,7 +277,8 @@ def _should_poll_channel(state: SignalBotState, now_utc: datetime) -> bool:
     return since_last_poll >= QUIET_POLL_INTERVAL_MINUTES
 
 
-def _try_new_signals(account_id: str, state: SignalBotState, equity: float, now_utc: datetime) -> None:
+def _try_new_signals(session: dict, state: SignalBotState, equity: float,
+                      currency_code: str, now_utc: datetime) -> None:
     if not CHANNEL:
         print("SIGNAL_CHANNEL nicht gesetzt, ueberspringe Kanal-Abruf.")
         return
@@ -342,7 +344,7 @@ def _try_new_signals(account_id: str, state: SignalBotState, equity: float, now_
             continue
 
         try:
-            instrument_price = get_latest_price(account_id, symbol)
+            instrument_price = get_latest_price(session, symbol)
         except Exception as e:
             print(f"Konnte aktuellen Kurs fuer {symbol} nicht laden: {e}")
             continue
@@ -357,17 +359,18 @@ def _try_new_signals(account_id: str, state: SignalBotState, equity: float, now_
             continue
 
         try:
-            trade_id = place_bracket_order(account_id, symbol, signal, units)
+            deal_id = place_bracket_order(session, symbol, signal, units, currency_code)
         except Exception as e:
-            # OANDA lehnt z. B. bei zu wenig Margin die Order direkt ab -
-            # wie jeden anderen API-Fehler behandeln statt den ganzen Lauf
-            # abzubrechen (siehe tradingbot/oanda.py::position_size).
+            # IG lehnt z. B. bei zu wenig Margin oder einem falschen Epic
+            # die Order direkt ab - wie jeden anderen API-Fehler behandeln
+            # statt den ganzen Lauf abzubrechen (siehe
+            # tradingbot/ig.py::position_size zur Margin-Begruendung).
             state.consecutive_api_errors += 1
             print(f"Order fuer {symbol} fehlgeschlagen: {e}")
             continue
 
         state.open_trades[symbol] = OpenSignalTrade(
-            signal=signal, order_id=trade_id, qty=units, source_message_id=message_id,
+            signal=signal, order_id=deal_id, qty=units, source_message_id=message_id,
         )
         send_notification(
             f"Signal-Einstieg {signal.direction.value} {units}x {symbol} @ ~{signal.entry_price:.2f} "
@@ -384,10 +387,16 @@ def main() -> None:
         return
 
     state = load_state(STATE_PATH)
-    account_id = os.environ["OANDA_ACCOUNT_ID"]
 
     try:
-        _run(account_id, state, now)
+        session = login()
+    except Exception as e:
+        print(f"API-Fehler beim IG-Login: {e}")
+        send_notification(f"Signal-Bot-Fehler: IG-Login fehlgeschlagen: {e}")
+        return
+
+    try:
+        _run(session, state, now)
     except Exception as e:
         print(f"Unerwarteter Fehler: {e}")
         send_notification(f"Signal-Bot-Fehler: {e}")
@@ -395,9 +404,9 @@ def main() -> None:
         raise
 
 
-def _run(account_id: str, state: SignalBotState, now: datetime) -> None:
+def _run(session: dict, state: SignalBotState, now: datetime) -> None:
     try:
-        summary = get_account_summary(account_id)
+        account = get_account(session)
         state.consecutive_api_errors = 0
     except Exception as e:
         state.consecutive_api_errors += 1
@@ -405,11 +414,12 @@ def _run(account_id: str, state: SignalBotState, now: datetime) -> None:
         save_state(state, STATE_PATH)
         return
 
-    equity = float(summary["NAV"])
+    equity = float(account["balance"]["balance"])
+    currency_code = account["currency"]
     if state.initial_equity is None:
         state.initial_equity = equity
 
-    _check_filled_trades(account_id, state, now)
+    _check_filled_trades(session, state, now)
 
     if state.stopped_permanently:
         save_state(state, STATE_PATH)
@@ -419,7 +429,7 @@ def _run(account_id: str, state: SignalBotState, now: datetime) -> None:
     if total_loss <= TOTAL_LOSS_LIMIT:
         print(f"Sicherheitsschalter: Gesamtverlust {total_loss * 100:.1f}%")
         send_notification(f"Signal-Bot Sicherheitsschalter: Gesamtverlust {total_loss * 100:.1f}%, stoppe dauerhaft.")
-        _close_all_open(account_id, state, now, "safety_stop")
+        _close_all_open(session, state, now, "safety_stop")
         state.stopped_permanently = True
         save_state(state, STATE_PATH)
         return
@@ -430,11 +440,11 @@ def _run(account_id: str, state: SignalBotState, now: datetime) -> None:
         return
 
     now_utc = datetime.now(timezone.utc)
-    _close_expiring_positions(account_id, state, now, now_utc)
+    _close_expiring_positions(session, state, now, now_utc)
 
     market_window_open = _any_session_active(now_utc)
     if market_window_open and _should_poll_channel(state, now_utc):
-        _try_new_signals(account_id, state, equity, now_utc)
+        _try_new_signals(session, state, equity, currency_code, now_utc)
     else:
         reason = "ausserhalb aller Handelsfenster" if not market_window_open else "Ruhe-Drosselung aktiv"
         print(f"Kein Kanal-Abruf diesen Lauf ({reason}).")

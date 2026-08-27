@@ -580,8 +580,9 @@ einem öffentlichen Telegram-Kanal ("KaraokeAndi", Live-Day-Trading, Signale
 für NASDAQ INDEX, DOW JONES INDEX, GERMAN DAX INDEX und FTSE 100 INDEX),
 lässt sie per LLM auswerten und führt sie automatisch aus - ursprünglich auf
 demselben Alpaca-Paper-Konto wie der ORB-Bot (QQQ/DIA-ETF-Proxys), seit
-27.08.2026 auf einem eigenen OANDA-Practice-Konto mit echten Index-CFDs
-(siehe Nachtrag unten, "Broker-Umstieg").
+27.08.2026 auf einem eigenen IG-Demo-Konto mit echten Index-CFDs (ein
+Zwischenstopp bei OANDA scheiterte an fehlendem API-Zugang für den
+EU-Rechtsträger - siehe Nachträge unten, "Broker-Umstieg").
 
 **Warum getrennt vom ORB-Bot:** eigener Zustand
 ([signal_state.json](signal_state.json)), eigenes Protokoll
@@ -820,3 +821,48 @@ keine Lösung - nur CFDs/Futures zeigen echte Indexpunkte. Nach Abwägung
 - Secrets: `OANDA_API_TOKEN`/`OANDA_ACCOUNT_ID` neu in
   `.github/workflows/signal-bot.yml`, `ALPACA_API_KEY`/`ALPACA_SECRET_KEY`
   dort entfernt (der ORB-Bot-Workflow braucht sie weiterhin).
+
+**Nachtrag 27.08.2026, direkt danach: OANDA durch IG ersetzt (Broker
+nie live gegangen).** Der Nutzer fand auf `oanda.com/eu-en` (dem für
+EU-Kunden erreichten Rechtstraeger) keine "Manage API Access"-Option, um
+ein Personal Access Token zu erzeugen - auch ein zweiter Blick ("Claude
+in Chrome") fand sie nicht. Statt weiter zu suchen, direkt auf **IG**
+umgestiegen (eigene REST-API, kein Bridge-Dienst wie bei MetaTrader
+noetig, in Deutschland/EU als Broker aktiv). Der OANDA-Code
+(`tradingbot/oanda.py`, `scripts/place_test_oanda_order.py`,
+`tests/test_oanda.py`) wurde **nicht geloescht**, aber durch die
+IG-Anbindung ersetzt und ist unbenutzter, aber getesteter Code - falls
+der Nutzer OANDA-Zugang doch noch findet, liesse sich mit vertretbarem
+Aufwand zurueckwechseln.
+
+- **Neues Modul `tradingbot/ig.py`:** Ersatz fuer `tradingbot/oanda.py`.
+  Wichtiger Unterschied zu OANDA/Alpaca: IG braucht eine **Session pro
+  Lauf** (`login()` liefert CST-/X-SECURITY-TOKEN-Header, kein
+  dauerhafter Bearer-Token) - `scripts/run_signal_bot.py` loggt sich
+  einmal pro Skriptaufruf ein und reicht die Session-Header durch alle
+  Funktionsaufrufe durch, statt wie bei OANDA nur eine `account_id`
+  durchzureichen.
+- **Epics UNVERIFIZIERT:** IGs REST-API-Doku (`labs.ig.com`, `www.ig.com`,
+  `trading-ig.readthedocs.io`) war in dieser Umgebung durchgaengig per
+  Netzwerk-Policy blockiert (`EGRESS_BLOCKED`) - die in
+  `signalbot/mapping.py::INDEX_TO_SYMBOL` hinterlegten Epics
+  (`IX.D.NASDAQ.IFD.IP` etc.) sind plausible Platzhalter nach
+  allgemeinem IG-Namensschema, **nicht live geprueft**. Neues
+  Diagnose-Skript `scripts/find_ig_epics.py` sucht die echten Epics
+  gegen den Demo-Account (IGs Marktsuche `GET /markets?searchTerm=...`) -
+  zwingend vor dem ersten Live-Lauf auszufuehren, die gefundenen Epics
+  dann manuell in `signalbot/mapping.py` uebertragen. Ein falscher Epic
+  fuehrt nur zu einer von IG abgelehnten Order (sicher), kein stiller
+  Fehlhandel.
+- **Geschlossene Positionen erkennen:** IG hat wie OANDA kein
+  Filled-Polling noetig (Market-Orders fuellen synchron), aber anders als
+  OANDA keinen direkten "gib mir diesen einzelnen geschlossenen Trade"-
+  Endpunkt - `find_closed_position_exit_price()` durchsucht stattdessen
+  die Transaktionshistorie (`GET /history/transactions`) nach dem
+  passenden Epic. Auch diese Feldnamen (`closeLevel`/`level`) sind
+  **best-effort, nicht live verifiziert** - liefert die Suche nichts,
+  bleibt der Trade im State offen und der naechste Lauf versucht es
+  erneut (kein Datenverlust, nur verzoegerte Protokollierung).
+- Secrets: `IG_API_KEY`/`IG_USERNAME`/`IG_PASSWORD`/`IG_ACCOUNT_ID` neu in
+  `.github/workflows/signal-bot.yml`, ersetzen die dort nie genutzten
+  `OANDA_API_TOKEN`/`OANDA_ACCOUNT_ID`.

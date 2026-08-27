@@ -1,16 +1,16 @@
 """Uebersetzung von Index-Signalen (NASDAQ INDEX, DOW JONES INDEX, GERMAN
-DAX INDEX, FTSE 100 INDEX) auf handelbare OANDA-CFD-Instrumente. Siehe
-trading-bot-spec.md, Aenderungsprotokoll: Umstieg von Alpaca/QQQ-DIA-
-ETF-Proxys auf OANDA, weil der Nutzer Kurse will, die den im Kanal
-genannten Index-Punkten entsprechen - das geht nur ueber CFDs auf echten
-Indizes, nicht ueber ETFs.
+DAX INDEX, FTSE 100 INDEX) auf handelbare IG-CFD-Instrumente (Epics).
+Siehe trading-bot-spec.md, Aenderungsprotokoll: Umstieg von Alpaca/QQQ-DIA-
+ETF-Proxys auf echte Index-CFDs, zunaechst ueber OANDA geplant, dann auf
+IG gewechselt, weil OANDAs API-Selbstbedienung ueber den fuer EU-Kunden
+erreichten Rechtstraeger nicht auffindbar war.
 
 Levels aus dem Signal (falls genannt) stehen in den Index-Punkten des
-Kanals, nicht zwingend identisch mit OANDAs eigener Quotierung desselben
+Kanals, nicht zwingend identisch mit IGs eigener Quotierung desselben
 Index (unterschiedliche CFD-Anbieter berechnen ihre Indexstaende leicht
 abweichend) - eine direkte Uebernahme der Zahlen waere deshalb falsch.
 Stattdessen wird der prozentuale Abstand zwischen Entry- und Stop-Level im
-Kanal-Index berechnet und auf den tatsaechlichen OANDA-Kurs beim Einstieg
+Kanal-Index berechnet und auf den tatsaechlichen IG-Kurs beim Einstieg
 angewendet. Fehlt ein Stop-Level in der Nachricht, greift
 DEFAULT_STOP_PCT. Das Ziel folgt, wie beim ORB-Bot (Abschnitt 1), der
 festen 2:1-CRV-Konvention, sofern die Nachricht kein eigenes Ziel-Level
@@ -22,11 +22,19 @@ from datetime import datetime
 from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
+# UNVERIFIZIERT - IGs REST-API-Doku war in dieser Umgebung nicht abrufbar
+# (Netzwerk-Policy blockierte labs.ig.com/www.ig.com). Diese Epics sind
+# plausible Platzhalter nach allgemein bekanntem IG-Namensschema, aber
+# NICHT live gegen die API geprueft. VOR GO-LIVE zwingend mit
+# scripts/find_ig_epics.py gegen den echten Demo-Account verifizieren und
+# hier durch die tatsaechlichen Epics ersetzen - ein falscher Epic fuehrt
+# nur zu einer von IG abgelehnten Order (sicher, aber kein Trade), kein
+# stiller Fehlhandel.
 INDEX_TO_SYMBOL = {
-    "NASDAQ": "NAS100_USD",
-    "DOW": "US30_USD",
-    "FTSE": "UK100_GBP",
-    "DAX": "DE30_EUR",  # VOR GO-LIVE gegen GET /v3/accounts/{id}/instruments pruefen
+    "NASDAQ": "IX.D.NASDAQ.IFD.IP",
+    "DOW": "IX.D.DOW.IFD.IP",
+    "FTSE": "IX.D.FTSE.IFD.IP",
+    "DAX": "IX.D.DAX.IFD.IP",
 }
 
 DEFAULT_STOP_PCT = 0.005  # 0,5 %, falls die Nachricht kein Stop-Level nennt
@@ -39,7 +47,7 @@ def symbol_for_index(index_name: str | None) -> str | None:
 
 def build_signal_from_parsed(parsed: dict, instrument_price: float, entry_timestamp: datetime) -> Signal | None:
     """parsed: Ausgabe von signalbot.parser.parse_signal_message.
-    instrument_price: aktueller OANDA-Kurs des zugeordneten Instruments
+    instrument_price: aktueller IG-Kurs des zugeordneten Instruments
     (Basis fuer Entry, da Market-Order - siehe Docstring oben zur
     Punkte/Kurs-Uebersetzung)."""
     if not parsed.get("is_signal"):
