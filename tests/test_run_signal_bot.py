@@ -21,9 +21,8 @@ def utc(y, m, d, h, mi=0) -> datetime:
 
 
 class IsEuHoursTests(unittest.TestCase):
-    # 26.08.2026 (Mittwoch) liegt in der Sommerzeit (CEST, UTC+2): Xetra-
-    # Handelsbeginn 09:00 Europe/Berlin = 07:00 UTC, 5 Min. Vorlauf ab
-    # 06:55 UTC.
+    # 26.08.2026 (Mittwoch) liegt in der Sommerzeit (CEST, UTC+2): Xetra
+    # 09:00-17:30 Europe/Berlin = 07:00-15:30 UTC, 5 Min. Vorlauf ab 06:55 UTC.
     def test_within_window_on_weekday(self):
         self.assertTrue(_is_eu_hours(utc(2026, 8, 26, 10, 0)))  # Mittwoch
 
@@ -31,21 +30,24 @@ class IsEuHoursTests(unittest.TestCase):
         self.assertFalse(_is_eu_hours(utc(2026, 8, 26, 6, 54)))
 
     def test_after_window(self):
-        self.assertFalse(_is_eu_hours(utc(2026, 8, 26, 17, 1)))
+        self.assertFalse(_is_eu_hours(utc(2026, 8, 26, 15, 31)))
 
     def test_weekend_excluded_even_within_hours(self):
         self.assertFalse(_is_eu_hours(utc(2026, 8, 29, 10, 0)))  # Samstag
 
     def test_window_boundaries_inclusive(self):
         self.assertTrue(_is_eu_hours(utc(2026, 8, 26, 6, 55)))  # 5 Min. vor Handelsbeginn
-        self.assertTrue(_is_eu_hours(utc(2026, 8, 26, 17, 0)))
+        self.assertTrue(_is_eu_hours(utc(2026, 8, 26, 15, 30)))  # Handelsschluss, kein Nachlauf
 
     def test_winter_time_shifts_boundary(self):
         # 27.01.2026 (Dienstag) liegt in der Winterzeit (CET, UTC+1):
-        # Handelsbeginn 09:00 Europe/Berlin = 08:00 UTC, Vorlauf ab 07:55 UTC -
-        # eine Stunde spaeter als im Sommer, DST-sicher per ZoneInfo.
+        # Xetra 09:00-17:30 Europe/Berlin = 08:00-16:30 UTC, Vorlauf ab
+        # 07:55 UTC - eine Stunde spaeter als im Sommer, DST-sicher per
+        # ZoneInfo.
         self.assertFalse(_is_eu_hours(utc(2026, 1, 27, 7, 54)))
         self.assertTrue(_is_eu_hours(utc(2026, 1, 27, 7, 55)))
+        self.assertTrue(_is_eu_hours(utc(2026, 1, 27, 16, 30)))
+        self.assertFalse(_is_eu_hours(utc(2026, 1, 27, 16, 31)))
 
 
 class IsUsPreSessionTests(unittest.TestCase):

@@ -58,21 +58,23 @@ CHANNEL = os.environ.get("SIGNAL_CHANNEL", "")
 TOTAL_LOSS_LIMIT = -0.15
 API_ERROR_LIMIT = 5
 
-# EU-Handelsfenster: Start ist der tatsaechliche Xetra/Euronext-Handelsbeginn
-# (09:00 Europe/Berlin, DST-sicher per ZoneInfo statt fixer UTC-Stunde -
-# sonst verschiebt sich die Grenze mit Sommer-/Winterzeit) minus
-# PRE_SESSION_LEAD_MINUTES Vorlauf, auf Nutzerwunsch (27.08.2026: "5 Minuten
-# vor Beginn der Trading-Sessions minuetlich gucken"). Ende bleibt die
-# bisherige grosszuegige UTC-Pauschale - der externe Cron-Trigger selbst
-# deckt ein noch breiteres Fenster ab (siehe trading-bot-spec.md), das
-# eigentliche Ein-/Ausschalten passiert hier im Skript, gleiches Prinzip wie
-# beim ORB-Bot (Abschnitt 9, "Workflow bewusst weiter getaktet als die
-# Session").
+# EU-Handelsfenster: Start und Ende sind der tatsaechliche Xetra/Euronext-
+# Handelsbeginn/-schluss (09:00-17:30 Europe/Berlin, DST-sicher per ZoneInfo
+# statt fixer UTC-Stunden - sonst verschiebt sich die Grenze mit Sommer-/
+# Winterzeit). Start minus PRE_SESSION_LEAD_MINUTES Vorlauf, Ende ohne
+# Nachlauf - ausserhalb der Session (inkl. Vorlauf) wird auf Nutzerwunsch
+# (27.08.2026: "nach der Session gar nicht mehr abfragen bis 5 Min. vorher")
+# gar nicht mehr abgefragt. Der externe Cron-Trigger selbst deckt ein noch
+# breiteres Fenster ab (siehe trading-bot-spec.md), das eigentliche
+# Ein-/Ausschalten passiert hier im Skript, gleiches Prinzip wie beim
+# ORB-Bot (Abschnitt 9, "Workflow bewusst weiter getaktet als die Session").
 EU_TZ = ZoneInfo("Europe/Berlin")
 EU_SESSION_START_LOCAL = time(9, 0)
-EU_HOURS_END_UTC = time(17, 0)
+EU_SESSION_END_LOCAL = time(17, 30)
 # US-Handelsbeginn (NYSE/NASDAQ): 09:30 America/New_York, ebenfalls DST-sicher
-# per ZoneInfo (NY-Konstante oben) statt fixer UTC-Stunde.
+# per ZoneInfo (NY-Konstante oben) statt fixer UTC-Stunde. Das Ende wird
+# bereits ueber die echte Alpaca-Marktuhr (_is_us_market_open) exakt
+# erkannt, braucht also keine eigene Konstante.
 US_SESSION_START_LOCAL = time(9, 30)
 PRE_SESSION_LEAD_MINUTES = 5
 # Rund um den Sessionstart kommt erfahrungsgemaess zuerst eine laengere
@@ -183,14 +185,15 @@ GEMINI_CALL_DELAY_SECONDS = 4  # Freikontingent-Ratenlimit, siehe trading-bot-sp
 def _is_eu_hours(now_utc: datetime) -> bool:
     """Keine exakte Boersenkalender-Pruefung wie beim US-Markt (dafuer gibt
     es hier keine Alpaca-aequivalente Quelle) - Feiertage werden nicht
-    beruecksichtigt, bewusst grosszuegiges Ende, siehe EU_HOURS_END_UTC
-    oben. Start ist PRE_SESSION_LEAD_MINUTES vor EU_SESSION_START_LOCAL."""
+    beruecksichtigt. Fenster: PRE_SESSION_LEAD_MINUTES vor
+    EU_SESSION_START_LOCAL bis EU_SESSION_END_LOCAL, kein Nachlauf danach."""
     now_eu = now_utc.astimezone(EU_TZ)
     if now_eu.weekday() >= 5:
         return False
     session_start = datetime.combine(now_eu.date(), EU_SESSION_START_LOCAL, tzinfo=EU_TZ)
+    session_end = datetime.combine(now_eu.date(), EU_SESSION_END_LOCAL, tzinfo=EU_TZ)
     poll_start = session_start - timedelta(minutes=PRE_SESSION_LEAD_MINUTES)
-    return poll_start <= now_eu and now_utc.time() <= EU_HOURS_END_UTC
+    return poll_start <= now_eu <= session_end
 
 
 def _is_us_pre_session(now_utc: datetime) -> bool:
