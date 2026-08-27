@@ -23,7 +23,7 @@
   },
   "open_order_id": "32388ca2-2a8e-45ed-ab97-db96a429aa6a",
   "open_qty": 236,
-  "open_entry_fill": null,
+  "open_entry_fill": 718.224322,
   "halted_for_day": false,
   "stopped_permanently": false,
   "daily_report_sent": false,
