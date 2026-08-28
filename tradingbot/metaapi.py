@@ -82,6 +82,19 @@ def _headers() -> dict:
     return {"auth-token": os.environ["METAAPI_TOKEN"], "Content-Type": "application/json"}
 
 
+def list_accounts() -> list[dict]:
+    """Alle Trading-Accounts, die zu METAAPI_TOKEN gehoeren - Diagnose-
+    Hilfsfunktion (siehe scripts/find_metaapi_symbols.py), falls die
+    Account-ID im Dashboard nicht auffindbar ist (Nutzer-Feedback
+    28.08.2026): braucht selbst keine METAAPI_ACCOUNT_ID, nur den Token."""
+    resp = requests.get(
+        f"{PROVISIONING_BASE_URL}/users/current/accounts",
+        headers=_headers(), timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+
 def get_account() -> dict:
     """Kontostand/Waehrung des verbundenen MT4/5-Demokontos (Ersatz fuer
     IGs get_account()) - Felder "balance"/"currency" direkt auf oberster
