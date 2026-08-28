@@ -1,13 +1,28 @@
 {
   "version": 1,
-  "last_message_id": 71490,
+  "last_message_id": 71492,
   "initial_equity": 99231.95,
   "total_pnl": 0.0,
   "total_trades": 0,
   "consecutive_api_errors": 0,
   "stopped_permanently": false,
-  "open_trades": {},
+  "open_trades": {
+    "DIA": {
+      "signal": {
+        "direction": "long",
+        "entry_price": 536.62,
+        "stop": 535.6291846400358,
+        "target": 538.6016307199285,
+        "risk": 0.9908153599642446,
+        "entry_timestamp": "2026-08-28T10:50:58.617661-04:00"
+      },
+      "order_id": "2bfe41ba-9e1b-4f51-b482-57ea2d923bf9",
+      "qty": 732,
+      "source_message_id": 71491,
+      "entry_fill": null
+    }
+  },
   "telegram_update_offset": null,
-  "last_channel_message_at": "2026-08-28T14:45:46+00:00",
-  "last_poll_at": "2026-08-28T14:49:35.273551+00:00"
+  "last_channel_message_at": "2026-08-28T14:50:51+00:00",
+  "last_poll_at": "2026-08-28T14:50:56.526920+00:00"
 }
