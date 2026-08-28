@@ -50,8 +50,9 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
+from signalbot.channel_log import append_channel_message
 from signalbot.mapping import INDEX_TO_SYMBOL, build_signal_from_parsed, symbol_for_index
-from signalbot.parser import parse_signal_message
+from signalbot.parser import GeminiError, parse_signal_message
 from signalbot.state import OpenSignalTrade, SignalBotState, load_state, save_state
 from signalbot.telegram_signals import fetch_new_messages
 from signalbot.trade_log import SignalTradeLogRow, append_trade
@@ -75,6 +76,7 @@ EU_TZ = ZoneInfo("Europe/Berlin")
 STATE_PATH = ROOT / "signal_state.json"
 KILL_SWITCH_PATH = ROOT / "STOP"
 TRADE_LOG_PATH = ROOT / "signal_trades.csv"
+CHANNEL_LOG_PATH = ROOT / "signal_channel_log.csv"
 CHANNEL = os.environ.get("SIGNAL_CHANNEL", "")
 TOTAL_LOSS_LIMIT = -0.15
 API_ERROR_LIMIT = 5
@@ -142,7 +144,8 @@ def _log_and_clear(state: SignalBotState, symbol: str, now: datetime,
     state.total_trades += 1
 
     exit_labels = {"stop": "Stop getroffen", "target": "Ziel getroffen",
-                   "eod": "Sessionende-Schluss", "safety_stop": "Sicherheitsschalter-Schluss"}
+                   "eod": "Sessionende-Schluss", "safety_stop": "Sicherheitsschalter-Schluss",
+                   "channel_close_signal": "Kanal-Schliess-Anweisung befolgt"}
     send_notification(
         f"Signal-Trade geschlossen: {signal.direction.value.upper()} {symbol}, "
         f"{exit_labels.get(exit_reason, exit_reason)}\n"
@@ -327,13 +330,28 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         print("Kanal abgefragt, keine neuen Nachrichten seit dem letzten Lauf.")
         return
 
-    for i, (message_id, text, _msg_date) in enumerate(messages):
+    for i, (message_id, text, msg_date) in enumerate(messages):
         state.last_message_id = message_id
 
         if i > 0:
             time_module.sleep(GEMINI_CALL_DELAY_SECONDS)
-        parsed = parse_signal_message(text)
+
+        # JEDE ausgewertete Nachricht wird protokolliert (nicht nur die,
+        # die zu einem Trade fuehren) - Nutzerwunsch (28.08.2026): die
+        # letzten sieben Tage sollen jederzeit nachvollziehbar sein, u. a.
+        # um zu sehen, warum ein gesendetes Signal NICHT gehandelt wurde
+        # (der Bot hatte zuvor nur 1 von ueber 5 gesendeten Signalen
+        # beachtet, ohne dass der Grund dafuer sichtbar war).
+        try:
+            parsed = parse_signal_message(text)
+        except GeminiError as e:
+            state.consecutive_api_errors += 1
+            print(f"Nachricht {message_id} uebersprungen (Gemini-Fehler): {e}")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, None, "gemini_fehler")
+            continue
+
         if parsed is None or not parsed.get("is_signal"):
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "kein_signal")
             continue
 
         # Rohdaten mitloggen (Nutzerwunsch, nach einer Nachfrage zu
@@ -343,33 +361,53 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         # tatsaechliche Kanal-Nachricht nachvollziehen lassen, auch wenn
         # DEFAULT_STOP_PCT als Fallback gegriffen hat (kein Stop-Level in
         # der Nachricht erkannt).
-        print(f"Signal erkannt (Nachricht {message_id}): {parsed.get('index')} "
-              f"{parsed.get('direction')}, Index-Level Entry={parsed.get('entry_level')} "
-              f"Stop={parsed.get('stop_level')} Ziel={parsed.get('target_level')} | "
-              f"Originaltext: {text!r}")
+        print(f"Signal erkannt (Nachricht {message_id}): action={parsed.get('action')} "
+              f"{parsed.get('index')} {parsed.get('direction')}, Index-Level "
+              f"Entry={parsed.get('entry_level')} Stop={parsed.get('stop_level')} "
+              f"Ziel={parsed.get('target_level')} | Originaltext: {text!r}")
 
         symbol = symbol_for_index(parsed.get("index"))
         if symbol is None:
             print(f"Signal fuer Index '{parsed.get('index')}' erkannt, aber nicht unterstuetzt "
                   f"(nur NASDAQ/DOW/DAX/FTSE werden gehandelt) - uebersprungen.")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "index_nicht_unterstuetzt")
             continue
+
+        if parsed.get("action") == "close":
+            # Eindeutige Kanal-Anweisung, die laufende Position JETZT zu
+            # schliessen (Nutzerwunsch 28.08.2026: der Bot hatte eine
+            # solche Nachricht zuvor ignoriert und stattdessen passiv auf
+            # den eigenen Stop gewartet) - nur wirksam, wenn ueberhaupt
+            # eine offene Position in diesem Instrument besteht.
+            if symbol in state.open_trades:
+                await _close_one_open(session, state, symbol, datetime.now(NY), "channel_close_signal")
+                append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "trade_geschlossen")
+            else:
+                print(f"Schliess-Anweisung fuer {symbol}, aber keine offene Position - ignoriert.")
+                append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "schliessung_ohne_position")
+            continue
+
         if symbol in state.open_trades:
             print(f"Signal fuer {symbol}, aber bereits eine offene Position - uebersprungen.")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "bereits_offen")
             continue
 
         try:
             instrument_price = await get_latest_price(session, symbol)
         except Exception as e:
             print(f"Konnte aktuellen Kurs fuer {symbol} nicht laden: {e}")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "kurs_nicht_ladbar")
             continue
 
         signal = build_signal_from_parsed(parsed, instrument_price, datetime.now(NY))
         if signal is None:
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "kein_gueltiges_signal")
             continue
 
         volume = position_size(signal, equity, risk_pct=SIGNAL_RISK_PCT)
         if volume < 0.01:
             print(f"Signal fuer {symbol} erkannt, aber Lot-Volumen < 0.01 - ausgelassen.")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "volumen_zu_klein")
             continue
 
         try:
@@ -382,11 +420,13 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             # Margin-Begruendung).
             state.consecutive_api_errors += 1
             print(f"Order fuer {symbol} fehlgeschlagen: {e}")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "order_fehlgeschlagen")
             continue
 
         state.open_trades[symbol] = OpenSignalTrade(
             signal=signal, order_id=position_id, qty=volume, source_message_id=message_id,
         )
+        append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "trade_eroeffnet")
         send_notification(
             f"Signal-Einstieg {signal.direction.value} {volume}x {symbol} @ ~{signal.entry_price:.2f} "
             f"(Kanal-Signal), Stop {signal.stop:.2f}, Ziel {signal.target:.2f}"

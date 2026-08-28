@@ -857,5 +857,61 @@ da UK100/DAX bei Alpaca keine Entsprechung hatten.
 Wie bei jedem vorigen Broker-Wechsel gilt die Regel: **kein Merge nach
 `master`, solange die drei Secrets nicht vom Nutzer hinterlegt sind** -
 sonst läuft der Workflow automatisiert und dauerhaft fehlschlagend. Der
-alte OANDA/IG/MetaApi-Feature-Branch wurde auf Nutzerwunsch gelöscht
-(nie gemergt, Broker-Vergleich abgeschlossen).
+alte OANDA/IG/MetaApi-Feature-Branch (`claude/signal-bot-datetime-offset-diyxej`)
+sollte auf Nutzerwunsch gelöscht werden (nie gemergt, Broker-Vergleich
+abgeschlossen) - das direkte Löschen aus dieser Umgebung heraus wurde vom
+Git-Proxy mit 403 abgelehnt, der Nutzer muss ihn manuell im GitHub-Web-UI
+entfernen.
+
+**Nachtrag 28.08.2026, direkt danach: Bot reagierte auf 1 von über 5
+gesendeten Signalen nicht, und ignorierte eine Kanal-Schliess-Anweisung
+für zwei offene Trades.** Nutzer-Feedback (noch ohne exakte
+Nachrichtentexte, die folgen bei Gelegenheit): der Bot hatte reagiert,
+als der Kanal seine eigenen zwei Dow-Jones-Trades per Nachricht schloss -
+der Bot selbst tat nichts und wartete stattdessen passiv auf seinen
+eigenen Stop, statt der Anweisung zu folgen. Zusätzlich wurde nur 1 von
+über 5 in der Zwischenzeit gesendeten Einstiegssignalen tatsächlich
+gehandelt.
+
+Zwei strukturelle Fixes, die ohne die noch ausstehenden echten
+Nachrichtentexte möglich waren:
+
+1. **Schliess-Anweisungen werden jetzt befolgt.** Bisher wurde eine
+   Nachricht wie "CLOSE TRADE ALERT... CLOSING DAX INDEX trade now"
+   bewusst als Nicht-Signal behandelt (ursprüngliche Design-Entscheidung:
+   der Bot verwaltet seine Position ausschließlich über den eigenen
+   Stop/Ziel) - das war offenbar der falsche Kompromiss. `signalbot/parser.py`
+   hat jetzt ein neues `"action": "open" | "close" | null`-Feld im
+   JSON-Schema; das bereits vorhandene reale Beispiel ("CLOSE TRADE
+   ALERT...") liefert jetzt `action: "close"`, `scripts/run_signal_bot.py`
+   schließt daraufhin sofort die betroffene Position (`_close_one_open`),
+   statt nichts zu tun. Nennt eine Schliess-Nachricht KEIN konkretes
+   Instrument (z. B. "closing both trades now" ohne Namen - vermutlich der
+   Fall aus dem Nutzer-Feedback), wird sie bewusst NICHT gehandelt (kein
+   Raten, welches Instrument gemeint ist) - das braucht ein echtes
+   Beispiel aus dem Kanal, um sauber ins Prompt aufgenommen zu werden.
+2. **Verschluckte Gemini-Fehler von echten Nicht-Signalen unterschieden.**
+   `parse_signal_message()` gab bisher bei jedem Fehler (Netzwerk,
+   Ratenlimit, unparsebare Antwort) `None` zurück - identisch zu einer
+   echten "kein Signal"-Klassifizierung. Das könnte die 1-von-5-Quote
+   erklären, war aber nicht nachprüfbar. Jetzt löst ein echter
+   Gemini-Fehler `GeminiError` aus, `scripts/run_signal_bot.py` fängt das
+   pro Nachricht ab, zählt es als API-Fehler und protokolliert es explizit
+   als `gemini_fehler` statt als `kein_signal`.
+
+**Neu: `signalbot/channel_log.py` + `signal_channel_log.csv`.** Auf
+Nutzerwunsch protokolliert der Bot jetzt JEDE ausgewertete Kanal-Nachricht
+der letzten sieben Tage (nicht nur die, die zu einem Trade führten) -
+inklusive Originaltext, geparstem JSON und einem kurzen Grund-Code
+(`trade_eroeffnet`, `kein_signal`, `bereits_offen`,
+`index_nicht_unterstuetzt`, `gemini_fehler`, `kurs_nicht_ladbar`,
+`kein_gueltiges_signal`, `volumen_zu_klein`, `order_fehlgeschlagen`,
+`trade_geschlossen`, `schliessung_ohne_position`). Ältere Zeilen werden
+beim Schreiben automatisch verworfen (sieben Tage Aufbewahrung), damit die
+Datei nicht unbegrenzt wächst. Zweck: Ursachen für ausgelassene/verzögerte
+Signale sind jetzt direkt in der Datei nachvollziehbar, ohne extra
+`scripts/dump_channel_history.py` per GitHub-Actions-Lauf zu triggern -
+liefert außerdem die Rohdaten für echte Beispielnachrichten (z. B. die
+noch ausstehende "closing both trades"-Formulierung), sobald sie im Kanal
+auftauchen. Die Datei wird wie `signal_state.json`/`signal_trades.csv` vom
+Workflow zurückcommittet.
