@@ -19,10 +19,10 @@
       "order_id": "2bfe41ba-9e1b-4f51-b482-57ea2d923bf9",
       "qty": 732,
       "source_message_id": 71491,
-      "entry_fill": null
+      "entry_fill": 536.6
     }
   },
   "telegram_update_offset": null,
   "last_channel_message_at": "2026-08-28T14:50:51+00:00",
-  "last_poll_at": "2026-08-28T14:50:56.526920+00:00"
+  "last_poll_at": "2026-08-28T14:51:34.441277+00:00"
 }
