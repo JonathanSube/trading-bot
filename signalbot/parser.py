@@ -80,7 +80,7 @@ fuer das zuerst genannte/naheliegendste Instrument - die Nachricht wird bei \
 Bedarf erneut ausgewertet (bereits geschlossene Positionen fuehren beim \
 naechsten Mal ohnehin zu keiner weiteren Aktion mehr).
 
-Beispiele aus genau diesem Kanal (echte Nachrichten, 24.-27.08.2026 abgerufen):
+Beispiele aus genau diesem Kanal (echte Nachrichten, 24.-28.08.2026 abgerufen):
 
 Nachricht: "🇺🇸 NASDAQ INDEX\nBOUGHT LONG ⬆️️ = 100%\n\nENTRY = 29247.8\n\nSTOP = 29180.6"
 Antwort: {"is_signal": true, "action": "open", "index": "NASDAQ", "direction": "long", "entry_level": 29247.8, "stop_level": 29180.6, "target_level": null}
@@ -102,9 +102,25 @@ Nachricht: "CLOSE TRADE ALERT \n\n🇩🇪 CLOSING DAX INDEX trade now"
 Antwort: {"is_signal": true, "action": "close", "index": "DAX", "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
 (Grund: eindeutige Anweisung, die laufende DAX-Position JETZT zu schliessen - ein konkretes Instrument wird genannt, also handelbar.)
 
+Nachricht: "CLOSE TRADE ALERT\n\n🇺🇸 CLOSING DOW INDEX trade now"
+Antwort: {"is_signal": true, "action": "close", "index": "DOW", "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+(Grund: dasselbe Muster wie oben, hier fuer DOW - dieses exakte Muster ("CLOSE TRADE ALERT" + "CLOSING <INSTRUMENT> INDEX trade now") wurde live beobachtet, NACHDEM der Kanal zwei separate DOW-Long-Einstiege kurz hintereinander gepostet hatte; der Bot hatte diese Nachricht zuvor faelschlich ignoriert (Nutzer-Feedback 28.08.2026) - jetzt korrekt als Schliess-Anweisung erkannt.)
+
+Nachricht: "move sl in dow to 53551"
+Antwort: {"is_signal": false, "action": null, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+(Grund: Stop-Anpassung an einem bereits laufenden Kanal-Trade, keine Schliess-Anweisung und kein neues Einstiegssignal - der Bot verwaltet seinen eigenen Stop unabhaengig vom Kanal. Trotz "sl"/"stop" im Text NICHT mit einer Schliess-Anweisung verwechseln: hier wird nur ein Stop-Preis verschoben, keine Position geschlossen.)
+
+Nachricht: "both stopps to 53572.9"
+Antwort: {"is_signal": false, "action": null, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+(Grund: wie oben, hier fuer mehrere gleichzeitig laufende Kanal-eigene Trades im selben Instrument ("both") - trotzdem nur eine Stop-Anpassung, keine Schliess-Anweisung.)
+
 Nachricht: "STOP LOSS ALERT \n\n🇩🇪 MOVING STOP TO BREAKEVEN in DAX INDEX now"
 Antwort: {"is_signal": false, "action": null, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
 (Grund: eine Anpassung des Stops an einem bereits laufenden Kanal-Trade ist keine Schliess-Anweisung und kein neues Einstiegssignal - wird ignoriert, der Bot verwaltet seinen eigenen Stop unabhaengig vom Kanal.)
+
+Nachricht: "+100"
+Antwort: {"is_signal": false, "action": null, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+(Grund: eine blosse (positive oder negative) Zahl ohne weiteren Kontext ist ein Ergebnis-/PnL-Update zu einem bereits geschlossenen Kanal-Trade, kein neues Einstiegssignal - vgl. das "-8,3"-Beispiel unten.)
 
 Nachricht: "no open orders, no open positions"
 Antwort: {"is_signal": false, "action": null, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}

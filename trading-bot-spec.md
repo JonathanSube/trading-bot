@@ -946,3 +946,32 @@ gewesen wäre, welche zuvor eröffnete Position gemeint ist.
   Nachrichtenaufbau des Kanals kennen (Nutzerwunsch: "die anderen
   Nachrichten sind dafür da, damit er weiß, wie andere Nachrichten
   aufgebaut sind").
+
+**Nachtrag 28.08.2026, direkt danach: echter Screenshot bestätigt den
+gemeldeten Bug und liefert neue Beispielnachrichten.** Der Nutzer schickte
+einen Screenshot des Kanals mit exakt dem gemeldeten Vorfall: zwei
+DOW-JONES-Long-Einstiege kurz hintereinander (16:40 und 16:50 Uhr,
+verschiedene Entry-/Stop-Level), zwei Stop-Anpassungs-Nachrichten ("move
+sl in dow to 53551", "both stopps to 53572.9"), dann "CLOSE TRADE
+ALERT / CLOSING DOW INDEX trade now" (16:54) - exakt dasselbe Muster wie
+das bisher einzige (angenommene) DAX-Beispiel, hier aber live für DOW
+bestätigt. Der Bot hatte diese Schließ-Nachricht zuvor ignoriert (siehe
+oben, "Bot reagierte auf 1 von über 5 Signalen nicht") - mit dem bereits
+umgesetzten `action: "close"`-Fix greift das jetzt korrekt.
+
+Vier neue echte Beispiele in `signalbot/parser.py::SYSTEM_PROMPT`
+aufgenommen: das DOW-Pendant zur Close-Alert-Nachricht (verstärkt das
+Muster über mehrere Instrumente hinweg statt nur einem angenommenen
+DAX-Fall), die beiden Stop-Anpassungs-Nachrichten im tatsächlichen
+Kanal-Wortlaut (ersetzt die zuvor erfundene "MOVING STOP TO
+BREAKEVEN"-Formulierung testweise nicht, ergänzt sie aber um die echten
+Varianten - wichtig, weil "sl"/"stop" im Text sonst leicht mit einer
+Schließ-Anweisung verwechselt werden könnte), und "+100" als echtes
+Beispiel für ein PnL-Update ohne Kontext.
+
+Noch nicht durch ein echtes Beispiel abgedeckt: eine Schließ-Anweisung
+OHNE erneut genanntes Instrument (z. B. "closing both trades now") - in
+diesem Screenshot nennt die Close-Nachricht weiterhin explizit "DOW
+INDEX". Der Kontextauflösungs-Mechanismus aus dem letzten Nachtrag bleibt
+als Absicherung für einen künftigen solchen Fall bestehen, ist aber noch
+nicht an einem echten Beispiel verifiziert.
