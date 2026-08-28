@@ -50,7 +50,7 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
-from signalbot.channel_log import append_channel_message
+from signalbot.channel_log import append_channel_message, recent_message_texts
 from signalbot.mapping import INDEX_TO_SYMBOL, build_signal_from_parsed, symbol_for_index
 from signalbot.parser import GeminiError, parse_signal_message
 from signalbot.state import OpenSignalTrade, SignalBotState, load_state, save_state
@@ -343,7 +343,8 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         # (der Bot hatte zuvor nur 1 von ueber 5 gesendeten Signalen
         # beachtet, ohne dass der Grund dafuer sichtbar war).
         try:
-            parsed = parse_signal_message(text)
+            history = recent_message_texts(CHANNEL_LOG_PATH, before=msg_date)
+            parsed = parse_signal_message(text, history=history)
         except GeminiError as e:
             state.consecutive_api_errors += 1
             print(f"Nachricht {message_id} uebersprungen (Gemini-Fehler): {e}")

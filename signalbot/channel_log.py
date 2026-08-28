@@ -43,6 +43,34 @@ def append_channel_message(path: Path, msg_date: datetime, message_id: int, text
         writer.writerows(rows)
 
 
+def recent_message_texts(path: Path, before: datetime, limit: int = 15) -> list[str]:
+    """Die letzten `limit` Nachrichtentexte VOR `before` (chronologisch,
+    aelteste zuerst) - Kontext fuer signalbot.parser.parse_signal_message,
+    damit Gemini z. B. eine Schliess-Anweisung ohne genanntes Instrument
+    ("closing both trades now") gegen die zuletzt eroeffneten Trades
+    aufloesen kann (Nutzerwunsch 28.08.2026), statt nur die isolierte
+    Einzelnachricht zu sehen. Enthaelt ALLE protokollierten Nachrichten
+    (nicht nur Signale), damit Gemini auch den allgemeinen
+    Nachrichtenaufbau des Kanals lernt."""
+    if not path.exists():
+        return []
+    rows = []
+    with open(path, "r", newline="", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        next(reader, None)  # Header ueberspringen
+        for row in reader:
+            if not row:
+                continue
+            try:
+                ts = datetime.fromisoformat(row[0])
+            except (ValueError, IndexError):
+                continue
+            if ts < before:
+                rows.append((ts, row[2]))
+    rows.sort(key=lambda item: item[0])
+    return [text for _ts, text in rows[-limit:]]
+
+
 def _load_recent_rows(path: Path, now: datetime) -> list[list[str]]:
     if not path.exists():
         return []

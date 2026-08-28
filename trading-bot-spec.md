@@ -915,3 +915,34 @@ liefert außerdem die Rohdaten für echte Beispielnachrichten (z. B. die
 noch ausstehende "closing both trades"-Formulierung), sobald sie im Kanal
 auftauchen. Die Datei wird wie `signal_state.json`/`signal_trades.csv` vom
 Workflow zurückcommittet.
+
+**Nachtrag 28.08.2026, direkt danach: Gemini bekommt jetzt Gesprächsverlauf
+als Kontext mit.** Nutzer-Feedback: `parse_signal_message()` wertete bisher
+jede Nachricht komplett isoliert aus - eine Schließ-Anweisung ohne erneut
+genanntes Instrument (z. B. "closing the trade now"/"closing both trades
+now", genauer Wortlaut vom Nutzer noch ausstehend) konnte deshalb nicht
+aufgelöst werden, selbst wenn aus dem Gesprächsverlauf offensichtlich
+gewesen wäre, welche zuvor eröffnete Position gemeint ist.
+
+- **`signalbot/channel_log.py::recent_message_texts()`** (neu): liefert die
+  letzten `limit` (Standard 15) protokollierten Nachrichtentexte vor einem
+  Zeitpunkt, chronologisch - nutzt die ohnehin durch `signal_channel_log.csv`
+  gespeicherte Sieben-Tage-Historie (siehe oben), kein zusätzlicher
+  Telegram-Abruf nötig.
+- **`signalbot/parser.py::parse_signal_message()`** akzeptiert jetzt einen
+  optionalen `history`-Parameter - wird der Gemini-Anfrage als klar
+  abgegrenzter Kontextblock vorangestellt ("BISHERIGE NACHRICHTEN... ===
+  NEUE NACHRICHT ==="), mit der expliziten Anweisung, NUR die neue
+  Nachricht zu klassifizieren, den Kontext aber zur Auflösung von
+  Schließ-Anweisungen ohne erneut genanntes Instrument zu nutzen (das
+  jüngste noch offene "BOUGHT LONG"/"SOLD SHORT" je Instrument in der
+  Historie identifizieren). Bleibt die Zuordnung nach Kontext uneindeutig,
+  bleibt die bisherige Regel bestehen: kein Raten, `is_signal: false`.
+- `scripts/run_signal_bot.py` holt vor jedem `parse_signal_message()`-Aufruf
+  die Historie über `recent_message_texts()` (Zeitpunkt der jeweiligen
+  Nachricht als Grenze, keine zukünftigen Nachrichten als Kontext).
+- Nebeneffekt: da `signal_channel_log.csv` ALLE ausgewerteten Nachrichten
+  enthält (nicht nur Signale), lernt Gemini nebenbei auch den allgemeinen
+  Nachrichtenaufbau des Kanals kennen (Nutzerwunsch: "die anderen
+  Nachrichten sind dafür da, damit er weiß, wie andere Nachrichten
+  aufgebaut sind").

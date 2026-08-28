@@ -26,14 +26,20 @@ Live-Day-Trading-Signale aus. Der Kanal handelt NASDAQ INDEX, DOW JONES INDEX, \
 GERMAN DAX INDEX und FTSE 100 INDEX (jeweils mit einem Flaggen-Emoji vor dem \
 Namen, das ignoriert werden kann).
 
-Aufgabe: Erkenne, ob die Nachricht eine Aktion fuer eines dieser vier \
+Du bekommst in der Nutzernachricht zwei Teile: zuerst BISHERIGE NACHRICHTEN \
+(reiner Kontext, chronologisch, aelteste zuerst - NICHT selbst klassifizieren, \
+nur zum Verstehen des Gespraechsverlaufs und des ueblichen Nachrichtenaufbaus \
+in diesem Kanal), danach durch eine Trennzeile abgesetzt die NEUE NACHRICHT \
+(die einzige, die du klassifizierst).
+
+Aufgabe: Erkenne, ob die NEUE NACHRICHT eine Aktion fuer eines dieser vier \
 Instrumente erfordert - entweder ein NEUES, eindeutiges Einstiegssignal \
 ("open", long oder short) ODER eine eindeutige Anweisung, eine laufende \
-Position in einem bestimmten Instrument JETZT zu schliessen ("close", z. B. \
-"CLOSE TRADE ALERT... CLOSING <INSTRUMENT> trade now"). Kommentare, \
-Stop-Anpassungen an bereits laufenden Trades (z. B. "MOVING STOP TO \
-BREAKEVEN"), Fragen, Werbung oder Signale zu anderen Instrumenten zaehlen \
-NICHT als Aktion.
+Position JETZT zu schliessen ("close", z. B. "CLOSE TRADE ALERT... CLOSING \
+<INSTRUMENT> trade now" oder auch "closing the trade now"/"closing both \
+trades now" OHNE erneut genanntes Instrument). Kommentare, Stop-Anpassungen \
+an bereits laufenden Trades (z. B. "MOVING STOP TO BREAKEVEN"), Fragen, \
+Werbung oder Signale zu anderen Instrumenten zaehlen NICHT als Aktion.
 
 Antworte ausschliesslich als JSON nach folgendem Schema:
 {
@@ -49,22 +55,30 @@ Antworte ausschliesslich als JSON nach folgendem Schema:
 Bei "action": "close" bleiben direction/entry_level/stop_level/target_level \
 null (nicht relevant fuer eine Schliess-Anweisung).
 
-Nenne Zahlen NUR, wenn sie woertlich oder eindeutig ableitbar in der Nachricht \
-stehen. Erfinde NIEMALS Kurswerte oder Punktestaende - steht keine konkrete Zahl \
-in der Nachricht (auch wenn ENTRY/STOP als leeres Feld auftauchen, z. B. "ENTRY = \
-\n\nSTOP ="), setze entry_level, stop_level und target_level auf null (nicht raten \
-oder einen plausibel klingenden Marktwert einsetzen) - is_signal bleibt in diesem \
-Fall trotzdem true, wenn Instrument und Richtung eindeutig genannt sind. Bei \
-Unsicherheit ueber is_signal lieber false setzen, statt zu raten - ein \
-ausgelassenes Signal ist weniger schlimm als ein falsch interpretiertes.
+Nenne Zahlen NUR, wenn sie woertlich oder eindeutig ableitbar in der \
+NEUEN NACHRICHT stehen. Erfinde NIEMALS Kurswerte oder Punktestaende - steht \
+keine konkrete Zahl in der Nachricht (auch wenn ENTRY/STOP als leeres Feld \
+auftauchen, z. B. "ENTRY = \n\nSTOP ="), setze entry_level, stop_level und \
+target_level auf null (nicht raten oder einen plausibel klingenden Marktwert \
+einsetzen) - is_signal bleibt in diesem Fall trotzdem true, wenn Instrument \
+und Richtung eindeutig genannt sind. Bei Unsicherheit ueber is_signal lieber \
+false setzen, statt zu raten - ein ausgelassenes Signal ist weniger schlimm \
+als ein falsch interpretiertes.
 
-Nennt die Nachricht KEIN konkretes Instrument bei einer Schliess-Anweisung \
-(z. B. "closing both trades now" ohne Instrumentname), setze is_signal auf \
-false und index auf null - das Instrument darf nicht geraten werden (siehe \
-Regel oben). Ein solcher Fall ist noch nicht abschliessend im Prompt \
-abgedeckt (fehlende reale Beispielnachricht), wird aber protokolliert \
-(signalbot/channel_log.py) und spaeter nachgezogen, sobald ein echtes \
-Beispiel vorliegt.
+WICHTIG bei Schliess-Anweisungen ohne erneut genanntes Instrument (z. B. \
+"closing the trade now" oder "closing both trades now"): nutze die \
+BISHERIGEN NACHRICHTEN, um das/die zuletzt eroeffneten Instrument(e) zu \
+identifizieren (das juengste "BOUGHT LONG"/"SOLD SHORT" je Instrument, dem \
+noch keine passende Schliess-Nachricht folgte), und setze "index" darauf - \
+das ist Kontextaufloesung, kein Raten von Kurswerten (jene Regel betrifft nur \
+Zahlen, nicht Instrumentnamen). Ist aus den bisherigen Nachrichten NICHT \
+eindeutig erkennbar, welches Instrument gemeint ist (z. B. keine passende \
+offene Position in der Historie, oder mehrdeutig), setze is_signal auf false \
+und index auf null, statt zu raten. Bezieht sich "closing both trades now" \
+auf zwei verschiedene Instrumente, antworte trotzdem nur mit EINEM JSON-Objekt \
+fuer das zuerst genannte/naheliegendste Instrument - die Nachricht wird bei \
+Bedarf erneut ausgewertet (bereits geschlossene Positionen fuehren beim \
+naechsten Mal ohnehin zu keiner weiteren Aktion mehr).
 
 Beispiele aus genau diesem Kanal (echte Nachrichten, 24.-27.08.2026 abgerufen):
 
@@ -113,7 +127,7 @@ class GeminiError(RuntimeError):
     oder an verschluckten API-Fehlern lag."""
 
 
-def parse_signal_message(text: str) -> dict | None:
+def parse_signal_message(text: str, history: list[str] | None = None) -> dict | None:
     """Nutzt bewusst KEIN responseSchema: im Test (26.08.2026) liess das
     Modell dabei wiederholt Felder wie "direction" komplett weg, obwohl
     die Nachricht sie eindeutig enthielt (z. B. "NASDAQ INDEX long" ->
@@ -121,6 +135,15 @@ def parse_signal_message(text: str) -> dict | None:
     responseMimeType=application/json und dem Format in SYSTEM_PROMPT,
     lieferte dasselbe Modell in denselben Faellen vollstaendige und
     korrekte JSON-Antworten.
+
+    history: die letzten Kanal-Nachrichten VOR `text` (chronologisch,
+    aelteste zuerst), typischerweise ueber
+    signalbot.channel_log.recent_message_texts() geholt - Nutzerwunsch
+    (28.08.2026): Gemini soll den Gespraechsverlauf kennen, damit z. B.
+    eine Schliess-Anweisung ohne erneut genanntes Instrument ("closing the
+    trade now") gegen die zuletzt eroeffnete Position aufgeloest werden
+    kann, statt ignoriert zu werden (siehe SYSTEM_PROMPT). Nur `text`
+    selbst wird klassifiziert, `history` ist reiner Kontext.
 
     Liefert None nur fuer "kein API-Key konfiguriert"/"leerer Text" (kein
     Fehler, einfach nichts zu tun) - ein tatsaechlicher Gemini-Fehler
@@ -132,9 +155,18 @@ def parse_signal_message(text: str) -> dict | None:
     if not api_key or not text.strip():
         return None
 
+    if history:
+        history_block = "\n---\n".join(history)
+        user_content = (
+            f"BISHERIGE NACHRICHTEN (nur Kontext, nicht klassifizieren):\n{history_block}\n"
+            f"=== NEUE NACHRICHT (diese klassifizieren) ===\n{text}"
+        )
+    else:
+        user_content = text
+
     payload = {
         "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
-        "contents": [{"role": "user", "parts": [{"text": text}]}],
+        "contents": [{"role": "user", "parts": [{"text": user_content}]}],
         "generationConfig": {"responseMimeType": "application/json"},
     }
 

@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from signalbot.channel_log import append_channel_message
+from signalbot.channel_log import append_channel_message, recent_message_texts
 
 UTC = timezone.utc
 
@@ -67,6 +67,31 @@ class AppendChannelMessageTests(unittest.TestCase):
         append_channel_message(self.path, now, 2, "aktuell", None, "kein_signal")
         rows = _read_rows(self.path)
         self.assertEqual(len(rows), 2)
+
+
+class RecentMessageTextsTests(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = Path(self._tmp.name) / "signal_channel_log.csv"
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_no_file_returns_empty_list(self):
+        self.assertEqual(recent_message_texts(self.path, before=utc(2026, 8, 26)), [])
+
+    def test_returns_texts_chronologically_before_cutoff(self):
+        append_channel_message(self.path, utc(2026, 8, 26, 8), 1, "erste", None, "kein_signal")
+        append_channel_message(self.path, utc(2026, 8, 26, 9), 2, "zweite", None, "trade_eroeffnet")
+        append_channel_message(self.path, utc(2026, 8, 26, 10), 3, "dritte", None, "kein_signal")
+        result = recent_message_texts(self.path, before=utc(2026, 8, 26, 10))
+        self.assertEqual(result, ["erste", "zweite"])
+
+    def test_respects_limit_keeping_most_recent(self):
+        for i in range(5):
+            append_channel_message(self.path, utc(2026, 8, 26, i), i, f"nachricht{i}", None, "kein_signal")
+        result = recent_message_texts(self.path, before=utc(2026, 8, 26, 5), limit=2)
+        self.assertEqual(result, ["nachricht3", "nachricht4"])
 
 
 if __name__ == "__main__":
