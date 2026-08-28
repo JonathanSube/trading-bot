@@ -22,9 +22,12 @@ verbindet (unterschiedliche Broker benennen z. B. den DAX-Index-CFD als
 "DE40", "GER40" oder "DAX40"). Vor dem ersten Live-Lauf mit
 scripts/find_metaapi_symbols.py gegen den echten Account pruefen.
 
-Die MetaApi-Region (Teil der Basis-URL, z. B. "new-york", "london") steht
-im MetaApi-Dashboard beim jeweiligen Account - ueber METAAPI_REGION
-konfigurierbar, Standard "new-york".
+Die MetaApi-Region (Teil der Basis-URL, z. B. "new-york", "london") ist im
+Dashboard nicht immer auffindbar (Nutzer-Feedback 28.08.2026) - deshalb
+per METAAPI_REGION ueberschreibbar, aber im Normalfall nicht noetig: ohne
+gesetzte Umgebungsvariable wird sie einmal pro Lauf automatisch ueber
+MetaApis Provisioning-API anhand der Account-ID ermittelt
+(_resolve_region()) und fuer den Rest des Laufs zwischengespeichert.
 """
 
 import math
@@ -35,10 +38,33 @@ import requests
 from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
+PROVISIONING_BASE_URL = "https://mt-provisioning-api-v1.agiliumtrade.ai"
+
+_cached_region: str | None = None
+
+
+def _resolve_region() -> str:
+    """Ermittelt die MetaApi-Region der Account-ID automatisch ueber die
+    Provisioning-API, falls METAAPI_REGION nicht gesetzt ist - im
+    MetaApi-Dashboard war das Region-Feld fuer den Nutzer nicht auffindbar
+    (28.08.2026), die Provisioning-API kennt sie aber zuverlaessig."""
+    global _cached_region
+    region = os.environ.get("METAAPI_REGION")
+    if region:
+        return region
+    if _cached_region is not None:
+        return _cached_region
+    resp = requests.get(
+        f"{PROVISIONING_BASE_URL}/users/current/accounts/{_account_id()}",
+        headers=_headers(), timeout=10,
+    )
+    resp.raise_for_status()
+    _cached_region = resp.json()["region"]
+    return _cached_region
+
 
 def _client_base_url() -> str:
-    region = os.environ.get("METAAPI_REGION", "new-york")
-    return f"https://mt-client-api-v1.{region}.agiliumtrade.ai"
+    return f"https://mt-client-api-v1.{_resolve_region()}.agiliumtrade.ai"
 
 
 def _account_id() -> str:

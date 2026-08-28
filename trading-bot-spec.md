@@ -916,9 +916,19 @@ die MetaApi-Anbindung ersetzt und ist unbenutzter, aber getesteter Code.
   Volumen (`OpenSignalTrade.qty` entsprechend von `int` auf `float`
   umgestellt, siehe `signalbot/state.py`).
 - Secrets: `METAAPI_TOKEN`/`METAAPI_ACCOUNT_ID`/`METAAPI_REGION` (Region
-  optional, Standard "new-york") neu in
-  `.github/workflows/signal-bot.yml`, ersetzen die dort nie genutzten
-  `IG_API_KEY`/`IG_USERNAME`/`IG_PASSWORD`/`IG_ACCOUNT_ID`. Wie bei jedem
-  vorigen Broker-Wechsel gilt die Regel: **kein Merge nach `master`,
-  solange diese Secrets nicht vom Nutzer hinterlegt sind** - sonst laeuft
-  der Workflow automatisiert und dauerhaft fehlschlagend.
+  optional) neu in `.github/workflows/signal-bot.yml`, ersetzen die dort
+  nie genutzten `IG_API_KEY`/`IG_USERNAME`/`IG_PASSWORD`/`IG_ACCOUNT_ID`.
+  Wie bei jedem vorigen Broker-Wechsel gilt die Regel: **kein Merge nach
+  `master`, solange diese Secrets nicht vom Nutzer hinterlegt sind** -
+  sonst laeuft der Workflow automatisiert und dauerhaft fehlschlagend.
+
+**Nachtrag 28.08.2026, direkt danach: Region automatisch ermittelt statt
+manuell gesucht.** Der Nutzer fand das Region-Feld ("new-york", "london"
+etc.) im MetaApi-Dashboard nicht. `tradingbot/metaapi.py::_resolve_region()`
+fragt sie jetzt bei Bedarf einmal pro Lauf selbst ueber MetaApis
+Provisioning-API (`GET
+mt-provisioning-api-v1.agiliumtrade.ai/users/current/accounts/{accountId}`)
+anhand der ohnehin vorhandenen Account-ID ab und cacht das Ergebnis fuer
+den Rest des Laufs - `METAAPI_REGION` bleibt als manueller Override
+moeglich, ist aber nicht mehr erforderlich. Damit reicht dem Nutzer fuer
+die Secrets faktisch `METAAPI_TOKEN` und `METAAPI_ACCOUNT_ID`.

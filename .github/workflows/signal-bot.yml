@@ -44,9 +44,11 @@ jobs:
           # Aenderungsprotokoll) - urspruenglich war OANDA geplant (API-
           # Selbstbedienung fuer EU-Kunden nicht auffindbar), dann IG
           # (verlangt ein KYC-verifiziertes Live-Konto nur um die API
-          # freizuschalten). METAAPI_REGION optional, Standard
-          # "new-york" (siehe tradingbot/metaapi.py). Der
-          # ORB-Bot-Workflow (trading-bot.yml, separat) braucht weiterhin
+          # freizuschalten). METAAPI_REGION optional - ohne gesetztes
+          # Secret ermittelt tradingbot/metaapi.py sie automatisch ueber
+          # MetaApis Provisioning-API (im Dashboard war das Region-Feld
+          # fuer den Nutzer nicht auffindbar). Der ORB-Bot-Workflow
+          # (trading-bot.yml, separat) braucht weiterhin
           # ALPACA_API_KEY/ALPACA_SECRET_KEY, hier nicht mehr.
           METAAPI_TOKEN: ${{ secrets.METAAPI_TOKEN }}
           METAAPI_ACCOUNT_ID: ${{ secrets.METAAPI_ACCOUNT_ID }}
