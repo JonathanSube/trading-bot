@@ -38,7 +38,14 @@ import requests
 from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
-PROVISIONING_BASE_URL = "https://mt-provisioning-api-v1.agiliumtrade.ai"
+# Anders als mt-client-api-v1 (regionsspezifisch) ist die Provisioning-API
+# nicht regionsgebunden - naheliegend, da sie u. a. dazu dient, die Region
+# eines Accounts erst herauszufinden (_resolve_region()). Domain live
+# gegen den echten Account verifiziert (28.08.2026): ein erster Versuch mit
+# "mt-provisioning-api-v1.agiliumtrade.ai" schlug mit DNS-Fehler fehl
+# (Domain existiert nicht) - die tatsaechliche Domain doppelt
+# "agiliumtrade".
+PROVISIONING_BASE_URL = "https://mt-provisioning-api-v1.agiliumtrade.agiliumtrade.ai"
 
 _cached_region: str | None = None
 
