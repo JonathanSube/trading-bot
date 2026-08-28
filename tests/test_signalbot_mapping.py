@@ -1,5 +1,5 @@
 """Tests fuer signalbot/mapping.py: Uebersetzung von Index-Signalen auf
-IG-CFD-Instrumente (Epics) und Stop/Ziel-Berechnung."""
+MetaTrader-Symbole (ueber MetaApi.cloud) und Stop/Ziel-Berechnung."""
 
 import sys
 import unittest
@@ -15,17 +15,17 @@ NOW = datetime(2026, 1, 2, 10, 0)
 
 
 class SymbolForIndexTests(unittest.TestCase):
-    def test_nasdaq_maps_to_an_epic(self):
-        self.assertEqual(symbol_for_index("NASDAQ"), "IX.D.NASDAQ.IFD.IP")
+    def test_nasdaq_maps_to_a_symbol(self):
+        self.assertEqual(symbol_for_index("NASDAQ"), "NAS100")
 
-    def test_dow_maps_to_an_epic(self):
-        self.assertEqual(symbol_for_index("DOW"), "IX.D.DOW.IFD.IP")
+    def test_dow_maps_to_a_symbol(self):
+        self.assertEqual(symbol_for_index("DOW"), "US30")
 
-    def test_ftse_maps_to_an_epic(self):
-        self.assertEqual(symbol_for_index("FTSE"), "IX.D.FTSE.IFD.IP")
+    def test_ftse_maps_to_a_symbol(self):
+        self.assertEqual(symbol_for_index("FTSE"), "UK100")
 
-    def test_dax_maps_to_an_epic(self):
-        self.assertEqual(symbol_for_index("DAX"), "IX.D.DAX.IFD.IP")
+    def test_dax_maps_to_a_symbol(self):
+        self.assertEqual(symbol_for_index("DAX"), "DAX40")
 
     def test_unknown_index_returns_none(self):
         self.assertIsNone(symbol_for_index("SP500"))
@@ -60,7 +60,7 @@ class BuildSignalFromParsedTests(unittest.TestCase):
 
     def test_short_with_explicit_levels_translates_percentage(self):
         # Index-Stop 150 Punkte (=1%) oberhalb des Index-Entrys -> gleicher
-        # Prozentsatz auf den tatsaechlichen IG-Kurs angewendet.
+        # Prozentsatz auf den tatsaechlichen Broker-Kurs angewendet.
         parsed = {"is_signal": True, "index": "DOW", "direction": "short",
                    "entry_level": 15000.0, "stop_level": 15150.0, "target_level": None}
         signal = build_signal_from_parsed(parsed, 100.0, NOW)

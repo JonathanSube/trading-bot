@@ -1,20 +1,21 @@
 """Uebersetzung von Index-Signalen (NASDAQ INDEX, DOW JONES INDEX, GERMAN
-DAX INDEX, FTSE 100 INDEX) auf handelbare IG-CFD-Instrumente (Epics).
-Siehe trading-bot-spec.md, Aenderungsprotokoll: Umstieg von Alpaca/QQQ-DIA-
-ETF-Proxys auf echte Index-CFDs, zunaechst ueber OANDA geplant, dann auf
-IG gewechselt, weil OANDAs API-Selbstbedienung ueber den fuer EU-Kunden
-erreichten Rechtstraeger nicht auffindbar war.
+DAX INDEX, FTSE 100 INDEX) auf handelbare MetaTrader-Symbole (ueber
+MetaApi.cloud). Siehe trading-bot-spec.md, Aenderungsprotokoll: Umstieg
+von Alpaca/QQQ-DIA-ETF-Proxys auf echte Index-CFDs, zunaechst ueber OANDA
+geplant (API-Selbstbedienung fuer EU-Kunden nicht auffindbar), dann auf IG
+gewechselt (verlangt aber ein KYC-verifiziertes Live-Konto nur um die
+API freizuschalten), zuletzt auf MetaApi.cloud/MetaTrader umgestiegen.
 
 Levels aus dem Signal (falls genannt) stehen in den Index-Punkten des
-Kanals, nicht zwingend identisch mit IGs eigener Quotierung desselben
-Index (unterschiedliche CFD-Anbieter berechnen ihre Indexstaende leicht
-abweichend) - eine direkte Uebernahme der Zahlen waere deshalb falsch.
-Stattdessen wird der prozentuale Abstand zwischen Entry- und Stop-Level im
-Kanal-Index berechnet und auf den tatsaechlichen IG-Kurs beim Einstieg
-angewendet. Fehlt ein Stop-Level in der Nachricht, greift
-DEFAULT_STOP_PCT. Das Ziel folgt, wie beim ORB-Bot (Abschnitt 1), der
-festen 2:1-CRV-Konvention, sofern die Nachricht kein eigenes Ziel-Level
-nennt.
+Kanals, nicht zwingend identisch mit der Quotierung des verbundenen
+MT4/5-Brokers fuer denselben Index (unterschiedliche CFD-Anbieter
+berechnen ihre Indexstaende leicht abweichend) - eine direkte Uebernahme
+der Zahlen waere deshalb falsch. Stattdessen wird der prozentuale Abstand
+zwischen Entry- und Stop-Level im Kanal-Index berechnet und auf den
+tatsaechlichen Broker-Kurs beim Einstieg angewendet. Fehlt ein Stop-Level
+in der Nachricht, greift DEFAULT_STOP_PCT. Das Ziel folgt, wie beim
+ORB-Bot (Abschnitt 1), der festen 2:1-CRV-Konvention, sofern die Nachricht
+kein eigenes Ziel-Level nennt.
 """
 
 from datetime import datetime
@@ -22,19 +23,22 @@ from datetime import datetime
 from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
-# UNVERIFIZIERT - IGs REST-API-Doku war in dieser Umgebung nicht abrufbar
-# (Netzwerk-Policy blockierte labs.ig.com/www.ig.com). Diese Epics sind
-# plausible Platzhalter nach allgemein bekanntem IG-Namensschema, aber
-# NICHT live gegen die API geprueft. VOR GO-LIVE zwingend mit
-# scripts/find_ig_epics.py gegen den echten Demo-Account verifizieren und
-# hier durch die tatsaechlichen Epics ersetzen - ein falscher Epic fuehrt
-# nur zu einer von IG abgelehnten Order (sicher, aber kein Trade), kein
+# UNVERIFIZIERT - MetaApi.cloud/mt-provisioning-Doku war in dieser Umgebung
+# nicht abrufbar (Netzwerk-Policy blockierte metaapi.cloud). Diese Symbole
+# sind plausible Platzhalter nach allgemein ueblicher MT4/5-Broker-
+# Namenskonvention, aber NICHT live gegen einen echten Account geprueft -
+# und haengen zusaetzlich vom konkreten Broker-Server ab (z. B. "DE40"
+# statt "DAX40" bei manchen Brokern seit dem DAX-40-Rebrand). VOR GO-LIVE
+# zwingend mit scripts/find_metaapi_symbols.py gegen den echten
+# MetaApi-Account verifizieren und hier durch die tatsaechlichen
+# Symbolnamen ersetzen - ein falsches Symbol fuehrt nur zu einer von
+# MetaApi/dem Broker abgelehnten Order (sicher, aber kein Trade), kein
 # stiller Fehlhandel.
 INDEX_TO_SYMBOL = {
-    "NASDAQ": "IX.D.NASDAQ.IFD.IP",
-    "DOW": "IX.D.DOW.IFD.IP",
-    "FTSE": "IX.D.FTSE.IFD.IP",
-    "DAX": "IX.D.DAX.IFD.IP",
+    "NASDAQ": "NAS100",
+    "DOW": "US30",
+    "FTSE": "UK100",
+    "DAX": "DAX40",
 }
 
 DEFAULT_STOP_PCT = 0.005  # 0,5 %, falls die Nachricht kein Stop-Level nennt

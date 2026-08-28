@@ -580,9 +580,10 @@ einem öffentlichen Telegram-Kanal ("KaraokeAndi", Live-Day-Trading, Signale
 für NASDAQ INDEX, DOW JONES INDEX, GERMAN DAX INDEX und FTSE 100 INDEX),
 lässt sie per LLM auswerten und führt sie automatisch aus - ursprünglich auf
 demselben Alpaca-Paper-Konto wie der ORB-Bot (QQQ/DIA-ETF-Proxys), seit
-27.08.2026 auf einem eigenen IG-Demo-Konto mit echten Index-CFDs (ein
-Zwischenstopp bei OANDA scheiterte an fehlendem API-Zugang für den
-EU-Rechtsträger - siehe Nachträge unten, "Broker-Umstieg").
+28.08.2026 auf einem eigenen MT4/5-Demokonto über MetaApi.cloud mit echten
+Index-CFDs (zwei Zwischenstopps scheiterten: OANDA an fehlendem API-Zugang
+für den EU-Rechtsträger, IG an der KYC-Pflicht für den Live-Konto-Verbund -
+siehe Nachträge unten, "Broker-Umstieg").
 
 **Warum getrennt vom ORB-Bot:** eigener Zustand
 ([signal_state.json](signal_state.json)), eigenes Protokoll
@@ -866,3 +867,58 @@ Aufwand zurueckwechseln.
 - Secrets: `IG_API_KEY`/`IG_USERNAME`/`IG_PASSWORD`/`IG_ACCOUNT_ID` neu in
   `.github/workflows/signal-bot.yml`, ersetzen die dort nie genutzten
   `OANDA_API_TOKEN`/`OANDA_ACCOUNT_ID`.
+
+**Nachtrag 28.08.2026: IG durch MetaApi.cloud/MetaTrader ersetzt (Broker
+wieder nie live gegangen).** Beim Versuch, den IG-API-Key zu erzeugen,
+zeigte sich: IG schaltet die API erst frei, nachdem das verknuepfte
+Live-Konto KYC-verifiziert wurde - auch wenn ausschliesslich das
+Demo-Konto gehandelt werden soll. Diesen Verifizierungsprozess wollte der
+Nutzer nicht durchlaufen. Drei Optionen besprochen (KYC doch durchlaufen /
+bei Alpaca-ETF-Proxys bleiben / auf MetaTrader mit einem beliebigen
+Broker plus MetaApi.cloud als Bridge-Dienst wechseln) - Nutzer waehlte
+MetaTrader. Der IG-Code (`tradingbot/ig.py`, `tests/test_ig.py`) wurde wie
+schon der OANDA-Code beim vorigen Wechsel **nicht geloescht**, aber durch
+die MetaApi-Anbindung ersetzt und ist unbenutzter, aber getesteter Code.
+
+- **Neues Modul `tradingbot/metaapi.py`:** Ersatz fuer `tradingbot/ig.py`.
+  MetaApi.cloud ist ein Bridge-Dienst: das eigene MetaApi-Konto (Token
+  ueber `app.metaapi.cloud/token`, kein Broker-KYC noetig) verbindet sich
+  im Hintergrund mit einem beliebigen MT4/5-Broker-Demokonto. Die
+  REST-API ist wie bei OANDA zustandslos (ein `auth-token`-Header pro
+  Anfrage) - kein Login-Schritt pro Lauf wie bei IG, `scripts/run_signal_bot.py`
+  reicht deshalb wieder keine Session mehr durch. MetaApi bietet fuer
+  produktiven Handel offiziell ein WebSocket-SDK an; die REST-API deckt
+  synchrone Order-Platzierung/-Abfrage aber ebenfalls ab und passt zum
+  bestehenden No-SDK-Stil dieses Projekts.
+- **Symbolnamen UNVERIFIZIERT:** `metaapi.cloud`s eigene Doku war in
+  dieser Umgebung durchgaengig per Netzwerk-Policy blockiert
+  (`EGRESS_BLOCKED`) - die in `signalbot/mapping.py::INDEX_TO_SYMBOL`
+  hinterlegten Symbole (`NAS100`, `US30`, `UK100`, `DAX40`) sind
+  plausible Platzhalter nach allgemein ueblicher MT4/5-Broker-
+  Namenskonvention, **nicht live geprueft** - und haengen zusaetzlich vom
+  konkreten Broker-Server ab (z. B. "DE40" statt "DAX40" bei manchen
+  Brokern). Neues Diagnose-Skript `scripts/find_metaapi_symbols.py`
+  listet die beim verbundenen Account tatsaechlich verfuegbaren Symbole
+  und filtert nach Stichwoerter - zwingend vor dem ersten Live-Lauf
+  auszufuehren, die gefundenen Symbole dann manuell in
+  `signalbot/mapping.py` uebertragen. Ein falsches Symbol fuehrt nur zu
+  einer von MetaApi/dem Broker abgelehnten Order (sicher), kein stiller
+  Fehlhandel.
+- **Geschlossene Positionen erkennen:** anders als bei IG (Best-effort-
+  Suche in der Transaktionshistorie nach Instrumentname) kennt MetaApi
+  einen direkten "Deals je Position"-Endpunkt
+  (`GET .../history-deals/position/{positionId}`) - `find_closed_position_exit_price()`
+  sucht darin gezielt den schliessenden Deal (`entryType ==
+  "DEAL_ENTRY_OUT"`), kein Raten anhand von Namens-/Referenz-Matching
+  noetig.
+- **Positionsgroesse jetzt in Lot statt Stueckzahl:** MT-Konvention -
+  `position_size()` liefert ein auf 0,01-Lot-Schritte abgerundetes
+  Volumen (`OpenSignalTrade.qty` entsprechend von `int` auf `float`
+  umgestellt, siehe `signalbot/state.py`).
+- Secrets: `METAAPI_TOKEN`/`METAAPI_ACCOUNT_ID`/`METAAPI_REGION` (Region
+  optional, Standard "new-york") neu in
+  `.github/workflows/signal-bot.yml`, ersetzen die dort nie genutzten
+  `IG_API_KEY`/`IG_USERNAME`/`IG_PASSWORD`/`IG_ACCOUNT_ID`. Wie bei jedem
+  vorigen Broker-Wechsel gilt die Regel: **kein Merge nach `master`,
+  solange diese Secrets nicht vom Nutzer hinterlegt sind** - sonst laeuft
+  der Workflow automatisiert und dauerhaft fehlschlagend.
