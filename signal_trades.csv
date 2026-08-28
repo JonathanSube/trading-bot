@@ -1,0 +1,2 @@
+zeitstempel,symbol,richtung,quelle_nachricht_id,entry_geplant,entry_tatsaechlich,slippage,stop,ziel,stueckzahl,risiko,exit_grund,exit_preis,pnl,pnl_in_r,dauer_minuten
+2026-08-28T10:50:58.617661-04:00,DIA,long,71491,536.62,536.6,-0.01999999999998181,535.6291846400358,538.6016307199285,732,0.9908153599642446,stop,535.62,-717.3600000000133,-0.9890843840323421,66.63062595
