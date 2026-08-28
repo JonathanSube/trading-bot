@@ -577,18 +577,20 @@ externer Cron-Trigger statt GitHubs eigenem `schedule`-Event.
 
 Zweiter, komplett getrennter Bot neben dem ORB-Bot: liest Handelssignale aus
 einem öffentlichen Telegram-Kanal ("KaraokeAndi", Live-Day-Trading, Signale
-für NASDAQ INDEX und DOW JONES INDEX), lässt sie per LLM auswerten und führt
-sie automatisch aus, auf demselben Alpaca-Paper-Konto wie der ORB-Bot.
+für NASDAQ INDEX, DOW JONES INDEX, GERMAN DAX INDEX und FTSE 100 INDEX),
+lässt sie per LLM auswerten und führt sie automatisch aus - ursprünglich auf
+demselben Alpaca-Paper-Konto wie der ORB-Bot (QQQ/DIA-ETF-Proxys), seit
+28.08.2026 auf einem eigenen Pepperstone-Demokonto über die cTrader Open API
+mit echten Index-CFDs (siehe Nachtrag unten, "Broker-Umstieg").
 
 **Warum getrennt vom ORB-Bot:** eigener Zustand
 ([signal_state.json](signal_state.json)), eigenes Protokoll
 ([signal_trades.csv](signal_trades.csv)), eigener Workflow
 ([.github/workflows/signal-bot.yml](.github/workflows/signal-bot.yml)).
-Geteilt wird nur die Kill-Switch-Datei (`STOP`) und das Konto selbst - ein
+Geteilt wird nur die Kill-Switch-Datei (`STOP`) - seit dem Broker-Umstieg
+nicht mehr das Konto (der ORB-Bot bleibt auf Alpaca) - ein
 Sicherheitsschalter-Stopp im einen Bot stoppt nicht automatisch den anderen,
-außer über die gemeinsame Kill-Switch-Datei oder den (je Bot eigenen)
-Gesamtverlust-Schalter, der über den tatsächlichen Kontostand ohnehin die
-kombinierte Wirkung beider Bots sieht.
+außer über die gemeinsame Kill-Switch-Datei.
 
 **Kanalzugang:** ein Bot kann über die normale Telegram-Bot-API keinem
 Kanal selbstständig beitreten. Lösung: Pyrogram (MTProto) mit dem
@@ -774,3 +776,86 @@ damit sie lernt" - dazu zwei Dinge:
 Zusätzlich: `_try_new_signals` protokolliert jetzt auch den Fall "Kanal
 abgefragt, keine neuen Nachrichten" (vorher stumm, was den ersten
 Live-Läufen einen leeren, missverständlichen Log gab).
+
+**Nachtrag 28.08.2026: Broker-Umstieg von Alpaca (QQQ/DIA-ETF-Proxys) auf
+die cTrader Open API (Pepperstone-Demokonto, echte Index-CFDs für
+NASDAQ/DOW/UK100/DAX).** Wunsch des Nutzers: ein Kurs, der 1:1 dieselben
+Werte wie der Kanal zeigt (z. B. "US Tech 100" bei ~29.000 Punkten), statt
+eines ETF-Proxys mit abweichenden Zahlen. Drei vorherige Broker-Anläufe
+scheiterten:
+- **OANDA**: "Manage API Access" (Personal Access Token) war auf dem für
+  EU-Kunden erreichten Rechtsträger (`oanda.com/eu-en`) nicht auffindbar.
+- **IG**: verlangt ein KYC-verifiziertes Live-Konto, um überhaupt einen
+  API-Key zu erzeugen - auch wenn nur das Demo-Konto gehandelt werden
+  soll.
+- **MetaApi.cloud** (Bridge zu einem beliebigen MT4/5-Broker, hier
+  Pepperstone-MT5-Demo): der Token selbst ist kostenlos, aber das
+  eigentliche Trading-Account-Hosting kostet laufend (~9 $/Monat + 2,10 $
+  einmalig, live im MetaApi-Dashboard bestätigt) - dem Nutzer zu teuer für
+  ein Demo-Setup.
+
+Gefunden: die **cTrader Open API** (Pepperstone bietet neben MT4/5 auch
+die Plattform cTrader an) ist eine offizielle, komplett kostenlose API -
+weder Hosting-Gebühr wie MetaApi noch KYC-Pflicht wie IG. Voraussetzung:
+ein separates kostenloses cTrader-Demokonto bei Pepperstone (zusätzlich
+zum vorhandenen MT5-Demokonto, da andere Plattform).
+
+**Architekturbruch:** anders als die bisherigen REST-basierten Module
+(`tradingbot/oanda.py`, `tradingbot/ig.py`, `tradingbot/metaapi.py` - alle
+reines `requests`, kein SDK) ist die cTrader Open API kein REST/JSON-API,
+sondern ein **Protobuf-Protokoll über eine dauerhafte TCP-Verbindung**.
+Neues Modul `tradingbot/ctrader.py` nutzt deshalb ausnahmsweise die
+offizielle Bibliothek `ctrader_open_api` (Twisted-basiert). Um trotzdem
+normalen `async`/`await`-Code schreiben zu können (und denselben
+Event-Loop wie den bestehenden Telegram-Abruf zu nutzen statt zwei
+parallele Event-Loops zu betreiben), wird Twisteds `asyncioreactor`
+installiert - Twisted-Deferreds werden per `.asFuture(loop)` awaitet.
+`scripts/run_signal_bot.py` wurde komplett auf `async def main()`
+umgebaut (vorher rein synchron).
+
+**Konto-Ermittlung automatisch statt manuell gesucht** - Lehre aus dem
+MetaApi-Vorfall, wo eine falsch/nicht auffindbare Account-ID zu
+stundenlangem Debugging führte (`404 Not Found`, dann `list_accounts()`
+als Workaround nachgerüstet): `tradingbot/ctrader.py::ctrader_session()`
+ruft nach der App-/Access-Token-Authentifizierung automatisch
+`ProtoOAGetAccountListByAccessTokenReq` auf und wählt das erste Konto mit
+`isLive == False` - kein manuell zu suchendes `CTRADER_ACCOUNT_ID`-Secret
+nötig, und ein Sicherheitsnetz gegen versehentlichen Live-Handel (bricht
+mit klarer Fehlermeldung ab, falls kein Demo-Konto gefunden wird).
+
+**UNVERIFIZIERT** (`help.ctrader.com` war in dieser Umgebung per
+Netzwerk-Policy nicht abrufbar, nur `pypi.org/project/ctrader-open-api`
+lieferte Basis-Infos zu Host/Port/Bibliotheksname) - vor dem ersten
+Live-Lauf zwingend zu prüfen:
+- Symbolnamen (`signalbot/mapping.py::INDEX_TO_SYMBOL`: `NAS100`, `US30`,
+  `UK100`, `GER40`) über `scripts/find_ctrader_symbols.py`.
+- Order-Platzierung, Volumen-Konvention (Lots vs. symbol-spezifische
+  kleinste Einheit) und SL/TP-Setzung über
+  `scripts/place_test_ctrader_order.py`.
+- Exakte Feldnamen der Protobuf-Requests in `tradingbot/ctrader.py`
+  (`ProtoOANewOrderReq`, `ProtoOAAmendPositionSLTPReq` etc.) - Bestwissen,
+  nicht live geprüft.
+- `_check_filled_trades` in `scripts/run_signal_bot.py` verwendet aktuell
+  den Marktkurs als Näherung für den Ausstiegspreis geschlossener
+  Positionen (cTrader bietet, anders als IG/MetaApi, keinen einfachen
+  "Schlusskurs der zuletzt geschlossenen Position"-Aufruf ohne die noch
+  ungeprüfte Deal-Historie) - führt zu einer leicht ungenauen PnL-Zahl bis
+  zur Verifikation, aber keinem Datenverlust.
+
+Neue Skripte: `scripts/ctrader_authorize.py` (einmaliger interaktiver
+OAuth-Login, liefert den dauerhaften Refresh-Token - App-Registrierung bei
+`connect.spotware.com/apps` ist ebenfalls kostenlos),
+`scripts/find_ctrader_symbols.py`, `scripts/place_test_ctrader_order.py`.
+Secrets: `CTRADER_CLIENT_ID`/`CTRADER_CLIENT_SECRET`/
+`CTRADER_REFRESH_TOKEN` neu in `.github/workflows/signal-bot.yml`,
+ersetzen `ALPACA_API_KEY`/`ALPACA_SECRET_KEY` (der ORB-Bot-Workflow
+braucht sie weiterhin). Der Parser (`signalbot/parser.py`) erkennt jetzt
+wieder alle vier Indizes (NASDAQ/DOW/DAX/FTSE) mit echten
+Kanal-Beispielen - vorher (nur Alpaca/QQQ-DIA) auf NASDAQ/DOW beschränkt,
+da UK100/DAX bei Alpaca keine Entsprechung hatten.
+
+Wie bei jedem vorigen Broker-Wechsel gilt die Regel: **kein Merge nach
+`master`, solange die drei Secrets nicht vom Nutzer hinterlegt sind** -
+sonst läuft der Workflow automatisiert und dauerhaft fehlschlagend. Der
+alte OANDA/IG/MetaApi-Feature-Branch wurde auf Nutzerwunsch gelöscht
+(nie gemergt, Broker-Vergleich abgeschlossen).

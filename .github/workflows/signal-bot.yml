@@ -6,15 +6,13 @@ on:
     # native GitHub-Schedules laufen unzuverlaessig nach (siehe
     # trading-bot-spec.md, Betriebsvorfaelle), Haupt-Auslöser ist der
     # externe cron-job.org-Trigger auf workflow_dispatch, idealerweise
-    # dichter getaktet fuer zeitnahe Signalreaktion. Minuetlich, 06:55-21:00
-    # UTC deckt beide Sessions inkl. 5-Minuten-Vorlauf ab (Nutzerwunsch
-    # 27.08.2026): EU-Vorlauf ab 06:55 UTC (5 Min. vor 09:00 Europe/Berlin im
-    # Sommer, im Winter entsprechend frueher lokal aber innerhalb dieses
-    # UTC-Fensters), US-Vorlauf ab 13:25 UTC (5 Min. vor 09:30 America/
-    # New_York im Sommer) bis zur bisherigen grosszuegigen Pauschale um
-    # 21:00 UTC - siehe EU_SESSION_START_LOCAL/US_SESSION_START_LOCAL/
+    # dichter getaktet fuer zeitnahe Signalreaktion. Minuetlich, 06:00-21:59
+    # UTC deckt alle vier Instrument-Sessions inkl. 5-Minuten-Vorlauf ab
+    # (DAX/FTSE ab ~06:55 UTC im Sommer, NASDAQ/DOW ab ~13:25 UTC im Sommer,
+    # bis zum US-Handelsschluss ~21:00 UTC im Winter) - siehe SESSIONS/
     # PRE_SESSION_LEAD_MINUTES in scripts/run_signal_bot.py, die das
-    # tatsaechliche Ein-/Ausschalten pro Lauf DST-sicher entscheiden.
+    # tatsaechliche Ein-/Ausschalten pro Instrument und Lauf DST-sicher
+    # entscheiden.
     - cron: "* 6-21 * * 1-5"
   workflow_dispatch: {}
 
@@ -41,8 +39,17 @@ jobs:
 
       - name: Signal-Bot-Durchlauf
         env:
-          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
-          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          # Pepperstone-Demokonto ueber die cTrader Open API statt Alpaca
+          # seit dem Umstieg auf echte Index-CFDs (siehe trading-bot-spec.md,
+          # Aenderungsprotokoll) - nach drei gescheiterten Broker-Anlaeufen
+          # (OANDA, IG, MetaApi.cloud) die einzige gefundene Loesung, die
+          # sowohl kostenlos ist als auch keine KYC-Huerde fuer ein
+          # Demokonto verlangt. Der ORB-Bot-Workflow (trading-bot.yml,
+          # separat) braucht weiterhin ALPACA_API_KEY/ALPACA_SECRET_KEY,
+          # hier nicht mehr.
+          CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
+          CTRADER_CLIENT_SECRET: ${{ secrets.CTRADER_CLIENT_SECRET }}
+          CTRADER_REFRESH_TOKEN: ${{ secrets.CTRADER_REFRESH_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}

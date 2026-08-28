@@ -1,18 +1,22 @@
-"""Uebersetzung von Index-Signalen (NASDAQ INDEX, DOW JONES INDEX) auf
-handelbare ETF-Proxys bei Alpaca. Siehe trading-bot-spec.md, Feature
-"Telegram-Signal-Ausfuehrung".
+"""Uebersetzung von Index-Signalen (NASDAQ INDEX, DOW JONES INDEX, GERMAN
+DAX INDEX, FTSE 100 INDEX) auf handelbare Symbole bei Pepperstone (ueber
+die cTrader Open API). Siehe trading-bot-spec.md, Aenderungsprotokoll:
+Umstieg von Alpaca/QQQ-DIA-ETF-Proxys auf echte Index-CFDs, nach drei
+gescheiterten Broker-Anlaeufen (OANDA: keine API-Selbstbedienung fuer
+EU-Kunden auffindbar; IG: verlangt ein KYC-Live-Konto nur fuer den
+API-Zugang; MetaApi.cloud: Hosting kostet laufend) auf die kostenlose
+cTrader Open API umgestiegen.
 
-Der Kanal handelt die Indizes direkt, Alpaca bietet Indizes selbst nicht
-zum Handel an. QQQ (Nasdaq-100) und DIA (Dow Jones Industrial Average)
-sind die liquidesten 1:1-Tracking-ETFs dafuer.
-
-Levels aus dem Signal (falls genannt) stehen in Index-Punkten, nicht im
-ETF-Kurs - eine direkte Uebernahme der Zahlen waere falsch. Stattdessen
-wird der prozentuale Abstand zwischen Entry- und Stop-Level im Index
-berechnet und auf den tatsaechlichen ETF-Kurs beim Einstieg angewendet.
-Fehlt ein Stop-Level in der Nachricht, greift DEFAULT_STOP_PCT. Das Ziel
-folgt, wie beim ORB-Bot (Abschnitt 1), der festen 2:1-CRV-Konvention,
-sofern die Nachricht kein eigenes Ziel-Level nennt.
+Levels aus dem Signal (falls genannt) stehen in den Index-Punkten des
+Kanals, nicht zwingend identisch mit Pepperstones eigener Quotierung
+desselben Index (unterschiedliche CFD-Anbieter berechnen ihre Indexstaende
+leicht abweichend) - eine direkte Uebernahme der Zahlen waere deshalb
+falsch. Stattdessen wird der prozentuale Abstand zwischen Entry- und
+Stop-Level im Kanal-Index berechnet und auf den tatsaechlichen
+Pepperstone-Kurs beim Einstieg angewendet. Fehlt ein Stop-Level in der
+Nachricht, greift DEFAULT_STOP_PCT. Das Ziel folgt, wie beim ORB-Bot
+(Abschnitt 1), der festen 2:1-CRV-Konvention, sofern die Nachricht kein
+eigenes Ziel-Level nennt.
 """
 
 from datetime import datetime
@@ -20,9 +24,19 @@ from datetime import datetime
 from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
+# UNVERIFIZIERT - cTraders Symbol-Doku (help.ctrader.com) war in dieser
+# Umgebung nicht abrufbar (Netzwerk-Policy). Diese Namen sind plausible
+# Platzhalter nach allgemein ueblicher Pepperstone/cTrader-Namenskonvention,
+# aber NICHT live gegen den echten Account geprueft. VOR GO-LIVE zwingend
+# mit scripts/find_ctrader_symbols.py verifizieren und hier durch die
+# tatsaechlichen Symbolnamen ersetzen - ein falsches Symbol fuehrt nur zu
+# einem Fehler bei list_symbols()/der Order selbst (sicher), kein stiller
+# Fehlhandel.
 INDEX_TO_SYMBOL = {
-    "NASDAQ": "QQQ",
-    "DOW": "DIA",
+    "NASDAQ": "NAS100",
+    "DOW": "US30",
+    "FTSE": "UK100",
+    "DAX": "GER40",
 }
 
 DEFAULT_STOP_PCT = 0.005  # 0,5 %, falls die Nachricht kein Stop-Level nennt
@@ -33,10 +47,11 @@ def symbol_for_index(index_name: str | None) -> str | None:
     return INDEX_TO_SYMBOL.get(index_name) if index_name else None
 
 
-def build_signal_from_parsed(parsed: dict, etf_price: float, entry_timestamp: datetime) -> Signal | None:
+def build_signal_from_parsed(parsed: dict, instrument_price: float, entry_timestamp: datetime) -> Signal | None:
     """parsed: Ausgabe von signalbot.parser.parse_signal_message.
-    etf_price: aktueller Kurs des zugeordneten ETF (Basis fuer Entry, da
-    Market-Order - siehe Docstring oben zur Punkte/Kurs-Uebersetzung)."""
+    instrument_price: aktueller Kurs des zugeordneten Pepperstone-Symbols
+    (Basis fuer Entry, da Market-Order - siehe Docstring oben zur
+    Punkte/Kurs-Uebersetzung)."""
     if not parsed.get("is_signal"):
         return None
 
@@ -56,7 +71,7 @@ def build_signal_from_parsed(parsed: dict, etf_price: float, entry_timestamp: da
     else:
         stop_pct = DEFAULT_STOP_PCT
 
-    entry_price = etf_price
+    entry_price = instrument_price
     if direction is Direction.LONG:
         stop = entry_price * (1 - stop_pct)
         risk = entry_price - stop
