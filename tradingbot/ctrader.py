@@ -18,6 +18,13 @@ signalbot/telegram_signals.py zu nutzen statt zwei parallele Event-Loops zu
 betreiben), wird Twisteds `asyncioreactor` installiert - das erlaubt,
 Twisted-Deferreds per `.asFuture(loop)` zu awaiten.
 
+Der eigentliche Verbindungsaufbau in `ctrader_session()` nutzt bewusst
+NICHT `ctrader_open_api.Client.startService()` (basiert auf
+`twisted.application.internet.ClientService`) - dessen interner
+Scheduler kam unter dem asyncioreactor live nie in Gang (siehe dortige
+Docstring). Stattdessen direktes `reactor.connectSSL`, nur die
+Nachrichten-Dispatch-Logik von `Client` wird weiterverwendet.
+
 UNVERIFIZIERT (`help.ctrader.com` war in dieser Umgebung per Netzwerk-Policy
 nicht abrufbar, nur pypi.org/project/ctrader-open-api lieferte Basis-Infos) -
 vor dem ersten Live-Lauf zwingend mit scripts/place_test_ctrader_order.py zu
@@ -48,7 +55,11 @@ try:
 except ReactorAlreadyInstalledError:  # pragma: no cover - nur bei Mehrfachimport in einem Prozess
     pass
 
+from twisted.internet import defer, reactor
+from twisted.internet import ssl as twisted_ssl
+
 from ctrader_open_api import Client, EndPoints, TcpProtocol
+from ctrader_open_api.factory import Factory as _CTraderFactory
 from ctrader_open_api.messages.OpenApiMessages_pb2 import (
     ProtoOAAccountAuthReq,
     ProtoOAAmendPositionSLTPReq,
@@ -121,16 +132,32 @@ async def get_access_token() -> str:
 @dataclass
 class CTraderSession:
     client: Client
+    protocol: object  # verbundene TcpProtocol-Instanz, siehe ctrader_session()
     account_id: int
     access_token: str
     _symbol_ids: dict[str, int] | None = field(default=None, repr=False)
 
 
-async def _send(session_or_client, request):
+def _protocol_send(client: Client, protocol, message, response_timeout: int = 10):
+    """Ersatz fuer Client.send() (das auf ClientService.whenConnected()
+    basiert) - sendet direkt ueber die bereits verbundene Protocol-
+    Instanz. Siehe ctrader_session() zur Begruendung, warum
+    ClientService hier umgangen wird. Nutzt weiterhin
+    client._responseDeferreds/_received (unveraendert aus
+    ctrader_open_api.Client) fuer die Antwort-Zuordnung."""
+    response_deferred = defer.Deferred()
+    client_msg_id = str(id(response_deferred))
+    client._responseDeferreds[client_msg_id] = response_deferred
+    response_deferred.addTimeout(response_timeout, reactor)
+    protocol.send(message, instant=True, clientMsgId=client_msg_id)
+    return response_deferred
+
+
+async def _send(session: CTraderSession, request):
     """asFuture() statt addCallback-Ketten, damit der Rest des Moduls
     normaler async/await-Code bleiben kann."""
-    client = session_or_client.client if isinstance(session_or_client, CTraderSession) else session_or_client
-    return await client.send(request).asFuture(asyncio.get_event_loop())
+    deferred = _protocol_send(session.client, session.protocol, request)
+    return await deferred.asFuture(asyncio.get_event_loop())
 
 
 @asynccontextmanager
@@ -141,36 +168,53 @@ async def ctrader_session():
     Disconnect fuer den gesamten Lauf. Waehlt automatisch das erste
     NICHT-Live-Konto (isLive == False) - bricht mit klarer Fehlermeldung ab,
     falls keins existiert, als Sicherheitsnetz gegen versehentlichen
-    Live-Handel."""
+    Live-Handel.
+
+    Verbindet BEWUSST NICHT ueber ctrader_open_api.Client.startService()
+    (das ist ein twisted.application.internet.ClientService) - live
+    beobachtet (31.08.2026): dessen interner Scheduler kam unter dem
+    installierten asyncioreactor nie in Gang (weder Connected- noch
+    Disconnected-Callback feuerten, 30s Timeout ohne jede Aktivitaet),
+    obwohl ein reiner TCP/TLS-Socket zum selben Host/Port im selben Lauf
+    sofort erfolgreich war (siehe trading-bot-spec.md). Stattdessen wird
+    hier direkt reactor.connectSSL verwendet (die grundlegende,
+    reactor-agnostische Twisted-API), nur die Nachrichten-Dispatch-Logik
+    von Client (_connected/_disconnected/_received/_responseDeferreds)
+    wird weiterverwendet, nicht dessen ClientService-Verbindungsverwaltung."""
     access_token = await get_access_token()
     client = Client(EndPoints.PROTOBUF_DEMO_HOST, EndPoints.PROTOBUF_PORT, TcpProtocol)
 
     loop = asyncio.get_event_loop()
     connected = loop.create_future()
+    protocol_holder: dict = {}
     client.setConnectedCallback(lambda c: not connected.done() and connected.set_result(None))
-    # Diagnose (31.08.2026): ein einfacher reiner Socket-Connect zum
-    # selben Host/Port gelingt im selben Lauf sofort - trotzdem verbindet
-    # Client/ClientService nicht innerhalb von 30s. Ohne einen
-    # Disconnected-Callback sieht man den eigentlichen Fehlgrund (z. B.
-    # TLS-Handshake-Fehler) nie, weil ClientService bei jedem
-    # fehlgeschlagenen Versuch automatisch und still mit Backoff erneut
-    # versucht (siehe Kommentar unten) - dieser Callback macht den ersten
-    # Fehler sichtbar, statt nur "Timeout nach 30s" zu sehen.
     client.setDisconnectedCallback(
         lambda c, reason: print(f"[cTrader] Verbindung getrennt/fehlgeschlagen: {reason}")
     )
-    client.startService()
-    # Twisteds ClientService (Basis von Client, siehe ctrader_open_api-Quelltext)
-    # versucht bei einem fehlgeschlagenen Verbindungsaufbau per Default
-    # ENDLOS automatisch erneut, OHNE einen Fehler zu werfen - ohne dieses
-    # Timeout haengt ein Lauf bei einem echten Verbindungsproblem (Netzwerk,
-    # TLS, falscher Host) bis zum Job-Zeitlimit, statt schnell und klar zu
-    # scheitern (live beobachtet 31.08.2026: 4 Min. Haenger ohne jede
-    # Fehlermeldung).
+
+    # forProtocol() (nicht der direkte Konstruktor) setzt factory.protocol
+    # auf die TcpProtocol-Klasse - Factory.__init__ selbst ignoriert das
+    # *args-Positionsargument (siehe ctrader_open_api/factory.py), genau
+    # wie im Original Client.__init__ (Factory.forProtocol(protocol,
+    # client=self)).
+    factory = _CTraderFactory.forProtocol(TcpProtocol, client=client)
+    _original_factory_connected = factory.connected
+
+    def _capture_protocol(protocol):
+        protocol_holder["protocol"] = protocol
+        _original_factory_connected(protocol)
+
+    factory.connected = _capture_protocol
+
+    context_factory = twisted_ssl.optionsForClientTLS(EndPoints.PROTOBUF_DEMO_HOST)
+    connector = reactor.connectSSL(
+        EndPoints.PROTOBUF_DEMO_HOST, EndPoints.PROTOBUF_PORT, factory, context_factory
+    )
+
     try:
         await asyncio.wait_for(connected, timeout=30)
     except asyncio.TimeoutError:
-        client.stopService()
+        connector.disconnect()
         raise RuntimeError(
             f"Keine Verbindung zu {EndPoints.PROTOBUF_DEMO_HOST}:{EndPoints.PROTOBUF_PORT} "
             "innerhalb von 30s zustande gekommen - moegliche Ursachen: Netzwerk-/"
@@ -180,31 +224,35 @@ async def ctrader_session():
         )
 
     try:
+        session = CTraderSession(
+            client=client, protocol=protocol_holder["protocol"],
+            account_id=0, access_token=access_token,
+        )
+
         app_auth_req = ProtoOAApplicationAuthReq()
         app_auth_req.clientId = os.environ["CTRADER_CLIENT_ID"]
         app_auth_req.clientSecret = os.environ["CTRADER_CLIENT_SECRET"]
-        await _send(client, app_auth_req)
+        await _send(session, app_auth_req)
 
         accounts_req = ProtoOAGetAccountListByAccessTokenReq()
         accounts_req.accessToken = access_token
-        accounts_resp = await _send(client, accounts_req)
+        accounts_resp = await _send(session, accounts_req)
         demo_accounts = [a for a in accounts_resp.ctidTraderAccount if not a.isLive]
         if not demo_accounts:
             raise RuntimeError(
                 "Kein Demo-Konto (isLive == False) zu diesem cTrader-Token gefunden - "
                 "Live-Handel wird hier bewusst nicht unterstuetzt, siehe tradingbot/ctrader.py."
             )
-        account_id = demo_accounts[0].ctidTraderAccountId
+        session.account_id = demo_accounts[0].ctidTraderAccountId
 
         account_auth_req = ProtoOAAccountAuthReq()
-        account_auth_req.ctidTraderAccountId = account_id
+        account_auth_req.ctidTraderAccountId = session.account_id
         account_auth_req.accessToken = access_token
-        await _send(client, account_auth_req)
+        await _send(session, account_auth_req)
 
-        session = CTraderSession(client=client, account_id=account_id, access_token=access_token)
         yield session
     finally:
-        client.stopService()
+        connector.disconnect()
 
 
 async def get_account_info(session: CTraderSession) -> dict:
