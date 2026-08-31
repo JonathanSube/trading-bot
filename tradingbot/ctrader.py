@@ -312,7 +312,19 @@ async def ctrader_session():
     loop = asyncio.get_event_loop()
     connected = loop.create_future()
     protocol_holder: dict = {}
-    client.setConnectedCallback(lambda c: not connected.done() and connected.set_result(None))
+    # Diagnose (31.08.2026): seit dem Merge nach master (minuetlicher Takt
+    # per externem Cron statt einzelner manueller Testlaeufe) reisst die
+    # Verbindung wiederholt binnen Sub-Millisekunden nach "Verbindungsversuch
+    # gestartet" wieder ab (ueber setDisconnectedCallback, nicht
+    # clientConnectionFailed) - unklar, ob TcpProtocol.connectionMade()
+    # dabei ueberhaupt je feuert. Eigener Log-Eintrag hier, um das von
+    # startedConnecting/disconnected zu unterscheiden.
+    def _log_connected(c):
+        print("[cTrader] TCP/TLS-Verbindung hergestellt (connectionMade)")
+        if not connected.done():
+            connected.set_result(None)
+
+    client.setConnectedCallback(_log_connected)
     client.setDisconnectedCallback(
         lambda c, reason: print(f"[cTrader] Verbindung getrennt/fehlgeschlagen: {reason}")
     )
