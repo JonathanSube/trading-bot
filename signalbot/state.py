@@ -2,12 +2,15 @@
 ORB-Bot-Zustand (state.json) - eigene Datei signal_state.json, eigenes
 Protokoll signal_trades.csv. Siehe trading-bot-spec.md, Feature
 "Telegram-Signal-Ausfuehrung": komplett getrennter Workflow, teilt sich
-mit dem ORB-Bot nur die Kill-Switch-Datei (STOP) und das Alpaca-Konto.
+mit dem ORB-Bot nur die Kill-Switch-Datei (STOP) - eigenes
+Pepperstone-Demokonto ueber die cTrader Open API seit dem Broker-Umstieg
+(Aenderungsprotokoll), der ORB-Bot bleibt auf Alpaca.
 
 Im Unterschied zum ORB-Bot (hoechstens ein Trade pro Tag, ein Instrument)
-kann hier gleichzeitig je eine offene Position in QQQ UND DIA bestehen
-(zwei verschiedene Signalquellen-Instrumente) - deshalb open_trades als
-dict statt einzelnem Feld.
+kann hier gleichzeitig je eine offene Position in mehreren Instrumenten
+bestehen (die vier Symbole aus signalbot/mapping.py::INDEX_TO_SYMBOL -
+verschiedene Signalquellen-Instrumente) - deshalb open_trades als dict
+statt einzelnem Feld.
 """
 
 import json
@@ -27,7 +30,7 @@ STATE_VERSION = 1
 class OpenSignalTrade:
     signal: Signal
     order_id: str
-    qty: int
+    qty: float  # Lot-Volumen (cTrader), keine Stueckzahl
     source_message_id: int
     entry_fill: float | None = None
 

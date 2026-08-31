@@ -577,18 +577,20 @@ externer Cron-Trigger statt GitHubs eigenem `schedule`-Event.
 
 Zweiter, komplett getrennter Bot neben dem ORB-Bot: liest Handelssignale aus
 einem öffentlichen Telegram-Kanal ("KaraokeAndi", Live-Day-Trading, Signale
-für NASDAQ INDEX und DOW JONES INDEX), lässt sie per LLM auswerten und führt
-sie automatisch aus, auf demselben Alpaca-Paper-Konto wie der ORB-Bot.
+für NASDAQ INDEX, DOW JONES INDEX, GERMAN DAX INDEX und FTSE 100 INDEX),
+lässt sie per LLM auswerten und führt sie automatisch aus - ursprünglich auf
+demselben Alpaca-Paper-Konto wie der ORB-Bot (QQQ/DIA-ETF-Proxys), seit
+28.08.2026 auf einem eigenen Pepperstone-Demokonto über die cTrader Open API
+mit echten Index-CFDs (siehe Nachtrag unten, "Broker-Umstieg").
 
 **Warum getrennt vom ORB-Bot:** eigener Zustand
 ([signal_state.json](signal_state.json)), eigenes Protokoll
 ([signal_trades.csv](signal_trades.csv)), eigener Workflow
 ([.github/workflows/signal-bot.yml](.github/workflows/signal-bot.yml)).
-Geteilt wird nur die Kill-Switch-Datei (`STOP`) und das Konto selbst - ein
+Geteilt wird nur die Kill-Switch-Datei (`STOP`) - seit dem Broker-Umstieg
+nicht mehr das Konto (der ORB-Bot bleibt auf Alpaca) - ein
 Sicherheitsschalter-Stopp im einen Bot stoppt nicht automatisch den anderen,
-außer über die gemeinsame Kill-Switch-Datei oder den (je Bot eigenen)
-Gesamtverlust-Schalter, der über den tatsächlichen Kontostand ohnehin die
-kombinierte Wirkung beider Bots sieht.
+außer über die gemeinsame Kill-Switch-Datei.
 
 **Kanalzugang:** ein Bot kann über die normale Telegram-Bot-API keinem
 Kanal selbstständig beitreten. Lösung: Pyrogram (MTProto) mit dem
@@ -774,3 +776,297 @@ damit sie lernt" - dazu zwei Dinge:
 Zusätzlich: `_try_new_signals` protokolliert jetzt auch den Fall "Kanal
 abgefragt, keine neuen Nachrichten" (vorher stumm, was den ersten
 Live-Läufen einen leeren, missverständlichen Log gab).
+
+**Nachtrag 28.08.2026: Broker-Umstieg von Alpaca (QQQ/DIA-ETF-Proxys) auf
+die cTrader Open API (Pepperstone-Demokonto, echte Index-CFDs für
+NASDAQ/DOW/UK100/DAX).** Wunsch des Nutzers: ein Kurs, der 1:1 dieselben
+Werte wie der Kanal zeigt (z. B. "US Tech 100" bei ~29.000 Punkten), statt
+eines ETF-Proxys mit abweichenden Zahlen. Drei vorherige Broker-Anläufe
+scheiterten:
+- **OANDA**: "Manage API Access" (Personal Access Token) war auf dem für
+  EU-Kunden erreichten Rechtsträger (`oanda.com/eu-en`) nicht auffindbar.
+- **IG**: verlangt ein KYC-verifiziertes Live-Konto, um überhaupt einen
+  API-Key zu erzeugen - auch wenn nur das Demo-Konto gehandelt werden
+  soll.
+- **MetaApi.cloud** (Bridge zu einem beliebigen MT4/5-Broker, hier
+  Pepperstone-MT5-Demo): der Token selbst ist kostenlos, aber das
+  eigentliche Trading-Account-Hosting kostet laufend (~9 $/Monat + 2,10 $
+  einmalig, live im MetaApi-Dashboard bestätigt) - dem Nutzer zu teuer für
+  ein Demo-Setup.
+
+Gefunden: die **cTrader Open API** (Pepperstone bietet neben MT4/5 auch
+die Plattform cTrader an) ist eine offizielle, komplett kostenlose API -
+weder Hosting-Gebühr wie MetaApi noch KYC-Pflicht wie IG. Voraussetzung:
+ein separates kostenloses cTrader-Demokonto bei Pepperstone (zusätzlich
+zum vorhandenen MT5-Demokonto, da andere Plattform).
+
+**Architekturbruch:** anders als die bisherigen REST-basierten Module
+(`tradingbot/oanda.py`, `tradingbot/ig.py`, `tradingbot/metaapi.py` - alle
+reines `requests`, kein SDK) ist die cTrader Open API kein REST/JSON-API,
+sondern ein **Protobuf-Protokoll über eine dauerhafte TCP-Verbindung**.
+Neues Modul `tradingbot/ctrader.py` nutzt deshalb ausnahmsweise die
+offizielle Bibliothek `ctrader_open_api` (Twisted-basiert). Um trotzdem
+normalen `async`/`await`-Code schreiben zu können (und denselben
+Event-Loop wie den bestehenden Telegram-Abruf zu nutzen statt zwei
+parallele Event-Loops zu betreiben), wird Twisteds `asyncioreactor`
+installiert - Twisted-Deferreds werden per `.asFuture(loop)` awaitet.
+`scripts/run_signal_bot.py` wurde komplett auf `async def main()`
+umgebaut (vorher rein synchron).
+
+**Konto-Ermittlung automatisch statt manuell gesucht** - Lehre aus dem
+MetaApi-Vorfall, wo eine falsch/nicht auffindbare Account-ID zu
+stundenlangem Debugging führte (`404 Not Found`, dann `list_accounts()`
+als Workaround nachgerüstet): `tradingbot/ctrader.py::ctrader_session()`
+ruft nach der App-/Access-Token-Authentifizierung automatisch
+`ProtoOAGetAccountListByAccessTokenReq` auf und wählt das erste Konto mit
+`isLive == False` - kein manuell zu suchendes `CTRADER_ACCOUNT_ID`-Secret
+nötig, und ein Sicherheitsnetz gegen versehentlichen Live-Handel (bricht
+mit klarer Fehlermeldung ab, falls kein Demo-Konto gefunden wird).
+
+**UNVERIFIZIERT** (`help.ctrader.com` war in dieser Umgebung per
+Netzwerk-Policy nicht abrufbar, nur `pypi.org/project/ctrader-open-api`
+lieferte Basis-Infos zu Host/Port/Bibliotheksname) - vor dem ersten
+Live-Lauf zwingend zu prüfen:
+- Symbolnamen (`signalbot/mapping.py::INDEX_TO_SYMBOL`: `NAS100`, `US30`,
+  `UK100`, `GER40`) über `scripts/find_ctrader_symbols.py`.
+- Order-Platzierung, Volumen-Konvention (Lots vs. symbol-spezifische
+  kleinste Einheit) und SL/TP-Setzung über
+  `scripts/place_test_ctrader_order.py`.
+- Exakte Feldnamen der Protobuf-Requests in `tradingbot/ctrader.py`
+  (`ProtoOANewOrderReq`, `ProtoOAAmendPositionSLTPReq` etc.) - Bestwissen,
+  nicht live geprüft.
+- `_check_filled_trades` in `scripts/run_signal_bot.py` verwendet aktuell
+  den Marktkurs als Näherung für den Ausstiegspreis geschlossener
+  Positionen (cTrader bietet, anders als IG/MetaApi, keinen einfachen
+  "Schlusskurs der zuletzt geschlossenen Position"-Aufruf ohne die noch
+  ungeprüfte Deal-Historie) - führt zu einer leicht ungenauen PnL-Zahl bis
+  zur Verifikation, aber keinem Datenverlust.
+
+Neue Skripte: `scripts/ctrader_authorize.py` (einmaliger interaktiver
+OAuth-Login, liefert den dauerhaften Refresh-Token - App-Registrierung bei
+`connect.spotware.com/apps` ist ebenfalls kostenlos),
+`scripts/find_ctrader_symbols.py`, `scripts/place_test_ctrader_order.py`.
+Secrets: `CTRADER_CLIENT_ID`/`CTRADER_CLIENT_SECRET`/
+`CTRADER_REFRESH_TOKEN` neu in `.github/workflows/signal-bot.yml`,
+ersetzen `ALPACA_API_KEY`/`ALPACA_SECRET_KEY` (der ORB-Bot-Workflow
+braucht sie weiterhin). Der Parser (`signalbot/parser.py`) erkennt jetzt
+wieder alle vier Indizes (NASDAQ/DOW/DAX/FTSE) mit echten
+Kanal-Beispielen - vorher (nur Alpaca/QQQ-DIA) auf NASDAQ/DOW beschränkt,
+da UK100/DAX bei Alpaca keine Entsprechung hatten.
+
+Wie bei jedem vorigen Broker-Wechsel gilt die Regel: **kein Merge nach
+`master`, solange die drei Secrets nicht vom Nutzer hinterlegt sind** -
+sonst läuft der Workflow automatisiert und dauerhaft fehlschlagend. Der
+alte OANDA/IG/MetaApi-Feature-Branch (`claude/signal-bot-datetime-offset-diyxej`)
+sollte auf Nutzerwunsch gelöscht werden (nie gemergt, Broker-Vergleich
+abgeschlossen) - das direkte Löschen aus dieser Umgebung heraus wurde vom
+Git-Proxy mit 403 abgelehnt, der Nutzer muss ihn manuell im GitHub-Web-UI
+entfernen.
+
+**Nachtrag 28.08.2026, direkt danach: Bot reagierte auf 1 von über 5
+gesendeten Signalen nicht, und ignorierte eine Kanal-Schliess-Anweisung
+für zwei offene Trades.** Nutzer-Feedback (noch ohne exakte
+Nachrichtentexte, die folgen bei Gelegenheit): der Bot hatte reagiert,
+als der Kanal seine eigenen zwei Dow-Jones-Trades per Nachricht schloss -
+der Bot selbst tat nichts und wartete stattdessen passiv auf seinen
+eigenen Stop, statt der Anweisung zu folgen. Zusätzlich wurde nur 1 von
+über 5 in der Zwischenzeit gesendeten Einstiegssignalen tatsächlich
+gehandelt.
+
+Zwei strukturelle Fixes, die ohne die noch ausstehenden echten
+Nachrichtentexte möglich waren:
+
+1. **Schliess-Anweisungen werden jetzt befolgt.** Bisher wurde eine
+   Nachricht wie "CLOSE TRADE ALERT... CLOSING DAX INDEX trade now"
+   bewusst als Nicht-Signal behandelt (ursprüngliche Design-Entscheidung:
+   der Bot verwaltet seine Position ausschließlich über den eigenen
+   Stop/Ziel) - das war offenbar der falsche Kompromiss. `signalbot/parser.py`
+   hat jetzt ein neues `"action": "open" | "close" | null`-Feld im
+   JSON-Schema; das bereits vorhandene reale Beispiel ("CLOSE TRADE
+   ALERT...") liefert jetzt `action: "close"`, `scripts/run_signal_bot.py`
+   schließt daraufhin sofort die betroffene Position (`_close_one_open`),
+   statt nichts zu tun. Nennt eine Schliess-Nachricht KEIN konkretes
+   Instrument (z. B. "closing both trades now" ohne Namen - vermutlich der
+   Fall aus dem Nutzer-Feedback), wird sie bewusst NICHT gehandelt (kein
+   Raten, welches Instrument gemeint ist) - das braucht ein echtes
+   Beispiel aus dem Kanal, um sauber ins Prompt aufgenommen zu werden.
+2. **Verschluckte Gemini-Fehler von echten Nicht-Signalen unterschieden.**
+   `parse_signal_message()` gab bisher bei jedem Fehler (Netzwerk,
+   Ratenlimit, unparsebare Antwort) `None` zurück - identisch zu einer
+   echten "kein Signal"-Klassifizierung. Das könnte die 1-von-5-Quote
+   erklären, war aber nicht nachprüfbar. Jetzt löst ein echter
+   Gemini-Fehler `GeminiError` aus, `scripts/run_signal_bot.py` fängt das
+   pro Nachricht ab, zählt es als API-Fehler und protokolliert es explizit
+   als `gemini_fehler` statt als `kein_signal`.
+
+**Neu: `signalbot/channel_log.py` + `signal_channel_log.csv`.** Auf
+Nutzerwunsch protokolliert der Bot jetzt JEDE ausgewertete Kanal-Nachricht
+der letzten sieben Tage (nicht nur die, die zu einem Trade führten) -
+inklusive Originaltext, geparstem JSON und einem kurzen Grund-Code
+(`trade_eroeffnet`, `kein_signal`, `bereits_offen`,
+`index_nicht_unterstuetzt`, `gemini_fehler`, `kurs_nicht_ladbar`,
+`kein_gueltiges_signal`, `volumen_zu_klein`, `order_fehlgeschlagen`,
+`trade_geschlossen`, `schliessung_ohne_position`). Ältere Zeilen werden
+beim Schreiben automatisch verworfen (sieben Tage Aufbewahrung), damit die
+Datei nicht unbegrenzt wächst. Zweck: Ursachen für ausgelassene/verzögerte
+Signale sind jetzt direkt in der Datei nachvollziehbar, ohne extra
+`scripts/dump_channel_history.py` per GitHub-Actions-Lauf zu triggern -
+liefert außerdem die Rohdaten für echte Beispielnachrichten (z. B. die
+noch ausstehende "closing both trades"-Formulierung), sobald sie im Kanal
+auftauchen. Die Datei wird wie `signal_state.json`/`signal_trades.csv` vom
+Workflow zurückcommittet.
+
+**Nachtrag 28.08.2026, direkt danach: Gemini bekommt jetzt Gesprächsverlauf
+als Kontext mit.** Nutzer-Feedback: `parse_signal_message()` wertete bisher
+jede Nachricht komplett isoliert aus - eine Schließ-Anweisung ohne erneut
+genanntes Instrument (z. B. "closing the trade now"/"closing both trades
+now", genauer Wortlaut vom Nutzer noch ausstehend) konnte deshalb nicht
+aufgelöst werden, selbst wenn aus dem Gesprächsverlauf offensichtlich
+gewesen wäre, welche zuvor eröffnete Position gemeint ist.
+
+- **`signalbot/channel_log.py::recent_message_texts()`** (neu): liefert die
+  letzten `limit` (Standard 15) protokollierten Nachrichtentexte vor einem
+  Zeitpunkt, chronologisch - nutzt die ohnehin durch `signal_channel_log.csv`
+  gespeicherte Sieben-Tage-Historie (siehe oben), kein zusätzlicher
+  Telegram-Abruf nötig.
+- **`signalbot/parser.py::parse_signal_message()`** akzeptiert jetzt einen
+  optionalen `history`-Parameter - wird der Gemini-Anfrage als klar
+  abgegrenzter Kontextblock vorangestellt ("BISHERIGE NACHRICHTEN... ===
+  NEUE NACHRICHT ==="), mit der expliziten Anweisung, NUR die neue
+  Nachricht zu klassifizieren, den Kontext aber zur Auflösung von
+  Schließ-Anweisungen ohne erneut genanntes Instrument zu nutzen (das
+  jüngste noch offene "BOUGHT LONG"/"SOLD SHORT" je Instrument in der
+  Historie identifizieren). Bleibt die Zuordnung nach Kontext uneindeutig,
+  bleibt die bisherige Regel bestehen: kein Raten, `is_signal: false`.
+- `scripts/run_signal_bot.py` holt vor jedem `parse_signal_message()`-Aufruf
+  die Historie über `recent_message_texts()` (Zeitpunkt der jeweiligen
+  Nachricht als Grenze, keine zukünftigen Nachrichten als Kontext).
+- Nebeneffekt: da `signal_channel_log.csv` ALLE ausgewerteten Nachrichten
+  enthält (nicht nur Signale), lernt Gemini nebenbei auch den allgemeinen
+  Nachrichtenaufbau des Kanals kennen (Nutzerwunsch: "die anderen
+  Nachrichten sind dafür da, damit er weiß, wie andere Nachrichten
+  aufgebaut sind").
+
+**Nachtrag 28.08.2026, direkt danach: echter Screenshot bestätigt den
+gemeldeten Bug und liefert neue Beispielnachrichten.** Der Nutzer schickte
+einen Screenshot des Kanals mit exakt dem gemeldeten Vorfall: zwei
+DOW-JONES-Long-Einstiege kurz hintereinander (16:40 und 16:50 Uhr,
+verschiedene Entry-/Stop-Level), zwei Stop-Anpassungs-Nachrichten ("move
+sl in dow to 53551", "both stopps to 53572.9"), dann "CLOSE TRADE
+ALERT / CLOSING DOW INDEX trade now" (16:54) - exakt dasselbe Muster wie
+das bisher einzige (angenommene) DAX-Beispiel, hier aber live für DOW
+bestätigt. Der Bot hatte diese Schließ-Nachricht zuvor ignoriert (siehe
+oben, "Bot reagierte auf 1 von über 5 Signalen nicht") - mit dem bereits
+umgesetzten `action: "close"`-Fix greift das jetzt korrekt.
+
+Vier neue echte Beispiele in `signalbot/parser.py::SYSTEM_PROMPT`
+aufgenommen: das DOW-Pendant zur Close-Alert-Nachricht (verstärkt das
+Muster über mehrere Instrumente hinweg statt nur einem angenommenen
+DAX-Fall), die beiden Stop-Anpassungs-Nachrichten im tatsächlichen
+Kanal-Wortlaut (ersetzt die zuvor erfundene "MOVING STOP TO
+BREAKEVEN"-Formulierung testweise nicht, ergänzt sie aber um die echten
+Varianten - wichtig, weil "sl"/"stop" im Text sonst leicht mit einer
+Schließ-Anweisung verwechselt werden könnte), und "+100" als echtes
+Beispiel für ein PnL-Update ohne Kontext.
+
+Noch nicht durch ein echtes Beispiel abgedeckt: eine Schließ-Anweisung
+OHNE erneut genanntes Instrument (z. B. "closing both trades now") - in
+diesem Screenshot nennt die Close-Nachricht weiterhin explizit "DOW
+INDEX". Der Kontextauflösungs-Mechanismus aus dem letzten Nachtrag bleibt
+als Absicherung für einen künftigen solchen Fall bestehen, ist aber noch
+nicht an einem echten Beispiel verifiziert.
+
+**Nachtrag 31.08.2026: cTrader-Verbindung nach mehreren Live-Testläufen
+zum ersten Mal erfolgreich, Broker-Wechsel von Pepperstone auf Fusion
+Markets.** Das Pepperstone-cTrader-Konto war durch einen Tippfehler in
+der beim Anlegen verwendeten E-Mail-Adresse blockiert; die cTrader Open
+API ist broker-unabhängig (Spotware betreibt sie für mehrere Broker), der
+Nutzer ist deshalb stattdessen zu **Fusion Markets** gewechselt (ebenfalls
+kostenloses cTrader-Demokonto, keine KYC-Hürde) - `tradingbot/ctrader.py`
+selbst ist davon unberührt, nur die beim Broker angelegten Zugangsdaten
+haben sich geändert.
+
+Der erste Verbindungsversuch hing 4 Minuten ohne jede Fehlermeldung -
+Ursachensuche über sieben Live-Testläufe hinweg, jeweils per
+`.github/workflows/find-ctrader-symbols.yml` gegen den echten Account
+getriggert (kein Weg, das lokal zu reproduzieren, da dieser Sandbox das
+ausgehende TCP auf Port 5035 von der eigenen Netzwerk-Policy blockiert
+wird):
+
+1. **`ctrader_open_api.Client.startService()`** (baut auf
+   `twisted.application.internet.ClientService` auf) kam unter dem
+   installierten `asyncioreactor` nie in Gang - weder Connected- noch
+   Disconnected-Callback feuerten, obwohl ein reiner TCP/TLS-Socket zum
+   selben Host/Port im selben Job sofort erfolgreich war (bestätigt
+   TLSv1.3). Behoben durch einen direkten `reactor.connectSSL()`-Aufruf
+   unter Umgehung von `ClientService`, nur die Nachrichten-Dispatch-Logik
+   von `Client` (`_connected`/`_disconnected`/`_received`/
+   `_responseDeferreds`) wird weiterverwendet.
+2. Antworten kamen danach zwar an, aber `TcpProtocol.stringReceived()`
+   liefert nur den rohen `ProtoMessage`-Umschlag (Felder `payloadType`,
+   `payload` als Bytes, `clientMsgId`) - **nicht** das decodierte
+   Antwortobjekt. Erst `Protobuf.extract()` liefert z. B. eine
+   `ProtoOAGetAccountListByAccessTokenRes` mit nutzbaren Feldern wie
+   `ctidTraderAccount`. Bei Code-Review vor dem nächsten Testlauf
+   gefunden, nicht erst live durch einen Crash.
+3. Trotz des `ClientService`-Fixes hing die Verbindung weiterhin lautlos
+   - Ursache: `asyncioreactor.install()` bindet sich beim Modulimport per
+   `get_event_loop()` an eine Event-Loop, die anschließende
+   `asyncio.run(main())` in den Aufrufer-Skripten erzeugt aber eine
+   komplett neue, unabhängige Loop und lässt die vom Reactor gebundene nie
+   laufen - Verbindungs-Callbacks wurden auf eine tote Loop registriert.
+   Behoben durch eine explizit selbst erzeugte Event-Loop in
+   `tradingbot/ctrader.py`, dem Reactor beim Install übergeben, plus ein
+   `run_ctrader()`-Helfer (`loop.run_until_complete()` statt
+   `asyncio.run()`) - alle drei Aufrufer (`find_ctrader_symbols.py`,
+   `place_test_ctrader_order.py`, `run_signal_bot.py`) darauf umgestellt.
+4. Immer noch lautlose 30s-Timeouts - Ursache:
+   `twisted.internet.protocol.ClientFactory.clientConnectionFailed` ist
+   per Default ein reiner No-Op-Stub. Schlägt der Verbindungsversuch
+   SELBST fehl (TCP/TLS, bevor überhaupt ein Protocol verbunden wird),
+   passiert ohne eigenen Hook absolut gar nichts - keine Exception, kein
+   Log, kein Disconnected-Callback (der läuft nur über
+   `TcpProtocol.connectionLost()`, das nie aufgerufen wird, wenn nie
+   verbunden wurde). Mit einem eigenen `clientConnectionFailed`-Hook
+   wurde der echte Fehler endlich sichtbar: `twisted.internet.error.
+   TimeoutError: User timeout caused connection failure`.
+5. Der eigentliche Grund dafür: Twisteds Standard-Resolver
+   (`base.BlockingResolver`) löst Hostnamen über das ältere, rein
+   IPv4-taugliche `socket.gethostbyname()` auf statt wie der erfolgreiche
+   Diagnose-Schritt über `getaddrinfo()`-basiertes
+   `socket.create_connection()`. Behoben, indem `ctrader_session()` den
+   Hostnamen selbst per `gethostbyname()` auflöst und die IP-Adresse
+   direkt an `connectSSL()` übergibt (der Hostname bleibt für
+   TLS-SNI/Zertifikatsprüfung in `optionsForClientTLS()` erhalten) - erst
+   danach stand die Verbindung sofort (unter 3s für den gesamten
+   Diagnose-Lauf inklusive Token-Tausch und Symbolsuche).
+
+**Refresh-Token-Rotation entdeckt und automatisiert.** Bei den
+wiederholten Testläufen fiel auf: jeder erfolgreiche Token-Tausch gibt
+einen NEUEN Refresh-Token zurück (Felder `refreshToken`/`refresh_token`
+in der Antwort), der vorherige wird dabei ungültig - ohne Persistenz
+hätte jeder automatisierte Lauf nach dem ersten erfolgreichen mit einem
+bereits ungültigen Token scheitern müssen. `get_access_token()`
+aktualisiert das `CTRADER_REFRESH_TOKEN`-Secret jetzt automatisch über
+die GitHub-API (`PUT /repos/{owner}/{repo}/actions/secrets/...`,
+verschlüsselt mit dem Repo-Public-Key via PyNaCl `SealedBox`, wie von
+GitHub für Secret-Updates vorgeschrieben). Braucht ein separates,
+einmalig vom Nutzer angelegtes Personal-Access-Token
+(`GH_SECRETS_PAT`-Secret, nur Schreibrecht auf Actions-Secrets dieses
+Repos) - der von GitHub Actions automatisch bereitgestellte
+`GITHUB_TOKEN` darf keine Repository-Secrets ändern. Fehlt das PAT (z. B.
+bei einem lokalen Lauf), wird nur geloggt statt der Lauf abgebrochen.
+
+**Symbolnamen live verifiziert.** `scripts/find_ctrader_symbols.py`
+bestätigte gegen den echten Fusion-Markets-Account: NASDAQ → `NAS100`
+(id 116), DOW → `US30` (id 118), FTSE → `UK100` (id 117), DAX → `GER40`
+(id 124) - identisch mit den zuvor geratenen Platzhaltern in
+`signalbot/mapping.py`, jetzt aber als verifiziert markiert statt als
+Annahme.
+
+Noch offen: Volumen-Konvention (Lots vs. symbol-spezifische Einheit),
+Preis-/Bilanz-Skalierung und ob `ProtoOAAmendPositionSLTPReq` SL/TP wie
+erwartet setzt, sind weiterhin UNVERIFIZIERT - das klärt erst ein echter
+Lauf von `scripts/place_test_ctrader_order.py`. Merge nach `master`
+weiterhin nicht vor expliziter Nutzer-Bestätigung, dass alle Secrets
+(inklusive `GH_SECRETS_PAT`) dauerhaft konfiguriert sind.

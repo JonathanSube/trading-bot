@@ -2,26 +2,39 @@
 (.github/workflows/signal-bot.yml), komplett getrennt vom ORB-Bot
 (scripts/run_bot.py) - eigener Zustand (signal_state.json), eigenes
 Protokoll (signal_trades.csv). Teilt sich mit dem ORB-Bot nur die
-Kill-Switch-Datei (STOP) und das Alpaca-Konto.
+Kill-Switch-Datei (STOP).
 
 Liest neue Nachrichten aus dem externen Signal-Kanal (KaraokeAndi, Live
 Day Trading), laesst sie per LLM (Gemini) auswerten, uebersetzt
-NASDAQ-/DOW-Index-Signale auf QQQ/DIA (signalbot/mapping.py) und fuehrt
-automatisch aus - ohne Rueckfrage, auf ausdruecklichen Wunsch (siehe
+NASDAQ-/DOW-/DAX-/FTSE-Index-Signale auf echte Pepperstone-Symbole
+(signalbot/mapping.py, ueber die cTrader Open API) und fuehrt automatisch
+aus - ohne Rueckfrage, auf ausdruecklichen Wunsch (siehe
 trading-bot-spec.md, Aenderungsprotokoll: "Telegram-Signal-Ausfuehrung").
-Laeuft auf demselben Alpaca-Paper-Konto wie der ORB-Bot.
+Laeuft auf einem Pepperstone-Demokonto (nicht Alpaca, urspruenglich auch
+nicht OANDA/IG/MetaApi - siehe Aenderungsprotokoll zum mehrfachen
+Broker-Wechsel). Der ORB-Bot bleibt unveraendert auf Alpaca.
+
+Das gesamte Skript laeuft als eine `async def main()` statt der frueheren
+synchronen Struktur - die cTrader Open API ist ein Twisted/Protobuf-
+Protokoll ueber eine dauerhafte TCP-Verbindung, keine einfachen
+REST-Aufrufe (siehe tradingbot/ctrader.py). Der bestehende Telegram-Abruf
+(zuvor per eigenem `asyncio.run(...)`) laeuft jetzt im selben Event-Loop
+mit.
 
 Ablauf pro Lauf:
 1. Kill-Switch pruefen
-2. Zustand laden, Konto abfragen
+2. Zustand laden, cTrader-Session oeffnen (Access-Token holen, verbinden,
+   Demo-Konto automatisch ermitteln - siehe tradingbot/ctrader.py), Konto
+   abfragen
 3. Offene Trades abgleichen (Fill nachtragen, geschlossene protokollieren)
 4. Sicherheitsschalter pruefen (Gesamtverlust, API-Fehler)
-5. Tagesende (15:55 ET): offene Positionen zwangsschliessen
+5. Sessionende je Instrument (5 Min. vorher): betroffene offene Position
+   zwangsschliessen - jedes Instrument hat seine eigene Handelszeit
+   (US/London/Xetra), kein einzelner globaler EOD-Zeitpunkt
 6. Neue Kanal-Nachrichten holen, per LLM auswerten, ggf. Order platzieren
 7. Zustand speichern
 """
 
-import asyncio
 import os
 import sys
 import time as time_module
@@ -36,49 +49,56 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
-from alpaca.trading.client import TradingClient
-
-from signalbot.mapping import build_signal_from_parsed, symbol_for_index
-from signalbot.parser import parse_signal_message
+from signalbot.channel_log import append_channel_message, recent_message_texts
+from signalbot.mapping import INDEX_TO_SYMBOL, build_signal_from_parsed, symbol_for_index
+from signalbot.parser import GeminiError, parse_signal_message
 from signalbot.state import OpenSignalTrade, SignalBotState, load_state, save_state
 from signalbot.telegram_signals import fetch_new_messages
 from signalbot.trade_log import SignalTradeLogRow, append_trade
-from tradingbot.data import get_latest_price
+from tradingbot.ctrader import (
+    CTraderSession,
+    close_position,
+    ctrader_session,
+    get_account_info,
+    get_latest_price,
+    get_open_positions,
+    place_market_order,
+    position_size,
+    run_ctrader,
+)
 from tradingbot.notify import send_notification
-from tradingbot.orders import place_bracket_order, position_size
 from tradingbot.safety import check_kill_switch
 from tradingbot.setup_detection import Direction
 
 NY = ZoneInfo("America/New_York")
+LONDON_TZ = ZoneInfo("Europe/London")
+EU_TZ = ZoneInfo("Europe/Berlin")
 STATE_PATH = ROOT / "signal_state.json"
 KILL_SWITCH_PATH = ROOT / "STOP"
 TRADE_LOG_PATH = ROOT / "signal_trades.csv"
-EOD_CUTOFF = time(15, 55)
+CHANNEL_LOG_PATH = ROOT / "signal_channel_log.csv"
 CHANNEL = os.environ.get("SIGNAL_CHANNEL", "")
 TOTAL_LOSS_LIMIT = -0.15
 API_ERROR_LIMIT = 5
 
-# EU-Handelsfenster: Start und Ende sind der tatsaechliche Xetra/Euronext-
-# Handelsbeginn/-schluss (09:00-17:30 Europe/Berlin, DST-sicher per ZoneInfo
-# statt fixer UTC-Stunden - sonst verschiebt sich die Grenze mit Sommer-/
-# Winterzeit). Start minus PRE_SESSION_LEAD_MINUTES Vorlauf, Ende ohne
-# Nachlauf - ausserhalb der Session (inkl. Vorlauf) wird auf Nutzerwunsch
-# (27.08.2026: "nach der Session gar nicht mehr abfragen bis 5 Min. vorher")
-# gar nicht mehr abgefragt. Der externe Cron-Trigger selbst deckt ein noch
-# breiteres Fenster ab (siehe trading-bot-spec.md), das eigentliche
-# Ein-/Ausschalten passiert hier im Skript, gleiches Prinzip wie beim
-# ORB-Bot (Abschnitt 9, "Workflow bewusst weiter getaktet als die Session").
-EU_TZ = ZoneInfo("Europe/Berlin")
-EU_SESSION_START_LOCAL = time(9, 0)
-EU_SESSION_END_LOCAL = time(17, 30)
-# US-Handelsbeginn (NYSE/NASDAQ): 09:30 America/New_York, ebenfalls DST-sicher
-# per ZoneInfo (NY-Konstante oben) statt fixer UTC-Stunde. Das Ende wird
-# bereits ueber die echte Alpaca-Marktuhr (_is_us_market_open) exakt
-# erkannt, braucht also keine eigene Konstante.
-US_SESSION_START_LOCAL = time(9, 30)
+# Handelszeiten je Instrument (Zeitzone, Sessionbeginn lokal, Sessionende
+# lokal) - DST-sicher per ZoneInfo statt fixer UTC-Stunden, sonst
+# verschiebt sich die Grenze mit Sommer-/Winterzeit. Kein Feiertagskalender
+# (dafuer gibt es keine aequivalente Quelle wie Alpacas Marktuhr fuer
+# US-Aktien) - unschaedlich, fuehrt hoechstens zu ein paar ungenutzten
+# Kanal-Abfragen an einem Feiertag. Ueber INDEX_TO_SYMBOL referenziert
+# statt Symbole hier zu duplizieren, damit eine Korrektur der Symbole in
+# signalbot/mapping.py (siehe dortiger Verifikations-Hinweis) automatisch
+# mitzieht.
+SESSIONS: dict[str, tuple[ZoneInfo, time, time]] = {
+    INDEX_TO_SYMBOL["NASDAQ"]: (NY, time(9, 30), time(16, 0)),
+    INDEX_TO_SYMBOL["DOW"]: (NY, time(9, 30), time(16, 0)),
+    INDEX_TO_SYMBOL["FTSE"]: (LONDON_TZ, time(8, 0), time(16, 30)),
+    INDEX_TO_SYMBOL["DAX"]: (EU_TZ, time(9, 0), time(17, 30)),
+}
 PRE_SESSION_LEAD_MINUTES = 5
 # Rund um den Sessionstart kommt erfahrungsgemaess zuerst eine laengere
-# Ansage-Nachricht im Kanal (Nutzerwunsch 27.08.2026) - deshalb wird die
+# Ansage-Nachricht im Kanal (Nutzerwunsch) - deshalb wird die
 # Ruhe-Drosselung unten in diesem Fenster (Vorlauf bis
 # ACTIVE_POLLING_WINDOW_MINUTES nach Sessionstart) komplett ignoriert und
 # jeder Lauf fragt den Kanal ab; erst danach greift die normale
@@ -86,11 +106,11 @@ PRE_SESSION_LEAD_MINUTES = 5
 ACTIVE_POLLING_WINDOW_MINUTES = 60
 QUIET_THRESHOLD_MINUTES = 30  # ab hier gilt der Kanal als "ruhig"
 QUIET_POLL_INTERVAL_MINUTES = 5  # und wird nur noch in diesem Abstand abgefragt
-# Risiko pro Trade fuer position_size() (tradingbot/orders.py) - bewusst
-# hoeher als der ORB-Bot-Standard von 1% (Nutzerwunsch 27.08.2026: die
-# bisherigen Positionen waren angesichts der beobachteten Kursausschlaege
-# zu klein, nur der Signal-Bot soll aggressiver dimensionieren, der
-# ORB-Bot bleibt unangetastet bei 1%).
+# Risiko pro Trade fuer position_size() (tradingbot/ctrader.py) - bewusst
+# hoeher als der ORB-Bot-Standard von 1% (Nutzerwunsch: die bisherigen
+# Positionen waren angesichts der beobachteten Kursausschlaege zu klein,
+# nur der Signal-Bot soll aggressiver dimensionieren, der ORB-Bot bleibt
+# unangetastet bei 1%).
 SIGNAL_RISK_PCT = 0.03
 
 
@@ -124,138 +144,146 @@ def _log_and_clear(state: SignalBotState, symbol: str, now: datetime,
     state.total_trades += 1
 
     exit_labels = {"stop": "Stop getroffen", "target": "Ziel getroffen",
-                   "eod": "Tagesende-Schluss", "safety_stop": "Sicherheitsschalter-Schluss"}
+                   "eod": "Sessionende-Schluss", "safety_stop": "Sicherheitsschalter-Schluss",
+                   "channel_close_signal": "Kanal-Schliess-Anweisung befolgt"}
     send_notification(
         f"Signal-Trade geschlossen: {signal.direction.value.upper()} {symbol}, "
         f"{exit_labels.get(exit_reason, exit_reason)}\n"
-        f"Ergebnis: {'+' if pnl >= 0 else ''}{pnl:.2f} $ ({row.pnl_in_r:+.2f} R)"
+        f"Ergebnis: {'+' if pnl >= 0 else ''}{pnl:.2f} ({row.pnl_in_r:+.2f} R)"
     )
 
 
-def _check_filled_trades(client: TradingClient, state: SignalBotState, now: datetime) -> None:
+async def _check_filled_trades(session: CTraderSession, state: SignalBotState, now: datetime) -> None:
+    """cTrader fuellt Market-Orders synchron (kein Filled-Polling wie bei
+    Alpaca noetig), aber Stop/Ziel laufen serverseitig weiter - ein
+    Trade, der nicht mehr unter den offenen Positionen auftaucht, wurde
+    durch Stop oder Ziel geschlossen."""
+    open_at_broker = await get_open_positions(session)
     for symbol in list(state.open_trades.keys()):
         trade = state.open_trades[symbol]
 
-        if trade.entry_fill is None:
-            order = client.get_order_by_id(trade.order_id)
-            if order.filled_avg_price is not None:
-                trade.entry_fill = float(order.filled_avg_price)
-
-        order = client.get_order_by_id(trade.order_id)
-        filled_leg = next((leg for leg in (order.legs or []) if leg.status == "filled"), None)
-        if filled_leg is None:
+        if symbol in open_at_broker:
+            trade.entry_fill = float(open_at_broker[symbol]["entryPrice"])
             continue
 
-        exit_price = float(filled_leg.filled_avg_price)
+        # cTrader liefert (anders als IG/MetaApi) hier keinen einfachen
+        # "Schlusskurs der zuletzt geschlossenen Position"-Aufruf, ohne die
+        # noch unverifizierte Deal-Historie separat abzufragen - solange
+        # das nicht gegen den echten Account geprueft ist (siehe
+        # tradingbot/ctrader.py), wird der aktuelle Marktkurs als Naeherung
+        # fuer den Ausstiegspreis verwendet (kein Datenverlust, nur eine
+        # leicht ungenaue PnL-Zahl bis zur Verifikation) - naeher an Stop
+        # oder Ziel entscheidet wie gewohnt den Log-Grund.
         signal = trade.signal
+        try:
+            exit_price = await get_latest_price(session, symbol)
+        except Exception:
+            exit_price = signal.stop
+        print(f"Trade fuer {symbol} nicht mehr offen - genauer Ausstiegspreis noch nicht "
+              f"verifiziert abrufbar (siehe tradingbot/ctrader.py), verwende aktuellen Marktkurs als Naeherung.")
         is_stop = abs(exit_price - signal.stop) < abs(exit_price - signal.target)
         _log_and_clear(state, symbol, now, exit_price, "stop" if is_stop else "target")
 
 
-def _close_all_open(client: TradingClient, state: SignalBotState, now: datetime, reason: str) -> None:
+async def _close_one_open(session: CTraderSession, state: SignalBotState, symbol: str,
+                           now: datetime, reason: str) -> None:
+    trade = state.open_trades[symbol]
+    try:
+        exit_price = await close_position(session, trade.order_id, trade.qty)
+    except Exception as e:
+        print(f"Konnte Trade fuer {symbol} nicht schliessen (oder Ausstiegspreis nicht ermittelbar): {e}")
+        exit_price = trade.signal.entry_price
+    _log_and_clear(state, symbol, now, exit_price, reason)
+
+
+async def _close_all_open(session: CTraderSession, state: SignalBotState, now: datetime, reason: str) -> None:
     for symbol in list(state.open_trades.keys()):
-        trade = state.open_trades[symbol]
-        # Bracket-Legs zuerst canceln, sonst lehnt Alpaca die Schliess-Order
-        # ab ("insufficient qty available") - siehe scripts/run_bot.py,
-        # force_close_open_position, selbe Ursache live beobachtet am
-        # 25./26.08.2026 beim ORB-Bot.
-        try:
-            order = client.get_order_by_id(trade.order_id)
-            for leg in (order.legs or []):
-                if leg.status not in ("filled", "canceled", "expired"):
-                    client.cancel_order_by_id(leg.id)
-        except Exception as e:
-            print(f"Konnte Bracket-Legs fuer {symbol} nicht abfragen/canceln: {e}")
+        await _close_one_open(session, state, symbol, now, reason)
 
-        positions = client.get_all_positions()
-        if any(p.symbol == symbol for p in positions):
-            order = client.close_position(symbol)
-            exit_price = None
-            for _ in range(3):
-                if order.filled_avg_price is not None:
-                    exit_price = float(order.filled_avg_price)
-                    break
-                time_module.sleep(2)
-                order = client.get_order_by_id(order.id)
-            if exit_price is None:
-                exit_price = trade.signal.entry_price
-        else:
-            exit_price = trade.signal.stop
 
-        _log_and_clear(state, symbol, now, exit_price, reason)
+async def _close_expiring_positions(session: CTraderSession, state: SignalBotState,
+                                     now: datetime, now_utc: datetime) -> None:
+    """Zwangsschluss 5 Min. vor Sessionende - pro Instrument statt eines
+    einzelnen globalen EOD-Zeitpunkts, da NASDAQ/DOW/UK100/DAX jeweils
+    eigene Handelszeiten haben (siehe SESSIONS oben)."""
+    for symbol in list(state.open_trades.keys()):
+        if _session_end_approaching(now_utc, symbol):
+            await _close_one_open(session, state, symbol, now, "eod")
 
 
 GEMINI_CALL_DELAY_SECONDS = 4  # Freikontingent-Ratenlimit, siehe trading-bot-spec.md Abschnitt 12
 
 
-def _is_eu_hours(now_utc: datetime) -> bool:
-    """Keine exakte Boersenkalender-Pruefung wie beim US-Markt (dafuer gibt
-    es hier keine Alpaca-aequivalente Quelle) - Feiertage werden nicht
-    beruecksichtigt. Fenster: PRE_SESSION_LEAD_MINUTES vor
-    EU_SESSION_START_LOCAL bis EU_SESSION_END_LOCAL, kein Nachlauf danach."""
-    now_eu = now_utc.astimezone(EU_TZ)
-    if now_eu.weekday() >= 5:
-        return False
-    session_start = datetime.combine(now_eu.date(), EU_SESSION_START_LOCAL, tzinfo=EU_TZ)
-    session_end = datetime.combine(now_eu.date(), EU_SESSION_END_LOCAL, tzinfo=EU_TZ)
-    poll_start = session_start - timedelta(minutes=PRE_SESSION_LEAD_MINUTES)
-    return poll_start <= now_eu <= session_end
-
-
-def _is_us_pre_session(now_utc: datetime) -> bool:
-    """Alpacas Clock (_is_us_market_open) kennt nur den tatsaechlichen
-    Marktstatus, keinen Vorlauf - deshalb hier separat: die
-    PRE_SESSION_LEAD_MINUTES vor US_SESSION_START_LOCAL. Feiertage werden
-    nicht beruecksichtigt (dafuer muesste die Alpaca-Clock/-Kalender befragt
-    werden) - unschaedlich, fuehrt hoechstens zu ein paar ungenutzten
-    Kanal-Abfragen an einem Boersenfeiertag."""
-    now_ny = now_utc.astimezone(NY)
-    if now_ny.weekday() >= 5:
-        return False
-    session_start = datetime.combine(now_ny.date(), US_SESSION_START_LOCAL, tzinfo=NY)
-    poll_start = session_start - timedelta(minutes=PRE_SESSION_LEAD_MINUTES)
-    return poll_start <= now_ny < session_start
-
-
-def _is_in_active_polling_window(now_utc: datetime, session_start_local: time, tz: ZoneInfo) -> bool:
-    """True von PRE_SESSION_LEAD_MINUTES vor bis ACTIVE_POLLING_WINDOW_MINUTES
-    nach Sessionstart (EU oder US) - in diesem Fenster ignoriert
-    _should_poll_channel() die Ruhe-Drosselung komplett, siehe deren
-    Docstring. Feiertage werden wie bei _is_us_pre_session() nicht
-    beruecksichtigt."""
+def _session_bounds(now_utc: datetime, symbol: str) -> tuple[datetime, datetime] | None:
+    tz, start_local, end_local = SESSIONS[symbol]
     now_local = now_utc.astimezone(tz)
     if now_local.weekday() >= 5:
+        return None
+    session_start = datetime.combine(now_local.date(), start_local, tzinfo=tz)
+    session_end = datetime.combine(now_local.date(), end_local, tzinfo=tz)
+    return session_start, session_end
+
+
+def _is_in_session(now_utc: datetime, symbol: str) -> bool:
+    """PRE_SESSION_LEAD_MINUTES vor Sessionbeginn bis Sessionende, kein
+    Nachlauf danach (Nutzerwunsch: "nach der Session gar nicht mehr
+    abfragen bis 5 Min. vorher")."""
+    bounds = _session_bounds(now_utc, symbol)
+    if bounds is None:
         return False
-    session_start = datetime.combine(now_local.date(), session_start_local, tzinfo=tz)
+    session_start, session_end = bounds
+    now_local = now_utc.astimezone(SESSIONS[symbol][0])
+    poll_start = session_start - timedelta(minutes=PRE_SESSION_LEAD_MINUTES)
+    return poll_start <= now_local <= session_end
+
+
+def _is_in_active_polling_window(now_utc: datetime, symbol: str) -> bool:
+    """True von PRE_SESSION_LEAD_MINUTES vor bis ACTIVE_POLLING_WINDOW_MINUTES
+    nach Sessionstart - in diesem Fenster ignoriert _should_poll_channel()
+    die Ruhe-Drosselung komplett, siehe deren Docstring."""
+    bounds = _session_bounds(now_utc, symbol)
+    if bounds is None:
+        return False
+    session_start, _ = bounds
+    now_local = now_utc.astimezone(SESSIONS[symbol][0])
     window_start = session_start - timedelta(minutes=PRE_SESSION_LEAD_MINUTES)
     window_end = session_start + timedelta(minutes=ACTIVE_POLLING_WINDOW_MINUTES)
     return window_start <= now_local <= window_end
 
 
-def _is_us_market_open(client: TradingClient) -> bool:
-    try:
-        return bool(client.get_clock().is_open)
-    except Exception as e:
-        print(f"Konnte US-Marktkalender nicht abrufen, nehme Markt vorsichtshalber als offen an: {e}")
-        return True
+def _session_end_approaching(now_utc: datetime, symbol: str) -> bool:
+    """5 Min. vor Sessionende - Zeitpunkt fuer den Zwangsschluss einer
+    offenen Position in diesem Instrument."""
+    bounds = _session_bounds(now_utc, symbol)
+    if bounds is None:
+        return False
+    _, session_end = bounds
+    now_local = now_utc.astimezone(SESSIONS[symbol][0])
+    return now_local >= session_end - timedelta(minutes=PRE_SESSION_LEAD_MINUTES)
+
+
+def _any_session_active(now_utc: datetime) -> bool:
+    return any(_is_in_session(now_utc, symbol) for symbol in SESSIONS)
+
+
+def _any_active_polling_window(now_utc: datetime) -> bool:
+    return any(_is_in_active_polling_window(now_utc, symbol) for symbol in SESSIONS)
 
 
 def _should_poll_channel(state: SignalBotState, now_utc: datetime) -> bool:
-    """Drosselung auf Nutzerwunsch (26.08.2026): solange der Kanal aktiv
-    ist, bei jedem Lauf abfragen (Takt macht der externe Trigger, siehe
+    """Drosselung auf Nutzerwunsch: solange der Kanal aktiv ist, bei jedem
+    Lauf abfragen (Takt macht der externe Trigger, siehe
     trading-bot-spec.md); nach QUIET_THRESHOLD_MINUTES ohne neue Nachricht
     nur noch alle QUIET_POLL_INTERVAL_MINUTES tatsaechlich abfragen. Der
     Cron-Trigger selbst kann diese Drosselung nicht - deshalb hier im
     Skript, nicht in der Cron-Konfiguration.
 
-    Ausnahme (Nutzerwunsch 27.08.2026): rund um den Sessionstart kommt
-    zuerst zuverlaessig eine laengere Ansage-Nachricht im Kanal - deshalb
-    wird die Ruhe-Drosselung im aktiven Polling-Fenster
-    (_is_in_active_polling_window) komplett ausgesetzt, unabhaengig davon
-    wie lange der Kanal vorher still war. Erst danach greift die normale
-    Drosselung wieder."""
-    if _is_in_active_polling_window(now_utc, EU_SESSION_START_LOCAL, EU_TZ) or \
-       _is_in_active_polling_window(now_utc, US_SESSION_START_LOCAL, NY):
+    Ausnahme (Nutzerwunsch): rund um den Sessionstart kommt zuerst
+    zuverlaessig eine laengere Ansage-Nachricht im Kanal - deshalb wird die
+    Ruhe-Drosselung im aktiven Polling-Fenster (_any_active_polling_window)
+    komplett ausgesetzt, unabhaengig davon wie lange der Kanal vorher still
+    war. Erst danach greift die normale Drosselung wieder."""
+    if _any_active_polling_window(now_utc):
         return True
     if state.last_channel_message_at is None or state.last_poll_at is None:
         return True
@@ -266,8 +294,8 @@ def _should_poll_channel(state: SignalBotState, now_utc: datetime) -> bool:
     return since_last_poll >= QUIET_POLL_INTERVAL_MINUTES
 
 
-def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float,
-                      buying_power: float, now_utc: datetime) -> None:
+async def _try_new_signals(session: CTraderSession, state: SignalBotState,
+                            equity: float, now_utc: datetime) -> None:
     if not CHANNEL:
         print("SIGNAL_CHANNEL nicht gesetzt, ueberspringe Kanal-Abruf.")
         return
@@ -275,7 +303,7 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
     is_first_run = state.last_message_id is None
 
     try:
-        messages = asyncio.run(fetch_new_messages(CHANNEL, state.last_message_id))
+        messages = await fetch_new_messages(CHANNEL, state.last_message_id)
     except Exception as e:
         state.consecutive_api_errors += 1
         print(f"API-Fehler beim Telegram-Abruf: {e}")
@@ -288,9 +316,9 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
     # Allererster Lauf: nur die Basislinie setzen (last_message_id), keine
     # der schon vorhandenen Kanal-Nachrichten als aktuelles Signal handeln -
     # ohne das wuerde der Bot beim Start tagealte "BOUGHT LONG"-Nachrichten
-    # aus dem Verlauf als jetzige Einstiege interpretieren (live beobachtet
-    # 26.08.2026: ~35 Alt-Nachrichten wurden beim ersten Lauf sofort an
-    # Gemini geschickt, siehe auch das Ratenlimit-Problem unten).
+    # aus dem Verlauf als jetzige Einstiege interpretieren (live beobachtet:
+    # ~35 Alt-Nachrichten wurden beim ersten Lauf sofort an Gemini
+    # geschickt, siehe auch das Ratenlimit-Problem unten).
     if is_first_run:
         if messages:
             state.last_message_id = messages[-1][0]
@@ -302,67 +330,111 @@ def _try_new_signals(client: TradingClient, state: SignalBotState, equity: float
         print("Kanal abgefragt, keine neuen Nachrichten seit dem letzten Lauf.")
         return
 
-    for i, (message_id, text, _msg_date) in enumerate(messages):
+    for i, (message_id, text, msg_date) in enumerate(messages):
         state.last_message_id = message_id
 
         if i > 0:
             time_module.sleep(GEMINI_CALL_DELAY_SECONDS)
-        parsed = parse_signal_message(text)
-        if parsed is None or not parsed.get("is_signal"):
+
+        # JEDE ausgewertete Nachricht wird protokolliert (nicht nur die,
+        # die zu einem Trade fuehren) - Nutzerwunsch (28.08.2026): die
+        # letzten sieben Tage sollen jederzeit nachvollziehbar sein, u. a.
+        # um zu sehen, warum ein gesendetes Signal NICHT gehandelt wurde
+        # (der Bot hatte zuvor nur 1 von ueber 5 gesendeten Signalen
+        # beachtet, ohne dass der Grund dafuer sichtbar war).
+        try:
+            history = recent_message_texts(CHANNEL_LOG_PATH, before=msg_date)
+            parsed = parse_signal_message(text, history=history)
+        except GeminiError as e:
+            state.consecutive_api_errors += 1
+            print(f"Nachricht {message_id} uebersprungen (Gemini-Fehler): {e}")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, None, "gemini_fehler")
             continue
 
-        # Rohdaten mitloggen (Nutzerwunsch 27.08.2026, nach einer Nachfrage
-        # zu Index-Punkten aus dem Kanal, die sich ohne Originaltext und
+        if parsed is None or not parsed.get("is_signal"):
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "kein_signal")
+            continue
+
+        # Rohdaten mitloggen (Nutzerwunsch, nach einer Nachfrage zu
+        # Index-Punkten aus dem Kanal, die sich ohne Originaltext und
         # geparste Level nicht nachrechnen liess) - damit sich die spaeter
-        # berechneten ETF-Werte (Entry/Stop/Ziel) jederzeit gegen die
+        # berechneten Werte (Entry/Stop/Ziel) jederzeit gegen die
         # tatsaechliche Kanal-Nachricht nachvollziehen lassen, auch wenn
         # DEFAULT_STOP_PCT als Fallback gegriffen hat (kein Stop-Level in
         # der Nachricht erkannt).
-        print(f"Signal erkannt (Nachricht {message_id}): {parsed.get('index')} "
-              f"{parsed.get('direction')}, Index-Level Entry={parsed.get('entry_level')} "
-              f"Stop={parsed.get('stop_level')} Ziel={parsed.get('target_level')} | "
-              f"Originaltext: {text!r}")
+        print(f"Signal erkannt (Nachricht {message_id}): action={parsed.get('action')} "
+              f"{parsed.get('index')} {parsed.get('direction')}, Index-Level "
+              f"Entry={parsed.get('entry_level')} Stop={parsed.get('stop_level')} "
+              f"Ziel={parsed.get('target_level')} | Originaltext: {text!r}")
 
         symbol = symbol_for_index(parsed.get("index"))
         if symbol is None:
-            # Bisher komplett stillschweigend uebersprungen - dadurch war im
-            # Nachhinein nicht erkennbar, ob ein Lauf gar kein Signal sah
-            # oder eines fuer einen nicht unterstuetzten Index (z. B. DAX,
-            # siehe trading-bot-spec.md: nur NASDAQ/DOW werden gehandelt).
             print(f"Signal fuer Index '{parsed.get('index')}' erkannt, aber nicht unterstuetzt "
-                  f"(nur NASDAQ/DOW werden gehandelt) - uebersprungen.")
+                  f"(nur NASDAQ/DOW/DAX/FTSE werden gehandelt) - uebersprungen.")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "index_nicht_unterstuetzt")
             continue
+
+        if parsed.get("action") == "close":
+            # Eindeutige Kanal-Anweisung, die laufende Position JETZT zu
+            # schliessen (Nutzerwunsch 28.08.2026: der Bot hatte eine
+            # solche Nachricht zuvor ignoriert und stattdessen passiv auf
+            # den eigenen Stop gewartet) - nur wirksam, wenn ueberhaupt
+            # eine offene Position in diesem Instrument besteht.
+            if symbol in state.open_trades:
+                await _close_one_open(session, state, symbol, datetime.now(NY), "channel_close_signal")
+                append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "trade_geschlossen")
+            else:
+                print(f"Schliess-Anweisung fuer {symbol}, aber keine offene Position - ignoriert.")
+                append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "schliessung_ohne_position")
+            continue
+
         if symbol in state.open_trades:
             print(f"Signal fuer {symbol}, aber bereits eine offene Position - uebersprungen.")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "bereits_offen")
             continue
 
         try:
-            etf_price = get_latest_price(symbol)
+            instrument_price = await get_latest_price(session, symbol)
         except Exception as e:
             print(f"Konnte aktuellen Kurs fuer {symbol} nicht laden: {e}")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "kurs_nicht_ladbar")
             continue
 
-        signal = build_signal_from_parsed(parsed, etf_price, datetime.now(NY))
+        signal = build_signal_from_parsed(parsed, instrument_price, datetime.now(NY))
         if signal is None:
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "kein_gueltiges_signal")
             continue
 
-        qty = position_size(signal, equity, buying_power, risk_pct=SIGNAL_RISK_PCT)
-        if qty < 1:
-            print(f"Signal fuer {symbol} erkannt, aber Stueckzahl < 1 - ausgelassen.")
+        volume = position_size(signal, equity, risk_pct=SIGNAL_RISK_PCT)
+        if volume < 0.01:
+            print(f"Signal fuer {symbol} erkannt, aber Lot-Volumen < 0.01 - ausgelassen.")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "volumen_zu_klein")
             continue
 
-        order = place_bracket_order(client, symbol, signal, qty)
+        try:
+            position_id = await place_market_order(session, symbol, signal, volume)
+        except Exception as e:
+            # cTrader/der Broker lehnt z. B. bei zu wenig Margin oder
+            # einem falschen Symbol die Order direkt ab - wie jeden
+            # anderen API-Fehler behandeln statt den ganzen Lauf
+            # abzubrechen (siehe tradingbot/ctrader.py::position_size zur
+            # Margin-Begruendung).
+            state.consecutive_api_errors += 1
+            print(f"Order fuer {symbol} fehlgeschlagen: {e}")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "order_fehlgeschlagen")
+            continue
+
         state.open_trades[symbol] = OpenSignalTrade(
-            signal=signal, order_id=str(order.id), qty=qty, source_message_id=message_id,
+            signal=signal, order_id=position_id, qty=volume, source_message_id=message_id,
         )
+        append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "trade_eroeffnet")
         send_notification(
-            f"Signal-Einstieg {signal.direction.value} {qty}x {symbol} @ ~{signal.entry_price:.2f} "
+            f"Signal-Einstieg {signal.direction.value} {volume}x {symbol} @ ~{signal.entry_price:.2f} "
             f"(Kanal-Signal), Stop {signal.stop:.2f}, Ziel {signal.target:.2f}"
         )
-        buying_power -= qty * etf_price  # grob fuer weitere Signale im selben Lauf gegenrechnen
 
 
-def main() -> None:
+async def main() -> None:
     now = datetime.now(NY)
 
     kill_switch = check_kill_switch(KILL_SWITCH_PATH)
@@ -371,10 +443,10 @@ def main() -> None:
         return
 
     state = load_state(STATE_PATH)
-    client = TradingClient(os.environ["ALPACA_API_KEY"], os.environ["ALPACA_SECRET_KEY"], paper=True)
 
     try:
-        _run(client, state, now)
+        async with ctrader_session() as session:
+            await _run(session, state, now)
     except Exception as e:
         print(f"Unerwarteter Fehler: {e}")
         send_notification(f"Signal-Bot-Fehler: {e}")
@@ -382,9 +454,9 @@ def main() -> None:
         raise
 
 
-def _run(client: TradingClient, state: SignalBotState, now: datetime) -> None:
+async def _run(session: CTraderSession, state: SignalBotState, now: datetime) -> None:
     try:
-        account = client.get_account()
+        account = await get_account_info(session)
         state.consecutive_api_errors = 0
     except Exception as e:
         state.consecutive_api_errors += 1
@@ -392,12 +464,11 @@ def _run(client: TradingClient, state: SignalBotState, now: datetime) -> None:
         save_state(state, STATE_PATH)
         return
 
-    equity = float(account.equity)
-    buying_power = float(account.buying_power)
+    equity = float(account["balance"])
     if state.initial_equity is None:
         state.initial_equity = equity
 
-    _check_filled_trades(client, state, now)
+    await _check_filled_trades(session, state, now)
 
     if state.stopped_permanently:
         save_state(state, STATE_PATH)
@@ -407,7 +478,7 @@ def _run(client: TradingClient, state: SignalBotState, now: datetime) -> None:
     if total_loss <= TOTAL_LOSS_LIMIT:
         print(f"Sicherheitsschalter: Gesamtverlust {total_loss * 100:.1f}%")
         send_notification(f"Signal-Bot Sicherheitsschalter: Gesamtverlust {total_loss * 100:.1f}%, stoppe dauerhaft.")
-        _close_all_open(client, state, now, "safety_stop")
+        await _close_all_open(session, state, now, "safety_stop")
         state.stopped_permanently = True
         save_state(state, STATE_PATH)
         return
@@ -417,23 +488,18 @@ def _run(client: TradingClient, state: SignalBotState, now: datetime) -> None:
         save_state(state, STATE_PATH)
         return
 
-    if now.time() >= EOD_CUTOFF:
-        if state.open_trades:
-            _close_all_open(client, state, now, "eod")
-        save_state(state, STATE_PATH)
-        return
-
     now_utc = datetime.now(timezone.utc)
-    market_window_open = (
-        _is_eu_hours(now_utc) or _is_us_market_open(client) or _is_us_pre_session(now_utc)
-    )
+    await _close_expiring_positions(session, state, now, now_utc)
+
+    market_window_open = _any_session_active(now_utc)
     if market_window_open and _should_poll_channel(state, now_utc):
-        _try_new_signals(client, state, equity, buying_power, now_utc)
+        await _try_new_signals(session, state, equity, now_utc)
     else:
-        reason = "ausserhalb EU-/US-Handelsfenster" if not market_window_open else "Ruhe-Drosselung aktiv"
+        reason = "ausserhalb aller Handelsfenster" if not market_window_open else "Ruhe-Drosselung aktiv"
         print(f"Kein Kanal-Abruf diesen Lauf ({reason}).")
     save_state(state, STATE_PATH)
 
 
 if __name__ == "__main__":
-    main()
+    # bewusst run_ctrader() statt asyncio.run() - siehe tradingbot/ctrader.py
+    run_ctrader(main())
