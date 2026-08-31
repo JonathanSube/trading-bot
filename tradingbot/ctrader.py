@@ -554,6 +554,11 @@ async def close_position(session: CTraderSession, position_id: int, volume: floa
     req.positionId = position_id
     req.volume = int(volume * 100)
     resp = await _send(session, req)
+    # Diagnose (31.08.2026): die Order wurde live nachweislich angenommen
+    # (keine Fehlerantwort, siehe _send()) - nur die erwartete
+    # deal.executionPrice-Struktur stimmte nicht. Volle Antwort mitloggen,
+    # um die tatsaechlichen Feldnamen zu finden statt weiter zu raten.
+    print(f"[cTrader] close_position()-Antwort: {resp}")
     deal = getattr(resp, "deal", None)
     if deal is not None and getattr(deal, "executionPrice", None):
         return float(deal.executionPrice)
