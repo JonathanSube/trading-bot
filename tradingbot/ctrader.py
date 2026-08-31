@@ -60,6 +60,7 @@ from twisted.internet import ssl as twisted_ssl
 
 from ctrader_open_api import Client, EndPoints, TcpProtocol
 from ctrader_open_api.factory import Factory as _CTraderFactory
+from ctrader_open_api.protobuf import Protobuf
 from ctrader_open_api.messages.OpenApiMessages_pb2 import (
     ProtoOAAccountAuthReq,
     ProtoOAAmendPositionSLTPReq,
@@ -155,9 +156,28 @@ def _protocol_send(client: Client, protocol, message, response_timeout: int = 10
 
 async def _send(session: CTraderSession, request):
     """asFuture() statt addCallback-Ketten, damit der Rest des Moduls
-    normaler async/await-Code bleiben kann."""
+    normaler async/await-Code bleiben kann.
+
+    WICHTIG (gefunden 31.08.2026 bei Code-Review vor dem naechsten Live-
+    Test, noch nicht live beobachtet): TcpProtocol.stringReceived() liefert
+    nur den rohen ProtoMessage-Umschlag (Felder: payloadType, payload als
+    Bytes, clientMsgId) an _received()/die Response-Deferred weiter - NICHT
+    das eigentliche decodierte Antwortobjekt (z.B. ProtoOATraderRes). Das
+    muss explizit per Protobuf.extract() ausgepackt werden, siehe
+    ctrader_open_api/protobuf.py. Ohne das wuerde z.B.
+    `accounts_resp.ctidTraderAccount` weiter unten mit AttributeError
+    fehlschlagen, weil der rohe Umschlag dieses Feld gar nicht hat."""
     deferred = _protocol_send(session.client, session.protocol, request)
-    return await deferred.asFuture(asyncio.get_event_loop())
+    envelope = await deferred.asFuture(asyncio.get_event_loop())
+    payload = Protobuf.extract(envelope)
+    # cTrader antwortet bei Fehlern (falsche Client-Id/Secret, ungueltiger
+    # Access-Token, etc.) mit ProtoErrorRes/ProtoOAErrorRes statt der
+    # erwarteten Antwortklasse - ohne diese Pruefung wuerde der Aufrufer
+    # erst beim naechsten Feldzugriff mit einem verwirrenden AttributeError
+    # scheitern statt der eigentlichen Fehlermeldung von cTrader.
+    if "Error" in type(payload).__name__:
+        raise RuntimeError(f"cTrader-Fehlerantwort auf {type(request).__name__}: {payload}")
+    return payload
 
 
 @asynccontextmanager
