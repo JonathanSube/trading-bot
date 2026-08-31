@@ -148,6 +148,17 @@ async def ctrader_session():
     loop = asyncio.get_event_loop()
     connected = loop.create_future()
     client.setConnectedCallback(lambda c: not connected.done() and connected.set_result(None))
+    # Diagnose (31.08.2026): ein einfacher reiner Socket-Connect zum
+    # selben Host/Port gelingt im selben Lauf sofort - trotzdem verbindet
+    # Client/ClientService nicht innerhalb von 30s. Ohne einen
+    # Disconnected-Callback sieht man den eigentlichen Fehlgrund (z. B.
+    # TLS-Handshake-Fehler) nie, weil ClientService bei jedem
+    # fehlgeschlagenen Versuch automatisch und still mit Backoff erneut
+    # versucht (siehe Kommentar unten) - dieser Callback macht den ersten
+    # Fehler sichtbar, statt nur "Timeout nach 30s" zu sehen.
+    client.setDisconnectedCallback(
+        lambda c, reason: print(f"[cTrader] Verbindung getrennt/fehlgeschlagen: {reason}")
+    )
     client.startService()
     # Twisteds ClientService (Basis von Client, siehe ctrader_open_api-Quelltext)
     # versucht bei einem fehlgeschlagenen Verbindungsaufbau per Default
@@ -164,7 +175,8 @@ async def ctrader_session():
             f"Keine Verbindung zu {EndPoints.PROTOBUF_DEMO_HOST}:{EndPoints.PROTOBUF_PORT} "
             "innerhalb von 30s zustande gekommen - moegliche Ursachen: Netzwerk-/"
             "Firewall-Problem, TLS-Handshake schlaegt fehl (siehe requirements.txt: "
-            "service_identity noetig), oder der Host/Port ist nicht (mehr) korrekt."
+            "service_identity noetig), oder der Host/Port ist nicht (mehr) korrekt. "
+            "Siehe vorherige [cTrader]-Log-Zeilen fuer den genauen Fehlgrund."
         )
 
     try:
