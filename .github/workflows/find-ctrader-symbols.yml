@@ -43,4 +43,8 @@ jobs:
           CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
           CTRADER_CLIENT_SECRET: ${{ secrets.CTRADER_CLIENT_SECRET }}
           CTRADER_REFRESH_TOKEN: ${{ secrets.CTRADER_REFRESH_TOKEN }}
+          # Fuer die automatische Aktualisierung des rotierten Refresh-
+          # Tokens (siehe tradingbot/ctrader.py::_persist_rotated_refresh_token) -
+          # eigenes PAT noetig, GITHUB_TOKEN darf keine Secrets schreiben.
+          GH_SECRETS_PAT: ${{ secrets.GH_SECRETS_PAT }}
         run: python scripts/find_ctrader_symbols.py

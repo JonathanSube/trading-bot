@@ -50,6 +50,11 @@ jobs:
           CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
           CTRADER_CLIENT_SECRET: ${{ secrets.CTRADER_CLIENT_SECRET }}
           CTRADER_REFRESH_TOKEN: ${{ secrets.CTRADER_REFRESH_TOKEN }}
+          # cTrader rotiert den Refresh-Token bei jedem Tausch - eigenes PAT
+          # noetig, damit der Bot CTRADER_REFRESH_TOKEN selbst aktuell
+          # halten kann (siehe tradingbot/ctrader.py::_persist_rotated_refresh_token,
+          # GITHUB_TOKEN darf keine Actions-Secrets schreiben).
+          GH_SECRETS_PAT: ${{ secrets.GH_SECRETS_PAT }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}

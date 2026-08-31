@@ -40,11 +40,13 @@ pruefen:
 """
 
 import asyncio
+import base64
 import math
 import os
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 
+import nacl.public
 import requests
 
 from twisted.internet import asyncioreactor
@@ -125,6 +127,68 @@ def run_ctrader(coro):
     return _loop.run_until_complete(coro)
 
 
+def _persist_rotated_refresh_token(new_refresh_token: str) -> None:
+    """cTrader rotiert den Refresh-Token bei JEDEM Tausch (live bestaetigt
+    31.08.2026, siehe get_access_token()) - ohne das hier zu speichern,
+    wuerde bereits der naechste automatisierte Lauf mit dem in
+    CTRADER_REFRESH_TOKEN hinterlegten, dann schon ungueltigen alten Token
+    scheitern. Aktualisiert das GitHub-Actions-Secret direkt per API
+    (verschluesselt mit dem repo-eigenen oeffentlichen Schluessel, wie von
+    GitHub fuer Secret-Updates vorgeschrieben - siehe docs.github.com,
+    "Encrypting secrets for the REST API").
+
+    Braucht ein EIGENES Personal-Access-Token mit Schreibrecht auf
+    Actions-Secrets dieses Repos (GH_SECRETS_PAT) - der von Actions
+    automatisch bereitgestellte GITHUB_TOKEN darf das nicht. Laeuft dieses
+    Modul lokal oder fehlt das PAT, wird nur geloggt und NICHT
+    fehlgeschlagen - der frisch getauschte Access-Token ist fuer den
+    aktuellen Lauf trotzdem gueltig, nur der naechste Lauf braeuchte dann
+    wieder einen manuell neu eingetragenen Refresh-Token."""
+    pat = os.environ.get("GH_SECRETS_PAT")
+    repository = os.environ.get("GITHUB_REPOSITORY")
+    if not pat or not repository:
+        print(
+            "[cTrader] GH_SECRETS_PAT/GITHUB_REPOSITORY nicht gesetzt - "
+            "rotierter Refresh-Token wird NICHT automatisch gespeichert "
+            "(z.B. bei einem lokalen Lauf normal, kein Fehler)."
+        )
+        return
+
+    headers = {
+        "Authorization": f"Bearer {pat}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    try:
+        key_resp = requests.get(
+            f"https://api.github.com/repos/{repository}/actions/secrets/public-key",
+            headers=headers,
+            timeout=10,
+        )
+        key_resp.raise_for_status()
+        key_data = key_resp.json()
+
+        public_key = nacl.public.PublicKey(base64.b64decode(key_data["key"]))
+        encrypted = nacl.public.SealedBox(public_key).encrypt(new_refresh_token.encode("utf-8"))
+
+        put_resp = requests.put(
+            f"https://api.github.com/repos/{repository}/actions/secrets/CTRADER_REFRESH_TOKEN",
+            headers=headers,
+            json={
+                "encrypted_value": base64.b64encode(encrypted).decode("utf-8"),
+                "key_id": key_data["key_id"],
+            },
+            timeout=10,
+        )
+        put_resp.raise_for_status()
+        print("[cTrader] Rotierter Refresh-Token erfolgreich als GitHub-Secret gespeichert.")
+    except Exception as exc:
+        # Bewusst nicht weitergereicht - der aktuelle Lauf hat bereits einen
+        # gueltigen Access-Token, das Speichern ist ein Best-Effort-Schritt
+        # fuer den NAECHSTEN Lauf, kein Grund, den jetzigen abzubrechen.
+        print(f"[cTrader] Speichern des rotierten Refresh-Tokens fehlgeschlagen: {exc!r}")
+
+
 async def get_access_token() -> str:
     """Tauscht den dauerhaften Refresh-Token (CTRADER_REFRESH_TOKEN, per
     scripts/ctrader_authorize.py einmalig erzeugt) gegen einen kurzlebigen
@@ -141,20 +205,22 @@ async def get_access_token() -> str:
     )
     resp.raise_for_status()
     data = resp.json()
-    # Diagnose (31.08.2026): nur die Feldnamen mitloggen (nie die Werte -
-    # das waeren aktive Tokens/Secrets) - Verdacht auf Refresh-Token-
-    # Rotation (jeder erfolgreiche Tausch koennte einen neuen Refresh-
-    # Token ausgeben, der alte in CTRADER_REFRESH_TOKEN wuerde dann beim
-    # naechsten Lauf ungueltig sein). Falls "refreshToken"/"refresh_token"
-    # hier auftaucht, bestaetigt das die Rotation.
+    # Diagnose: nur die Feldnamen mitloggen (nie die Werte - das waeren
+    # aktive Tokens/Secrets).
     print(f"[cTrader] Token-Antwort-Felder: {sorted(data.keys())}")
+
+    for key in ("refreshToken", "refresh_token"):
+        if key in data:
+            _persist_rotated_refresh_token(data[key])
+            break
+
     # Feldname unverifiziert (help.ctrader.com nicht abrufbar) - live
-    # beobachtet (31.08.2026): der Tausch selbst funktioniert, aber
-    # "accessToken" (camelCase, urspruengliche Annahme) existiert nicht in
-    # der Antwort. Beide plausiblen Varianten (Standard-OAuth2-Konvention
-    # "access_token" vs. cTraders sonst uebliches camelCase) werden
-    # probiert; schlaegt beides fehl, wird die komplette Antwort zur
-    # Diagnose mitgeloggt statt eines nichtssagenden KeyError.
+    # beobachtet: der Tausch selbst funktioniert, aber "accessToken"
+    # (camelCase, urspruengliche Annahme) existiert nicht in der Antwort.
+    # Beide plausiblen Varianten (Standard-OAuth2-Konvention "access_token"
+    # vs. cTraders sonst uebliches camelCase) werden probiert; schlaegt
+    # beides fehl, wird die komplette Antwort zur Diagnose mitgeloggt statt
+    # eines nichtssagenden KeyError.
     for key in ("accessToken", "access_token"):
         if key in data:
             return data[key]
