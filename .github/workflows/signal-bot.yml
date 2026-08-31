@@ -62,7 +62,14 @@ jobs:
           TELEGRAM_USER_SESSION: ${{ secrets.TELEGRAM_USER_SESSION }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SIGNAL_CHANNEL: ${{ secrets.SIGNAL_CHANNEL }}
-        run: python scripts/run_signal_bot.py
+        # -u (unbuffered): ohne das puffert Python stdout komplett, wenn es
+        # nicht an ein Terminal geht (wie hier) - alle print()-Zeilen
+        # koennten dann erst am Prozessende in einem Rutsch geschrieben
+        # werden und im Actions-Log denselben Zeitstempel tragen, obwohl
+        # sie ueber Sekunden verteilt tatsaechlich passiert sind. Wichtig
+        # fuer die Diagnose der [cTrader]-Verbindungs-Logs (siehe
+        # tradingbot/ctrader.py).
+        run: python -u scripts/run_signal_bot.py
 
       - name: Zustand und Protokoll zurückschreiben
         run: |
