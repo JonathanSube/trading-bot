@@ -125,6 +125,12 @@ from tradingbot.setup_detection import Direction
 # Ablauf und wird deshalb auch fuer den Token-Tausch verwendet.
 TOKEN_URL = "https://connect.spotware.com/apps/token"
 
+# Siehe ctrader_session()-Docstring: unter dem echten Produktionstakt
+# (Neuverbindung alle ~60s) reisst die Verbindung haeufiger ab als unter
+# vereinzelten manuellen Tests - vermutlich serverseitiges Rate-Limiting.
+RECONNECT_ATTEMPTS = 3
+RECONNECT_DELAY_SECONDS = 3
+
 
 def run_ctrader(coro):
     """ZWINGEND anstelle von asyncio.run() verwenden, um irgendeine
@@ -305,8 +311,48 @@ async def ctrader_session():
     hier direkt reactor.connectSSL verwendet (die grundlegende,
     reactor-agnostische Twisted-API), nur die Nachrichten-Dispatch-Logik
     von Client (_connected/_disconnected/_received/_responseDeferreds)
-    wird weiterverwendet, nicht dessen ClientService-Verbindungsverwaltung."""
+    wird weiterverwendet, nicht dessen ClientService-Verbindungsverwaltung.
+
+    WICHTIG (gefunden 31.08.2026, nach dem Merge nach master unter dem
+    echten minuetlichen Produktionstakt statt vereinzelter manueller
+    Testlaeufe): die Verbindung wird oft (nicht immer) SOFORT nach
+    connectionMade() wieder gekappt (ConnectionLost binnen Sub-
+    Millisekunden, bevor auch nur die App-Auth-Anfrage rausgehen kann),
+    manchmal auch schon der Verbindungsaufbau selbst mit User-Timeout.
+    Sieht nach serverseitigem Verbindungs-Rate-Limiting/Session-Konflikt
+    bei so haeufigen Neuverbindungen (alle ~60s) aus - unter den
+    vereinzelten manuellen Tests nie beobachtet. Deshalb: bis zu
+    RECONNECT_ATTEMPTS Versuche mit kurzer Pause, bevor endgueltig
+    aufgegeben wird."""
     access_token = await get_access_token()
+
+    last_error: Exception | None = None
+    for attempt in range(1, RECONNECT_ATTEMPTS + 1):
+        try:
+            session, connector = await _connect_and_authenticate(access_token)
+            break
+        except Exception as e:
+            last_error = e
+            print(f"[cTrader] Verbindungsversuch {attempt}/{RECONNECT_ATTEMPTS} fehlgeschlagen: {e}")
+            if attempt < RECONNECT_ATTEMPTS:
+                await asyncio.sleep(RECONNECT_DELAY_SECONDS)
+    else:
+        raise RuntimeError(
+            f"cTrader-Verbindung nach {RECONNECT_ATTEMPTS} Versuchen weiterhin fehlgeschlagen: {last_error}"
+        )
+
+    try:
+        yield session
+    finally:
+        connector.disconnect()
+
+
+async def _connect_and_authenticate(access_token: str):
+    """Ein einzelner Verbindungsversuch: Connect -> App-Auth -> Konto
+    automatisch ermitteln -> Account-Auth. Ausgelagert aus
+    ctrader_session(), damit ctrader_session() das bei einem fehlgeschlagenen
+    Versuch (siehe dortige Docstring) mehrfach probieren kann, ohne jedes
+    Mal einen neuen Access-Token zu holen."""
     client = Client(EndPoints.PROTOBUF_DEMO_HOST, EndPoints.PROTOBUF_PORT, TcpProtocol)
 
     loop = asyncio.get_event_loop()
@@ -434,10 +480,11 @@ async def ctrader_session():
         account_auth_req.ctidTraderAccountId = session.account_id
         account_auth_req.accessToken = access_token
         await _send(session, account_auth_req)
-
-        yield session
-    finally:
+    except Exception:
         connector.disconnect()
+        raise
+
+    return session, connector
 
 
 async def get_account_info(session: CTraderSession) -> dict:
