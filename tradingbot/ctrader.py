@@ -323,6 +323,24 @@ async def ctrader_session():
 
     factory.connected = _capture_protocol
 
+    # WICHTIG (gefunden 31.08.2026, nach zwei Live-Tests mit weiterhin
+    # lautlosem 30s-Timeout trotz des Event-Loop-Fixes oben): twisted.
+    # internet.protocol.ClientFactory.clientConnectionFailed ist per
+    # Default ein reiner No-Op-Stub. Wenn der Verbindungsversuch SELBST
+    # fehlschlaegt (TCP-Connect oder TLS-Handshake, bevor ueberhaupt ein
+    # Protocol verbunden wird), passiert dadurch OHNE diesen Hook absolut
+    # gar nichts - keine Exception, kein Log, kein Disconnected-Callback
+    # (der laeuft nur ueber TcpProtocol.connectionLost(), das aber nie
+    # aufgerufen wird, wenn nie eine Verbindung zustande kam). Das erklaert
+    # die komplette Stille bei jedem bisherigen Testlauf, auch nach dem
+    # Event-Loop-Fix - der eigentliche Fehler wurde nie sichtbar.
+    def _connection_failed(connector_, reason):
+        print(f"[cTrader] Verbindungsversuch fehlgeschlagen: {reason}")
+        if not connected.done():
+            connected.set_exception(RuntimeError(f"cTrader-Verbindungsversuch fehlgeschlagen: {reason}"))
+
+    factory.clientConnectionFailed = _connection_failed
+
     context_factory = twisted_ssl.optionsForClientTLS(EndPoints.PROTOBUF_DEMO_HOST)
     connector = reactor.connectSSL(
         EndPoints.PROTOBUF_DEMO_HOST, EndPoints.PROTOBUF_PORT, factory, context_factory
@@ -330,6 +348,11 @@ async def ctrader_session():
 
     try:
         await asyncio.wait_for(connected, timeout=30)
+    except RuntimeError:
+        # von _connection_failed oben ausgeloest - Nachricht traegt bereits
+        # den echten Fehlgrund von Twisted, einfach durchreichen.
+        connector.disconnect()
+        raise
     except asyncio.TimeoutError:
         connector.disconnect()
         raise RuntimeError(
