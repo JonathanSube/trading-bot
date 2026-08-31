@@ -23,6 +23,21 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      - name: Netzwerk-Diagnose (reines TCP, kein Twisted)
+        run: |
+          python -c "
+          import socket, ssl
+          try:
+              s = socket.create_connection(('demo.ctraderapi.com', 5035), timeout=15)
+              print('TCP-Verbindung OK')
+              ctx = ssl.create_default_context()
+              ss = ctx.wrap_socket(s, server_hostname='demo.ctraderapi.com')
+              print('TLS-Handshake OK, Protokoll:', ss.version())
+              ss.close()
+          except Exception as e:
+              print('FEHLGESCHLAGEN:', repr(e))
+          "
+
       - name: cTrader-Symbole suchen
         env:
           CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
