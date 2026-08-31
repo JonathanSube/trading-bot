@@ -35,7 +35,6 @@ Ablauf pro Lauf:
 7. Zustand speichern
 """
 
-import asyncio
 import os
 import sys
 import time as time_module
@@ -65,6 +64,7 @@ from tradingbot.ctrader import (
     get_open_positions,
     place_market_order,
     position_size,
+    run_ctrader,
 )
 from tradingbot.notify import send_notification
 from tradingbot.safety import check_kill_switch
@@ -501,4 +501,5 @@ async def _run(session: CTraderSession, state: SignalBotState, now: datetime) ->
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # bewusst run_ctrader() statt asyncio.run() - siehe tradingbot/ctrader.py
+    run_ctrader(main())

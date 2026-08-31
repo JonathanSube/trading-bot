@@ -50,8 +50,30 @@ import requests
 from twisted.internet import asyncioreactor
 from twisted.internet.error import ReactorAlreadyInstalledError
 
+# WICHTIG (Ursache des ueber mehrere Live-Tests hinweg beobachteten
+# stillen 30s-Verbindungs-Timeouts, gefunden 31.08.2026 bei genauerer
+# Analyse - nicht "ClientService unter asyncioreactor kaputt" wie zuvor
+# vermutet, sondern ein klassischer asyncio.get_event_loop()/asyncio.run()-
+# Mismatch): asyncioreactor.install() bindet sich beim Import dieses Moduls
+# per get_event_loop() an EINE Event-Loop. Wenn die Aufrufer-Skripte
+# (scripts/find_ctrader_symbols.py etc.) danach wie ueblich
+# `asyncio.run(main())` verwenden, erzeugt asyncio.run() eine KOMPLETT NEUE
+# eigene Loop und laesst die vom Reactor gebundene Loop nie laufen - der
+# Reactor registriert reactor.connectSSL()-Callbacks also auf einer toten
+# Loop, die niemand jemals iteriert. TCP/TLS-Verbindungsaufbau passiert
+# dadurch technisch, aber KEIN Callback (weder connected noch disconnected)
+# feuert je - exakt das beobachtete Symptom, unabhaengig davon, ob
+# ClientService oder der direkte connectSSL-Bypass verwendet wird.
+#
+# Fix: die Event-Loop hier explizit selbst erzeugen, VOR dem Install als
+# aktuelle Loop setzen und dem Reactor explizit uebergeben - Aufrufer
+# muessen danach zwingend tradingbot.ctrader.run_ctrader(coro) statt
+# asyncio.run(coro) verwenden, damit dieselbe Loop tatsaechlich laeuft.
+_loop = asyncio.new_event_loop()
+asyncio.set_event_loop(_loop)
+
 try:
-    asyncioreactor.install()
+    asyncioreactor.install(eventloop=_loop)
 except ReactorAlreadyInstalledError:  # pragma: no cover - nur bei Mehrfachimport in einem Prozess
     pass
 
@@ -92,6 +114,15 @@ from tradingbot.setup_detection import Direction
 # ist der live bestaetigt funktionierende Endpunkt fuer den Autorisierungs-
 # Ablauf und wird deshalb auch fuer den Token-Tausch verwendet.
 TOKEN_URL = "https://connect.spotware.com/apps/token"
+
+
+def run_ctrader(coro):
+    """ZWINGEND anstelle von asyncio.run() verwenden, um irgendeine
+    Coroutine auszufuehren, die ctrader_session() nutzt - siehe
+    Begruendung beim asyncioreactor.install()-Aufruf oben. asyncio.run()
+    wuerde eine neue, vom Reactor unabhaengige Loop erzeugen und den
+    Verbindungsaufbau erneut lautlos haengen lassen."""
+    return _loop.run_until_complete(coro)
 
 
 async def get_access_token() -> str:

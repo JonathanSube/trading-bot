@@ -10,7 +10,6 @@ Ausgabe: fuer jedes Stichwort alle passenden Symbole - das jeweils
 richtige manuell in signalbot/mapping.py::INDEX_TO_SYMBOL uebertragen.
 """
 
-import asyncio
 import sys
 from pathlib import Path
 
@@ -20,7 +19,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from tradingbot.ctrader import ctrader_session, list_symbols
+from tradingbot.ctrader import ctrader_session, list_symbols, run_ctrader
 
 KEYWORDS = {
     "NASDAQ": ["NAS100", "NASDAQ", "USTEC", "NDX"],
@@ -44,4 +43,5 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # bewusst run_ctrader() statt asyncio.run() - siehe tradingbot/ctrader.py
+    run_ctrader(main())

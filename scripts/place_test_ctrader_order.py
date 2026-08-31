@@ -11,7 +11,6 @@ scripts/find_ctrader_symbols.py, falls die Symbole dort noch nicht
 verifiziert sind, sonst schlaegt diese Order mit einem Symbol-Fehler fehl
 (sicher, aber ohne Aussagekraft ueber die eigentliche Order-Logik)."""
 
-import asyncio
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -30,6 +29,7 @@ from tradingbot.ctrader import (
     get_latest_price,
     get_open_positions,
     place_market_order,
+    run_ctrader,
 )
 from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
@@ -74,4 +74,5 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # bewusst run_ctrader() statt asyncio.run() - siehe tradingbot/ctrader.py
+    run_ctrader(main())
