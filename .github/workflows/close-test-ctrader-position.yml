@@ -1,0 +1,34 @@
+name: Close Test cTrader Position
+
+# Einmaliges manuelles Werkzeug (siehe
+# scripts/close_test_ctrader_position.py) - schliesst alle offenen
+# Positionen auf dem Demokonto, um close_position() live zu verifizieren.
+# NICHT Teil des automatisierten Signal-Bot-Takts, nur per Hand/API
+# ausgeloest, kein Schedule.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  close-test-position:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Test-Position schliessen
+        env:
+          CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
+          CTRADER_CLIENT_SECRET: ${{ secrets.CTRADER_CLIENT_SECRET }}
+          CTRADER_REFRESH_TOKEN: ${{ secrets.CTRADER_REFRESH_TOKEN }}
+          GH_SECRETS_PAT: ${{ secrets.GH_SECRETS_PAT }}
+        run: python scripts/close_test_ctrader_position.py
