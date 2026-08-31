@@ -70,7 +70,12 @@ from ctrader_open_api.messages.OpenApiModelMessages_pb2 import (
 from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
-TOKEN_URL = "https://connect.spotware.com/apps/token"
+# Bestaetigter Wert (aus dem installierten ctrader_open_api-Paket selbst,
+# ctrader_open_api/endpoints.py::EndPoints.TOKEN_URI) - der Browser-
+# Autorisierungs-Ablauf lief zwar ueber connect.spotware.com, das ist aber
+# nicht zwingend derselbe Endpunkt wie der programmatische Token-Tausch
+# hier.
+TOKEN_URL = "https://openapi.ctrader.com/apps/token"
 
 
 async def get_access_token() -> str:
@@ -122,7 +127,23 @@ async def ctrader_session():
     connected = loop.create_future()
     client.setConnectedCallback(lambda c: not connected.done() and connected.set_result(None))
     client.startService()
-    await connected
+    # Twisteds ClientService (Basis von Client, siehe ctrader_open_api-Quelltext)
+    # versucht bei einem fehlgeschlagenen Verbindungsaufbau per Default
+    # ENDLOS automatisch erneut, OHNE einen Fehler zu werfen - ohne dieses
+    # Timeout haengt ein Lauf bei einem echten Verbindungsproblem (Netzwerk,
+    # TLS, falscher Host) bis zum Job-Zeitlimit, statt schnell und klar zu
+    # scheitern (live beobachtet 31.08.2026: 4 Min. Haenger ohne jede
+    # Fehlermeldung).
+    try:
+        await asyncio.wait_for(connected, timeout=30)
+    except asyncio.TimeoutError:
+        client.stopService()
+        raise RuntimeError(
+            f"Keine Verbindung zu {EndPoints.PROTOBUF_DEMO_HOST}:{EndPoints.PROTOBUF_PORT} "
+            "innerhalb von 30s zustande gekommen - moegliche Ursachen: Netzwerk-/"
+            "Firewall-Problem, TLS-Handshake schlaegt fehl (siehe requirements.txt: "
+            "service_identity noetig), oder der Host/Port ist nicht (mehr) korrekt."
+        )
 
     try:
         app_auth_req = ProtoOAApplicationAuthReq()
