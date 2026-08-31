@@ -1,0 +1,38 @@
+name: Place Test cTrader Order
+
+# Einmaliges manuelles Test-Werkzeug (siehe
+# scripts/place_test_ctrader_order.py) - platziert eine winzige echte
+# Order (0.01 Lot) auf dem verbundenen Demokonto, um Order-Platzierung
+# und die Volumen-/Preis-Konventionen aus tradingbot/ctrader.py einmal
+# echt zu pruefen. NICHT Teil des automatisierten Signal-Bot-Takts, nur
+# per Hand/API ausgeloest, kein Schedule. Die interaktive
+# "Wirklich platzieren?"-Abfrage des Skripts wird hier bewusst per
+# echo "ja" automatisch bestaetigt - das Skript selbst bleibt fuer lokale,
+# interaktive Laeufe unveraendert sicher (Standardeingabe leer -> Abbruch).
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  place-test-order:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Test-Order platzieren
+        env:
+          CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
+          CTRADER_CLIENT_SECRET: ${{ secrets.CTRADER_CLIENT_SECRET }}
+          CTRADER_REFRESH_TOKEN: ${{ secrets.CTRADER_REFRESH_TOKEN }}
+          GH_SECRETS_PAT: ${{ secrets.GH_SECRETS_PAT }}
+        run: echo "ja" | python scripts/place_test_ctrader_order.py
