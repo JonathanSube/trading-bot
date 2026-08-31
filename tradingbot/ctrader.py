@@ -46,6 +46,7 @@ import os
 import socket as _socket
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 
 import nacl.public
 import requests
@@ -454,11 +455,18 @@ async def get_latest_price(session: CTraderSession, symbol_name: str) -> float:
     symbol_ids = await list_symbols(session)
     symbol_id = symbol_ids[symbol_name]
 
+    # fromTimestamp/toTimestamp sind PFLICHTFELDER (live 31.08.2026 per
+    # EncodeError entdeckt, in keiner hier verfuegbaren Doku genannt) -
+    # Millisekunden seit Epoch. 30-Minuten-Fenster bis jetzt, reicht
+    # sicher fuer mindestens eine M1-Kerze auch bei kurzen Verbindungs-
+    # Verzoegerungen.
+    now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
     req = ProtoOAGetTrendbarsReq()
     req.ctidTraderAccountId = session.account_id
     req.symbolId = symbol_id
     req.period = ProtoOATrendbarPeriod.M1
-    req.count = 1
+    req.fromTimestamp = now_ms - 30 * 60 * 1000
+    req.toTimestamp = now_ms
     resp = await _send(session, req)
     bar = resp.trendbar[-1]
     return (bar.low + bar.deltaClose) / 100000
