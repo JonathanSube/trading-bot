@@ -1,0 +1,31 @@
+name: Find cTrader Symbols
+
+# Einmaliges Diagnose-Werkzeug (siehe scripts/find_ctrader_symbols.py),
+# nicht Teil des automatisierten Signal-Bot-Takts - nur per Hand/API
+# ausgeloest, kein Schedule.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  find-symbols:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: cTrader-Symbole suchen
+        env:
+          CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
+          CTRADER_CLIENT_SECRET: ${{ secrets.CTRADER_CLIENT_SECRET }}
+          CTRADER_REFRESH_TOKEN: ${{ secrets.CTRADER_REFRESH_TOKEN }}
+        run: python scripts/find_ctrader_symbols.py
