@@ -70,12 +70,16 @@ from ctrader_open_api.messages.OpenApiModelMessages_pb2 import (
 from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
-# Bestaetigter Wert (aus dem installierten ctrader_open_api-Paket selbst,
-# ctrader_open_api/endpoints.py::EndPoints.TOKEN_URI) - der Browser-
-# Autorisierungs-Ablauf lief zwar ueber connect.spotware.com, das ist aber
-# nicht zwingend derselbe Endpunkt wie der programmatische Token-Tausch
-# hier.
-TOKEN_URL = "https://openapi.ctrader.com/apps/token"
+# Zurueckgesetzt auf connect.spotware.com (31.08.2026): der Wechsel auf
+# das im installierten ctrader_open_api-Paket hinterlegte
+# openapi.ctrader.com lieferte live einen ACCESS_DENIED-Fehler - der
+# Refresh-Token wurde ueber den Browser-Autorisierungs-Ablauf auf
+# connect.spotware.com ausgestellt, das ist also offenbar ein
+# EIGENSTAENDIGES Autorisierungssystem, kein blosser Alias von
+# openapi.ctrader.com (trotz beider Domains von Spotware). connect.spotware.com
+# ist der live bestaetigt funktionierende Endpunkt fuer den Autorisierungs-
+# Ablauf und wird deshalb auch fuer den Token-Tausch verwendet.
+TOKEN_URL = "https://connect.spotware.com/apps/token"
 
 
 async def get_access_token() -> str:

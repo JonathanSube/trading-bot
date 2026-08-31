@@ -36,10 +36,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 AUTH_URL = "https://connect.spotware.com/apps/auth"
-# TOKEN_URL bestaetigt aus dem installierten ctrader_open_api-Paket
-# (ctrader_open_api/endpoints.py::EndPoints.TOKEN_URI) - siehe
-# tradingbot/ctrader.py.
-TOKEN_URL = "https://openapi.ctrader.com/apps/token"
+# connect.spotware.com (nicht openapi.ctrader.com) - live bestaetigt
+# funktionierend, siehe tradingbot/ctrader.py zur Begruendung.
+TOKEN_URL = "https://connect.spotware.com/apps/token"
 REDIRECT_URI = "http://localhost/callback"
 
 
