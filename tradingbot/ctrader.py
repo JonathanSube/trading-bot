@@ -98,6 +98,13 @@ async def get_access_token() -> str:
     )
     resp.raise_for_status()
     data = resp.json()
+    # Diagnose (31.08.2026): nur die Feldnamen mitloggen (nie die Werte -
+    # das waeren aktive Tokens/Secrets) - Verdacht auf Refresh-Token-
+    # Rotation (jeder erfolgreiche Tausch koennte einen neuen Refresh-
+    # Token ausgeben, der alte in CTRADER_REFRESH_TOKEN wuerde dann beim
+    # naechsten Lauf ungueltig sein). Falls "refreshToken"/"refresh_token"
+    # hier auftaucht, bestaetigt das die Rotation.
+    print(f"[cTrader] Token-Antwort-Felder: {sorted(data.keys())}")
     # Feldname unverifiziert (help.ctrader.com nicht abrufbar) - live
     # beobachtet (31.08.2026): der Tausch selbst funktioniert, aber
     # "accessToken" (camelCase, urspruengliche Annahme) existiert nicht in
