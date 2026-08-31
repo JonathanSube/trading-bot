@@ -93,7 +93,18 @@ async def get_access_token() -> str:
         timeout=10,
     )
     resp.raise_for_status()
-    return resp.json()["accessToken"]
+    data = resp.json()
+    # Feldname unverifiziert (help.ctrader.com nicht abrufbar) - live
+    # beobachtet (31.08.2026): der Tausch selbst funktioniert, aber
+    # "accessToken" (camelCase, urspruengliche Annahme) existiert nicht in
+    # der Antwort. Beide plausiblen Varianten (Standard-OAuth2-Konvention
+    # "access_token" vs. cTraders sonst uebliches camelCase) werden
+    # probiert; schlaegt beides fehl, wird die komplette Antwort zur
+    # Diagnose mitgeloggt statt eines nichtssagenden KeyError.
+    for key in ("accessToken", "access_token"):
+        if key in data:
+            return data[key]
+    raise RuntimeError(f"Kein Access-Token in der Antwort gefunden, Felder: {list(data.keys())} - {data}")
 
 
 @dataclass
