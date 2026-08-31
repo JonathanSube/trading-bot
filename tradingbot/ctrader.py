@@ -1,10 +1,12 @@
-"""Order-Platzierung und Kontodaten gegen die cTrader Open API (Pepperstone-
-Demokonto), Ersatz fuer die urspruengliche Alpaca/QQQ-DIA-Loesung des
-Signal-Bots. Siehe trading-bot-spec.md, Aenderungsprotokoll: drei
-REST-basierte Broker-Anlaeufe (OANDA, IG, MetaApi.cloud) scheiterten an
-Zugangshuerden bzw. Kosten - die cTrader Open API ist die einzige bisher
-gefundene Loesung, die sowohl **kostenlos** ist als auch **keine
-KYC-Huerde** fuer ein Demokonto verlangt.
+"""Order-Platzierung und Kontodaten gegen die cTrader Open API (broker-
+unabhaengig - aktuell ein Fusion-Markets-Demokonto, urspruenglich
+Pepperstone, siehe trading-bot-spec.md zum Wechsel), Ersatz fuer die
+urspruengliche Alpaca/QQQ-DIA-Loesung des Signal-Bots. Siehe
+trading-bot-spec.md, Aenderungsprotokoll: drei REST-basierte
+Broker-Anlaeufe (OANDA, IG, MetaApi.cloud) scheiterten an Zugangshuerden
+bzw. Kosten - die cTrader Open API ist die einzige bisher gefundene
+Loesung, die sowohl **kostenlos** ist als auch **keine KYC-Huerde** fuer
+ein Demokonto verlangt.
 
 WICHTIGER ARCHITEKTURBRUCH gegenueber tradingbot/oanda.py, tradingbot/ig.py,
 tradingbot/metaapi.py (alle reines `requests`, kein SDK): die cTrader Open
@@ -25,18 +27,22 @@ Scheduler kam unter dem asyncioreactor live nie in Gang (siehe dortige
 Docstring). Stattdessen direktes `reactor.connectSSL`, nur die
 Nachrichten-Dispatch-Logik von `Client` wird weiterverwendet.
 
-UNVERIFIZIERT (`help.ctrader.com` war in dieser Umgebung per Netzwerk-Policy
-nicht abrufbar, nur pypi.org/project/ctrader-open-api lieferte Basis-Infos) -
-vor dem ersten Live-Lauf zwingend mit scripts/place_test_ctrader_order.py zu
-pruefen:
-  - Exakte Feldnamen/Struktur der Protobuf-Requests unten (Namen wie
-    ProtoOANewOrderReq, ProtoOAAmendPositionSLTPReq etc. stammen aus
-    allgemeinem Wissen ueber die cTrader Open API, nicht live verifiziert).
-  - Volumen-Konvention fuer Order-Groessen (Lots vs. eine symbol-spezifische
-    kleinste Einheit) - position_size() liefert vorerst Lots wie bei MetaApi.
-  - Preis-/Bilanz-Skalierung (cTrader arbeitet intern oft mit Centibons/
-    relativen Deltas statt direkten Fliesskommazahlen) - die Umrechnungen
-    unten sind Bestwissen, keine Garantie.
+LIVE VERIFIZIERT (31.08.2026, scripts/place_test_ctrader_order.py gegen
+den echten Fusion-Markets-Account, siehe trading-bot-spec.md fuer die
+vollstaendige Ursachenkette der Verbindungs-Fixes davor): Verbindungsaufbau,
+Token-Tausch samt Rotation, Kontostand-Abfrage, Kursabfrage, Marktorder
+inkl. SL/TP-Setzen und Positionsabfrage funktionieren wie unten
+implementiert. Volumen-Konvention bestaetigt: `place_market_order()`
+sendet Lots * 100 als `volume`, `get_open_positions()` liefert exakt
+wieder Lots zurueck (0.01 rein, 0.01 raus) - `position_size()`s
+Lot-Ausgabe ist also korrekt.
+
+Weiterhin nicht einzeln verifiziert: `close_position()` (fuer
+Session-Ende-Zwangsschluss/Sicherheitsschalter) wurde beim Testkauf nicht
+ausgeloest - die Test-Position blieb bewusst offen (siehe
+scripts/place_test_ctrader_order.py), erst der naechste echte
+Schliess-Vorgang (Sicherheitsschalter oder Session-Ende im Signal-Bot-
+Lauf) bestaetigt das live.
 """
 
 import asyncio
@@ -424,7 +430,8 @@ async def ctrader_session():
 
 async def get_account_info(session: CTraderSession) -> dict:
     """Kontostand/Waehrung - cTrader liefert Geldbetraege als Integer in
-    Centibons (Wert * 100, UNVERIFIZIERT), deshalb /100 unten."""
+    Centibons (Wert * 100), deshalb /100 unten. Live bestaetigt
+    (31.08.2026): Demokonto-Balance 10000.0 korrekt zurueckgegeben."""
     req = ProtoOATraderReq()
     req.ctidTraderAccountId = session.account_id
     resp = await _send(session, req)
@@ -449,9 +456,9 @@ async def get_latest_price(session: CTraderSession, symbol_name: str) -> float:
     """Letzter M1-Schlusskurs als Naeherung fuer den aktuellen Kurs (keine
     dauerhafte Spot-Preis-Subscription noetig fuer einen kurzen,
     einmaligen Lauf). Trendbar-Preise sind bei cTrader relativ zum
-    'low'-Feld kodiert (deltaClose addiert) und je Symbol unterschiedlich
-    skaliert (digits) - UNVERIFIZIERT, vor Go-Live mit
-    scripts/place_test_ctrader_order.py gegenpruefen."""
+    'low'-Feld kodiert (deltaClose addiert), Skalierung /100000 live
+    bestaetigt (31.08.2026: NAS100 ergab einen plausiblen Kurs von
+    29365.27)."""
     symbol_ids = await list_symbols(session)
     symbol_id = symbol_ids[symbol_name]
 
@@ -474,9 +481,8 @@ async def get_latest_price(session: CTraderSession, symbol_name: str) -> float:
 
 def position_size(signal: Signal, equity: float, risk_pct: float = 0.03) -> float:
     """Gleiche Risiko-Regel wie tradingbot/metaapi.py::position_size -
-    liefert ein Lot-Volumen, auf 0,01-Lot-Schritte abgerundet. Ob cTrader
-    fuer Order-Volumen Lots oder eine symbol-spezifische kleinste Einheit
-    erwartet, ist UNVERIFIZIERT (siehe Moduldocstring)."""
+    liefert ein Lot-Volumen, auf 0,01-Lot-Schritte abgerundet. Lots als
+    Volumen-Einheit live bestaetigt (31.08.2026, siehe Moduldocstring)."""
     if signal.risk <= 0 or equity <= 0:
         return 0.0
     raw_volume = (equity * risk_pct) / signal.risk
@@ -486,9 +492,11 @@ def position_size(signal: Signal, equity: float, risk_pct: float = 0.03) -> floa
 async def place_market_order(session: CTraderSession, symbol_name: str, signal: Signal, volume: float) -> int:
     """Market-Order, danach separat Stop/Ziel per
     ProtoOAAmendPositionSLTPReq gesetzt (statt auf die optionalen SL/TP-
-    Felder von ProtoOANewOrderReq zu vertrauen, deren Verhalten hier nicht
-    verifiziert ist - das Nachtraeglich-Setzen ist ein eindeutig
-    dokumentierter Kernvorgang der Open API). Gibt die positionId zurueck."""
+    Felder von ProtoOANewOrderReq zu vertrauen - das Nachtraeglich-Setzen
+    ist ein eindeutig dokumentierter Kernvorgang der Open API). Live
+    bestaetigt (31.08.2026): Order + SLTP-Aufruf liefen ohne Fehlerantwort
+    durch, get_open_positions() zeigte die Position danach korrekt mit
+    0.01 Lot. Gibt die positionId zurueck."""
     if volume < 0.01:
         raise ValueError("Lot-Volumen < 0.01 - Order darf nicht platziert werden")
 
