@@ -33,7 +33,7 @@ load_dotenv(ROOT / ".env")
 from alpaca.trading.client import TradingClient
 
 from tradingbot.data import load_alpaca_bars
-from tradingbot.notify import get_telegram_commands, send_notification
+from tradingbot.notify import send_notification
 from tradingbot.orb_strategy import build_signal, check_breakout, detect_opening_range
 from tradingbot.orders import place_bracket_order, position_size
 from tradingbot.reporting import build_status_report
@@ -239,22 +239,15 @@ def try_new_entry(client: TradingClient, state: BotState, bars_today: list[Bar],
 
 def send_daily_report(client: TradingClient, state: BotState) -> None:
     """Abschnitt 6: taeglicher Statusbericht, einmal pro Tag, wenn der
-    Markt fuer heute geschlossen hat. Gleicher Inhalt wie /status."""
+    Markt fuer heute geschlossen hat. Frueher auch per /status abrufbar -
+    das Abfragen eingehender Telegram-Befehle (get_telegram_commands) ist
+    hier bewusst deaktiviert (Nutzerwunsch, 31.08.2026), weil beide Bots
+    denselben Telegram-Bot-Token/Chat teilen und sich sonst gegenseitig die
+    Befehls-Updates wegschnappen koennen (Telegrams getUpdates-Offset ist
+    global pro Bot-Token, nicht pro Aufrufer) - /status gibt es jetzt nur
+    noch beim Signal-Bot (scripts/run_signal_bot.py)."""
     report = build_status_report(client, state, TRADE_LOG_PATH, SYMBOL)
     send_notification(f"Tagesbericht {state.trading_date}\n{report}")
-
-
-def handle_telegram_commands(client: TradingClient, state: BotState) -> None:
-    commands, new_offset = get_telegram_commands(state.telegram_update_offset)
-    state.telegram_update_offset = new_offset
-
-    for command in commands:
-        cmd = command.split()[0].lower()
-        if cmd == "/status":
-            report = build_status_report(client, state, TRADE_LOG_PATH, SYMBOL)
-            send_notification(report)
-        elif cmd == "/help":
-            send_notification("Verfuegbare Befehle:\n/status - aktueller Stand\n/help - diese Uebersicht")
 
 
 def main() -> None:
@@ -285,10 +278,6 @@ def main() -> None:
 
 
 def _run(client: TradingClient, state: BotState, now: datetime, run_delay: float) -> None:
-    # /status soll auch ausserhalb der Handelszeit funktionieren, deshalb
-    # vor der Markt-Pruefung unten.
-    handle_telegram_commands(client, state)
-
     # Der Workflow ist bewusst grosszuegiger getaktet als die Session
     # (siehe .github/workflows/trading-bot.yml, wegen Sommer-/Winterzeit),
     # deshalb hier ueber Alpacas eigenen Marktkalender pruefen statt selbst

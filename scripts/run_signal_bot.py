@@ -24,15 +24,18 @@ mit.
 Ablauf pro Lauf:
 1. Kill-Switch pruefen
 2. Zustand laden, cTrader-Session oeffnen (Access-Token holen, verbinden,
-   Demo-Konto automatisch ermitteln - siehe tradingbot/ctrader.py), Konto
-   abfragen
-3. Offene Trades abgleichen (Fill nachtragen, geschlossene protokollieren)
-4. Sicherheitsschalter pruefen (Gesamtverlust, API-Fehler)
-5. Sessionende je Instrument (5 Min. vorher): betroffene offene Position
+   Demo-Konto automatisch ermitteln - siehe tradingbot/ctrader.py)
+3. Eingehende Telegram-Befehle beantworten (/status, /help - siehe
+   signalbot/reporting.py; bewusst der einzige Bot der beiden, der das
+   noch tut, siehe scripts/run_bot.py)
+4. Konto abfragen
+5. Offene Trades abgleichen (Fill nachtragen, geschlossene protokollieren)
+6. Sicherheitsschalter pruefen (Gesamtverlust, API-Fehler)
+7. Sessionende je Instrument (5 Min. vorher): betroffene offene Position
    zwangsschliessen - jedes Instrument hat seine eigene Handelszeit
    (US/London/Xetra), kein einzelner globaler EOD-Zeitpunkt
-6. Neue Kanal-Nachrichten holen, per LLM auswerten, ggf. Order platzieren
-7. Zustand speichern
+8. Neue Kanal-Nachrichten holen, per LLM auswerten, ggf. Order platzieren
+9. Zustand speichern
 """
 
 import os
@@ -52,6 +55,7 @@ load_dotenv(ROOT / ".env")
 from signalbot.channel_log import append_channel_message, recent_message_texts
 from signalbot.mapping import INDEX_TO_SYMBOL, build_signal_from_parsed, symbol_for_index
 from signalbot.parser import GeminiError, parse_signal_message
+from signalbot.reporting import build_signal_status_report
 from signalbot.state import OpenSignalTrade, SignalBotState, load_state, save_state
 from signalbot.telegram_signals import fetch_new_messages
 from signalbot.trade_log import SignalTradeLogRow, append_trade
@@ -66,7 +70,7 @@ from tradingbot.ctrader import (
     position_size,
     run_ctrader,
 )
-from tradingbot.notify import send_notification
+from tradingbot.notify import get_telegram_commands, send_notification
 from tradingbot.safety import check_kill_switch
 from tradingbot.setup_detection import Direction
 
@@ -454,7 +458,27 @@ async def main() -> None:
         raise
 
 
+async def handle_telegram_commands(session: CTraderSession, state: SignalBotState) -> None:
+    """/status und /help per Telegram - bewusst nur hier, nicht mehr beim
+    ORB-Bot (siehe scripts/run_bot.py::send_daily_report zur Begruendung):
+    beide Bots teilen sich Bot-Token/Chat, Telegrams getUpdates-Offset ist
+    global pro Bot-Token, zwei gleichzeitig pollende Bots wuerden sich die
+    Befehls-Updates gegenseitig wegschnappen."""
+    commands, new_offset = get_telegram_commands(state.telegram_update_offset)
+    state.telegram_update_offset = new_offset
+
+    for command in commands:
+        cmd = command.split()[0].lower()
+        if cmd == "/status":
+            report = await build_signal_status_report(session, state, TRADE_LOG_PATH)
+            send_notification(report)
+        elif cmd == "/help":
+            send_notification("Verfuegbare Befehle:\n/status - aktueller Stand\n/help - diese Uebersicht")
+
+
 async def _run(session: CTraderSession, state: SignalBotState, now: datetime) -> None:
+    await handle_telegram_commands(session, state)
+
     try:
         account = await get_account_info(session)
         state.consecutive_api_errors = 0
