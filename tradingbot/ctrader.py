@@ -131,12 +131,17 @@ TOKEN_URL = "https://connect.spotware.com/apps/token"
 RECONNECT_ATTEMPTS = 3
 RECONNECT_DELAY_SECONDS = 3
 
-# Siehe get_access_token()-Docstring: ein voruebergehender Aussetzer des
+# Siehe get_access_token()-Docstring: voruebergehende Aussetzer des
 # cTrader-Auth-Servers (ACCESS_DENIED trotz gueltigem, nicht rotiertem
-# Token) wurde live beobachtet, war beim naechsten Versuch schon wieder
-# behoben.
-TOKEN_RETRY_ATTEMPTS = 2
-TOKEN_RETRY_DELAY_SECONDS = 5
+# Token) wurden live mehrfach beobachtet - meist beim naechsten Versuch
+# Sekunden spaeter schon wieder behoben, einmal aber auch noch nach der
+# urspruenglichen Kombination (2 Versuche, 5s Pause) fehlgeschlagen,
+# obwohl der direkt folgende automatische Lauf (60s spaeter) bereits
+# wieder erfolgreich war. Grosszuegiger bemessen, um auch laenger
+# andauernde Aussetzer innerhalb eines einzelnen Laufs abzufangen, ohne
+# jedes Mal eine Telegram-Fehlermeldung auszuloesen.
+TOKEN_RETRY_ATTEMPTS = 4
+TOKEN_RETRY_DELAY_SECONDS = 7
 
 
 def run_ctrader(coro):
