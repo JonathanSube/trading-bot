@@ -131,6 +131,13 @@ TOKEN_URL = "https://connect.spotware.com/apps/token"
 RECONNECT_ATTEMPTS = 3
 RECONNECT_DELAY_SECONDS = 3
 
+# Siehe get_access_token()-Docstring: ein voruebergehender Aussetzer des
+# cTrader-Auth-Servers (ACCESS_DENIED trotz gueltigem, nicht rotiertem
+# Token) wurde live beobachtet, war beim naechsten Versuch schon wieder
+# behoben.
+TOKEN_RETRY_ATTEMPTS = 2
+TOKEN_RETRY_DELAY_SECONDS = 5
+
 
 def run_ctrader(coro):
     """ZWINGEND anstelle von asyncio.run() verwenden, um irgendeine
@@ -206,7 +213,29 @@ def _persist_rotated_refresh_token(new_refresh_token: str) -> None:
 async def get_access_token() -> str:
     """Tauscht den dauerhaften Refresh-Token (CTRADER_REFRESH_TOKEN, per
     scripts/ctrader_authorize.py einmalig erzeugt) gegen einen kurzlebigen
-    Access-Token - reiner REST-Aufruf, kein Twisted noetig."""
+    Access-Token - reiner REST-Aufruf, kein Twisted noetig.
+
+    Live beobachtet (31.08.2026): ein einzelner Lauf bekam 'ACCESS_DENIED'
+    vom Token-Endpunkt - der naechste Lauf, Sekunden spaeter, mit exakt
+    demselben (nie rotierten, da dieser Lauf ja fehlschlug) Refresh-Token
+    war wieder erfolgreich. Also ein voruebergehender Aussetzer des
+    Auth-Servers, kein wirklich ungueltiger Token. TOKEN_RETRY_ATTEMPTS
+    Versuche mit kurzer Pause, bevor der Fehler tatsaechlich als
+    Signal-Bot-Fehler gemeldet wird."""
+    last_error: Exception | None = None
+    for attempt in range(1, TOKEN_RETRY_ATTEMPTS + 1):
+        try:
+            return await _exchange_refresh_token()
+        except Exception as e:
+            last_error = e
+            print(f"[cTrader] Token-Tausch {attempt}/{TOKEN_RETRY_ATTEMPTS} fehlgeschlagen: {e}")
+            if attempt < TOKEN_RETRY_ATTEMPTS:
+                await asyncio.sleep(TOKEN_RETRY_DELAY_SECONDS)
+    raise RuntimeError(f"Token-Tausch nach {TOKEN_RETRY_ATTEMPTS} Versuchen weiterhin fehlgeschlagen: {last_error}")
+
+
+async def _exchange_refresh_token() -> str:
+    """Ein einzelner Token-Tausch-Versuch, siehe get_access_token()."""
     resp = requests.post(
         TOKEN_URL,
         data={
