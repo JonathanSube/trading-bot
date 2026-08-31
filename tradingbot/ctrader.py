@@ -545,10 +545,17 @@ async def get_open_positions(session: CTraderSession) -> dict[str, dict]:
 
 async def close_position(session: CTraderSession, position_id: int, volume: float) -> float:
     """Fuer Session-Ende-Zwangsschluss und Sicherheitsschalter-Stopps.
-    Gibt den (Best-effort) Ausstiegspreis zurueck - cTraders Schliess-
-    Bestaetigung selbst tragen den Ausfuehrungspreis vermutlich im
-    zurueckgegebenen Deal-Objekt (UNVERIFIZIERT); der Aufrufer hat einen
-    eigenen Fallback fuer den Fall, dass das Feld fehlt."""
+    Das Schliessen selbst live bestaetigt (31.08.2026): die Test-Position
+    aus scripts/place_test_ctrader_order.py war nach diesem Aufruf
+    nachweislich nicht mehr in get_open_positions() - trotz der Exception
+    unten, die nur die Ausstiegspreis-Ermittlung betrifft, nicht das
+    Schliessen selbst. Gibt den (Best-effort) Ausstiegspreis zurueck -
+    die vermutete deal.executionPrice-Struktur stimmte live nicht (siehe
+    Diagnose-Log unten), noch nicht durch eine zweite Test-Order mit
+    Log-Auswertung nachgebessert. scripts/run_signal_bot.py faengt das
+    bereits robust ab (Fallback auf den Entry-Preis, siehe dort) - nicht
+    blockierend fuer den Go-Live, nur die Trade-Log-Genauigkeit leidet in
+    diesem Randfall."""
     req = ProtoOAClosePositionReq()
     req.ctidTraderAccountId = session.account_id
     req.positionId = position_id
