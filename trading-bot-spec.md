@@ -975,3 +975,98 @@ diesem Screenshot nennt die Close-Nachricht weiterhin explizit "DOW
 INDEX". Der Kontextauflösungs-Mechanismus aus dem letzten Nachtrag bleibt
 als Absicherung für einen künftigen solchen Fall bestehen, ist aber noch
 nicht an einem echten Beispiel verifiziert.
+
+**Nachtrag 31.08.2026: cTrader-Verbindung nach mehreren Live-Testläufen
+zum ersten Mal erfolgreich, Broker-Wechsel von Pepperstone auf Fusion
+Markets.** Das Pepperstone-cTrader-Konto war durch einen Tippfehler in
+der beim Anlegen verwendeten E-Mail-Adresse blockiert; die cTrader Open
+API ist broker-unabhängig (Spotware betreibt sie für mehrere Broker), der
+Nutzer ist deshalb stattdessen zu **Fusion Markets** gewechselt (ebenfalls
+kostenloses cTrader-Demokonto, keine KYC-Hürde) - `tradingbot/ctrader.py`
+selbst ist davon unberührt, nur die beim Broker angelegten Zugangsdaten
+haben sich geändert.
+
+Der erste Verbindungsversuch hing 4 Minuten ohne jede Fehlermeldung -
+Ursachensuche über sieben Live-Testläufe hinweg, jeweils per
+`.github/workflows/find-ctrader-symbols.yml` gegen den echten Account
+getriggert (kein Weg, das lokal zu reproduzieren, da dieser Sandbox das
+ausgehende TCP auf Port 5035 von der eigenen Netzwerk-Policy blockiert
+wird):
+
+1. **`ctrader_open_api.Client.startService()`** (baut auf
+   `twisted.application.internet.ClientService` auf) kam unter dem
+   installierten `asyncioreactor` nie in Gang - weder Connected- noch
+   Disconnected-Callback feuerten, obwohl ein reiner TCP/TLS-Socket zum
+   selben Host/Port im selben Job sofort erfolgreich war (bestätigt
+   TLSv1.3). Behoben durch einen direkten `reactor.connectSSL()`-Aufruf
+   unter Umgehung von `ClientService`, nur die Nachrichten-Dispatch-Logik
+   von `Client` (`_connected`/`_disconnected`/`_received`/
+   `_responseDeferreds`) wird weiterverwendet.
+2. Antworten kamen danach zwar an, aber `TcpProtocol.stringReceived()`
+   liefert nur den rohen `ProtoMessage`-Umschlag (Felder `payloadType`,
+   `payload` als Bytes, `clientMsgId`) - **nicht** das decodierte
+   Antwortobjekt. Erst `Protobuf.extract()` liefert z. B. eine
+   `ProtoOAGetAccountListByAccessTokenRes` mit nutzbaren Feldern wie
+   `ctidTraderAccount`. Bei Code-Review vor dem nächsten Testlauf
+   gefunden, nicht erst live durch einen Crash.
+3. Trotz des `ClientService`-Fixes hing die Verbindung weiterhin lautlos
+   - Ursache: `asyncioreactor.install()` bindet sich beim Modulimport per
+   `get_event_loop()` an eine Event-Loop, die anschließende
+   `asyncio.run(main())` in den Aufrufer-Skripten erzeugt aber eine
+   komplett neue, unabhängige Loop und lässt die vom Reactor gebundene nie
+   laufen - Verbindungs-Callbacks wurden auf eine tote Loop registriert.
+   Behoben durch eine explizit selbst erzeugte Event-Loop in
+   `tradingbot/ctrader.py`, dem Reactor beim Install übergeben, plus ein
+   `run_ctrader()`-Helfer (`loop.run_until_complete()` statt
+   `asyncio.run()`) - alle drei Aufrufer (`find_ctrader_symbols.py`,
+   `place_test_ctrader_order.py`, `run_signal_bot.py`) darauf umgestellt.
+4. Immer noch lautlose 30s-Timeouts - Ursache:
+   `twisted.internet.protocol.ClientFactory.clientConnectionFailed` ist
+   per Default ein reiner No-Op-Stub. Schlägt der Verbindungsversuch
+   SELBST fehl (TCP/TLS, bevor überhaupt ein Protocol verbunden wird),
+   passiert ohne eigenen Hook absolut gar nichts - keine Exception, kein
+   Log, kein Disconnected-Callback (der läuft nur über
+   `TcpProtocol.connectionLost()`, das nie aufgerufen wird, wenn nie
+   verbunden wurde). Mit einem eigenen `clientConnectionFailed`-Hook
+   wurde der echte Fehler endlich sichtbar: `twisted.internet.error.
+   TimeoutError: User timeout caused connection failure`.
+5. Der eigentliche Grund dafür: Twisteds Standard-Resolver
+   (`base.BlockingResolver`) löst Hostnamen über das ältere, rein
+   IPv4-taugliche `socket.gethostbyname()` auf statt wie der erfolgreiche
+   Diagnose-Schritt über `getaddrinfo()`-basiertes
+   `socket.create_connection()`. Behoben, indem `ctrader_session()` den
+   Hostnamen selbst per `gethostbyname()` auflöst und die IP-Adresse
+   direkt an `connectSSL()` übergibt (der Hostname bleibt für
+   TLS-SNI/Zertifikatsprüfung in `optionsForClientTLS()` erhalten) - erst
+   danach stand die Verbindung sofort (unter 3s für den gesamten
+   Diagnose-Lauf inklusive Token-Tausch und Symbolsuche).
+
+**Refresh-Token-Rotation entdeckt und automatisiert.** Bei den
+wiederholten Testläufen fiel auf: jeder erfolgreiche Token-Tausch gibt
+einen NEUEN Refresh-Token zurück (Felder `refreshToken`/`refresh_token`
+in der Antwort), der vorherige wird dabei ungültig - ohne Persistenz
+hätte jeder automatisierte Lauf nach dem ersten erfolgreichen mit einem
+bereits ungültigen Token scheitern müssen. `get_access_token()`
+aktualisiert das `CTRADER_REFRESH_TOKEN`-Secret jetzt automatisch über
+die GitHub-API (`PUT /repos/{owner}/{repo}/actions/secrets/...`,
+verschlüsselt mit dem Repo-Public-Key via PyNaCl `SealedBox`, wie von
+GitHub für Secret-Updates vorgeschrieben). Braucht ein separates,
+einmalig vom Nutzer angelegtes Personal-Access-Token
+(`GH_SECRETS_PAT`-Secret, nur Schreibrecht auf Actions-Secrets dieses
+Repos) - der von GitHub Actions automatisch bereitgestellte
+`GITHUB_TOKEN` darf keine Repository-Secrets ändern. Fehlt das PAT (z. B.
+bei einem lokalen Lauf), wird nur geloggt statt der Lauf abgebrochen.
+
+**Symbolnamen live verifiziert.** `scripts/find_ctrader_symbols.py`
+bestätigte gegen den echten Fusion-Markets-Account: NASDAQ → `NAS100`
+(id 116), DOW → `US30` (id 118), FTSE → `UK100` (id 117), DAX → `GER40`
+(id 124) - identisch mit den zuvor geratenen Platzhaltern in
+`signalbot/mapping.py`, jetzt aber als verifiziert markiert statt als
+Annahme.
+
+Noch offen: Volumen-Konvention (Lots vs. symbol-spezifische Einheit),
+Preis-/Bilanz-Skalierung und ob `ProtoOAAmendPositionSLTPReq` SL/TP wie
+erwartet setzt, sind weiterhin UNVERIFIZIERT - das klärt erst ein echter
+Lauf von `scripts/place_test_ctrader_order.py`. Merge nach `master`
+weiterhin nicht vor expliziter Nutzer-Bestätigung, dass alle Secrets
+(inklusive `GH_SECRETS_PAT`) dauerhaft konfiguriert sind.

@@ -24,14 +24,8 @@ from datetime import datetime
 from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
-# UNVERIFIZIERT - cTraders Symbol-Doku (help.ctrader.com) war in dieser
-# Umgebung nicht abrufbar (Netzwerk-Policy). Diese Namen sind plausible
-# Platzhalter nach allgemein ueblicher Pepperstone/cTrader-Namenskonvention,
-# aber NICHT live gegen den echten Account geprueft. VOR GO-LIVE zwingend
-# mit scripts/find_ctrader_symbols.py verifizieren und hier durch die
-# tatsaechlichen Symbolnamen ersetzen - ein falsches Symbol fuehrt nur zu
-# einem Fehler bei list_symbols()/der Order selbst (sicher), kein stiller
-# Fehlhandel.
+# Live verifiziert (31.08.2026) per scripts/find_ctrader_symbols.py gegen
+# den echten Fusion-Markets-cTrader-Demo-Account - keine Platzhalter mehr.
 INDEX_TO_SYMBOL = {
     "NASDAQ": "NAS100",
     "DOW": "US30",
