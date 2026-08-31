@@ -43,6 +43,7 @@ import asyncio
 import base64
 import math
 import os
+import socket as _socket
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 
@@ -341,9 +342,34 @@ async def ctrader_session():
 
     factory.clientConnectionFailed = _connection_failed
 
+    def _started_connecting(connector_):
+        print(f"[cTrader] Verbindungsversuch gestartet zu {connector_.getDestination()}")
+
+    factory.startedConnecting = _started_connecting
+
+    # WICHTIG (gefunden 31.08.2026, dritter Anlauf): der clientConnection
+    # Failed-Hook oben zeigte den echten Fehler - "twisted.internet.error.
+    # TimeoutError: User timeout caused connection failure" nach den vollen
+    # 30s, obwohl ein reiner TCP/TLS-Socket zum selben Host/Port im selben
+    # Job sofort erfolgreich war. Twisteds Standard-Resolver
+    # (base.BlockingResolver) loest den Hostnamen ueber das aeltere,
+    # rein IPv4-taugliche socket.gethostbyname() auf statt ueber
+    # socket.getaddrinfo() - falls das in dieser Netzwerkumgebung anders
+    # reagiert (haengt/liefert eine andere, nicht erreichbare Adresse) als
+    # der erfolgreiche Diagnose-Schritt (der getaddrinfo()-basiertes
+    # socket.create_connection() nutzt), waere das eine plausible
+    # Erklaerung. Um das auszuschliessen, wird hier selbst per
+    # gethostbyname() aufgeloest (identischer Mechanismus zu Twisteds
+    # eigenem Resolver, aber synchron VOR dem Verbindungsaufbau, mit
+    # Log-Zeile) und die IP-Adresse direkt an connectSSL uebergeben - der
+    # Hostname bleibt fuer TLS-SNI/Zertifikatspruefung in
+    # optionsForClientTLS() unveraendert.
+    resolved_ip = _socket.gethostbyname(EndPoints.PROTOBUF_DEMO_HOST)
+    print(f"[cTrader] {EndPoints.PROTOBUF_DEMO_HOST} selbst aufgeloest zu {resolved_ip}")
+
     context_factory = twisted_ssl.optionsForClientTLS(EndPoints.PROTOBUF_DEMO_HOST)
     connector = reactor.connectSSL(
-        EndPoints.PROTOBUF_DEMO_HOST, EndPoints.PROTOBUF_PORT, factory, context_factory
+        resolved_ip, EndPoints.PROTOBUF_PORT, factory, context_factory, timeout=15
     )
 
     try:
