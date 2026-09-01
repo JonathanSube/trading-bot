@@ -50,10 +50,19 @@ jobs:
           CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
           CTRADER_CLIENT_SECRET: ${{ secrets.CTRADER_CLIENT_SECRET }}
           CTRADER_REFRESH_TOKEN: ${{ secrets.CTRADER_REFRESH_TOKEN }}
+          # Zwischengespeicherter Access-Token samt Ablaufzeitpunkt (siehe
+          # tradingbot/ctrader.py::get_access_token) - vermeidet einen
+          # kompletten Token-Tausch bei JEDEM (minuetlichen!) Lauf, nur
+          # wenn der zwischengespeicherte Token bereits abgelaufen ist.
+          # Beide Secrets existieren zunaechst nicht und werden beim
+          # ersten erfolgreichen Tausch automatisch angelegt.
+          CTRADER_ACCESS_TOKEN: ${{ secrets.CTRADER_ACCESS_TOKEN }}
+          CTRADER_ACCESS_TOKEN_EXPIRES_AT: ${{ secrets.CTRADER_ACCESS_TOKEN_EXPIRES_AT }}
           # cTrader rotiert den Refresh-Token bei jedem Tausch - eigenes PAT
-          # noetig, damit der Bot CTRADER_REFRESH_TOKEN selbst aktuell
-          # halten kann (siehe tradingbot/ctrader.py::_persist_rotated_refresh_token,
-          # GITHUB_TOKEN darf keine Actions-Secrets schreiben).
+          # noetig, damit der Bot CTRADER_REFRESH_TOKEN und die beiden
+          # Access-Token-Secrets oben selbst aktuell halten kann (siehe
+          # tradingbot/ctrader.py::_persist_secret, GITHUB_TOKEN darf keine
+          # Actions-Secrets schreiben).
           GH_SECRETS_PAT: ${{ secrets.GH_SECRETS_PAT }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

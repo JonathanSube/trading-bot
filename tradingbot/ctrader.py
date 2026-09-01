@@ -52,7 +52,7 @@ import os
 import socket as _socket
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import nacl.public
 import requests
@@ -143,6 +143,12 @@ RECONNECT_DELAY_SECONDS = 3
 TOKEN_RETRY_ATTEMPTS = 4
 TOKEN_RETRY_DELAY_SECONDS = 7
 
+# Sicherheitsabstand vor dem tatsaechlichen Ablauf des zwischengespeicherten
+# Access-Tokens (siehe get_access_token()) - lieber etwas frueher neu
+# tauschen als riskieren, dass der Token waehrend eines laufenden
+# cTrader-Handshakes ablaeuft.
+ACCESS_TOKEN_SAFETY_MARGIN_SECONDS = 120
+
 
 def run_ctrader(coro):
     """ZWINGEND anstelle von asyncio.run() verwenden, um irgendeine
@@ -153,30 +159,28 @@ def run_ctrader(coro):
     return _loop.run_until_complete(coro)
 
 
-def _persist_rotated_refresh_token(new_refresh_token: str) -> None:
-    """cTrader rotiert den Refresh-Token bei JEDEM Tausch (live bestaetigt
-    31.08.2026, siehe get_access_token()) - ohne das hier zu speichern,
-    wuerde bereits der naechste automatisierte Lauf mit dem in
-    CTRADER_REFRESH_TOKEN hinterlegten, dann schon ungueltigen alten Token
-    scheitern. Aktualisiert das GitHub-Actions-Secret direkt per API
+def _persist_secret(secret_name: str, value: str) -> None:
+    """Aktualisiert ein GitHub-Actions-Secret dieses Repos direkt per API
     (verschluesselt mit dem repo-eigenen oeffentlichen Schluessel, wie von
     GitHub fuer Secret-Updates vorgeschrieben - siehe docs.github.com,
-    "Encrypting secrets for the REST API").
+    "Encrypting secrets for the REST API"). Verallgemeinert aus der
+    urspruenglich nur fuer den rotierten Refresh-Token gedachten Funktion,
+    wird jetzt auch fuer den zwischengespeicherten Access-Token genutzt
+    (siehe get_access_token()).
 
     Braucht ein EIGENES Personal-Access-Token mit Schreibrecht auf
     Actions-Secrets dieses Repos (GH_SECRETS_PAT) - der von Actions
     automatisch bereitgestellte GITHUB_TOKEN darf das nicht. Laeuft dieses
     Modul lokal oder fehlt das PAT, wird nur geloggt und NICHT
-    fehlgeschlagen - der frisch getauschte Access-Token ist fuer den
-    aktuellen Lauf trotzdem gueltig, nur der naechste Lauf braeuchte dann
-    wieder einen manuell neu eingetragenen Refresh-Token."""
+    fehlgeschlagen - das Speichern ist immer ein Best-Effort-Schritt fuer
+    den NAECHSTEN Lauf, kein Grund, den aktuellen abzubrechen."""
     pat = os.environ.get("GH_SECRETS_PAT")
     repository = os.environ.get("GITHUB_REPOSITORY")
     if not pat or not repository:
         print(
-            "[cTrader] GH_SECRETS_PAT/GITHUB_REPOSITORY nicht gesetzt - "
-            "rotierter Refresh-Token wird NICHT automatisch gespeichert "
-            "(z.B. bei einem lokalen Lauf normal, kein Fehler)."
+            f"[cTrader] GH_SECRETS_PAT/GITHUB_REPOSITORY nicht gesetzt - "
+            f"{secret_name} wird NICHT automatisch gespeichert "
+            f"(z.B. bei einem lokalen Lauf normal, kein Fehler)."
         )
         return
 
@@ -195,10 +199,10 @@ def _persist_rotated_refresh_token(new_refresh_token: str) -> None:
         key_data = key_resp.json()
 
         public_key = nacl.public.PublicKey(base64.b64decode(key_data["key"]))
-        encrypted = nacl.public.SealedBox(public_key).encrypt(new_refresh_token.encode("utf-8"))
+        encrypted = nacl.public.SealedBox(public_key).encrypt(value.encode("utf-8"))
 
         put_resp = requests.put(
-            f"https://api.github.com/repos/{repository}/actions/secrets/CTRADER_REFRESH_TOKEN",
+            f"https://api.github.com/repos/{repository}/actions/secrets/{secret_name}",
             headers=headers,
             json={
                 "encrypted_value": base64.b64encode(encrypted).decode("utf-8"),
@@ -207,26 +211,37 @@ def _persist_rotated_refresh_token(new_refresh_token: str) -> None:
             timeout=10,
         )
         put_resp.raise_for_status()
-        print("[cTrader] Rotierter Refresh-Token erfolgreich als GitHub-Secret gespeichert.")
+        print(f"[cTrader] {secret_name} erfolgreich als GitHub-Secret gespeichert.")
     except Exception as exc:
-        # Bewusst nicht weitergereicht - der aktuelle Lauf hat bereits einen
-        # gueltigen Access-Token, das Speichern ist ein Best-Effort-Schritt
-        # fuer den NAECHSTEN Lauf, kein Grund, den jetzigen abzubrechen.
-        print(f"[cTrader] Speichern des rotierten Refresh-Tokens fehlgeschlagen: {exc!r}")
+        print(f"[cTrader] Speichern von {secret_name} fehlgeschlagen: {exc!r}")
 
 
 async def get_access_token() -> str:
-    """Tauscht den dauerhaften Refresh-Token (CTRADER_REFRESH_TOKEN, per
-    scripts/ctrader_authorize.py einmalig erzeugt) gegen einen kurzlebigen
-    Access-Token - reiner REST-Aufruf, kein Twisted noetig.
+    """Liefert einen gueltigen Access-Token - aus dem Zwischenspeicher
+    (CTRADER_ACCESS_TOKEN/CTRADER_ACCESS_TOKEN_EXPIRES_AT-Secrets), falls
+    der noch nicht abgelaufen ist, sonst per Tausch des dauerhaften
+    Refresh-Tokens (CTRADER_REFRESH_TOKEN, per scripts/ctrader_authorize.py
+    einmalig erzeugt).
 
-    Live beobachtet (31.08.2026): ein einzelner Lauf bekam 'ACCESS_DENIED'
-    vom Token-Endpunkt - der naechste Lauf, Sekunden spaeter, mit exakt
-    demselben (nie rotierten, da dieser Lauf ja fehlschlug) Refresh-Token
-    war wieder erfolgreich. Also ein voruebergehender Aussetzer des
-    Auth-Servers, kein wirklich ungueltiger Token. TOKEN_RETRY_ATTEMPTS
-    Versuche mit kurzer Pause, bevor der Fehler tatsaechlich als
-    Signal-Bot-Fehler gemeldet wird."""
+    WICHTIG (gefunden 31.08.2026, nach WIEDERHOLTEN ACCESS_DENIED-
+    Ausfaellen trotz mehrfach erhoehtem Retry-Budget - Symptombekaempfung
+    allein reichte nicht, die eigentliche Ursache war vermutlich
+    naheliegender: der Bot tauschte bislang bei JEDEM einzelnen Lauf
+    (minuetlich!) einen kompletten neuen Access-Token, obwohl cTrader
+    laut Token-Antwort ('expiresIn'/'expires_in') eine deutlich laengere
+    Gueltigkeit ausstellt. Bis zu 60 Token-Tausche pro Stunde sind ein
+    plausibler Grund fuer periodische Rate-Limit-Treffer beim
+    Auth-Server, die sich als 'voruebergehende Aussetzer' zeigen,
+    tatsaechlich aber ein selbstgemachtes Verkehrsaufkommen sein
+    koennten. Ein zwischengespeicherter, wiederverwendeter Access-Token
+    (mit Sicherheitsabstand vor dem echten Ablauf, siehe
+    ACCESS_TOKEN_SAFETY_MARGIN_SECONDS) braucht im Normalfall gar keinen
+    Tausch pro Lauf mehr - das reduziert die Tausch-Frequenz drastisch,
+    nicht nur die Fehlerbehandlung danach."""
+    cached = _cached_access_token()
+    if cached is not None:
+        return cached
+
     last_error: Exception | None = None
     for attempt in range(1, TOKEN_RETRY_ATTEMPTS + 1):
         try:
@@ -237,6 +252,25 @@ async def get_access_token() -> str:
             if attempt < TOKEN_RETRY_ATTEMPTS:
                 await asyncio.sleep(TOKEN_RETRY_DELAY_SECONDS)
     raise RuntimeError(f"Token-Tausch nach {TOKEN_RETRY_ATTEMPTS} Versuchen weiterhin fehlgeschlagen: {last_error}")
+
+
+def _cached_access_token() -> str | None:
+    """Liest den zwischengespeicherten Access-Token, falls vorhanden und
+    (mit Sicherheitsabstand) noch nicht abgelaufen. Lokal/ohne vorherigen
+    erfolgreichen Lauf sind die Secrets leer - dann ganz normal per
+    Refresh-Token neu tauschen (kein Fehler, siehe get_access_token())."""
+    token = os.environ.get("CTRADER_ACCESS_TOKEN")
+    expires_at_raw = os.environ.get("CTRADER_ACCESS_TOKEN_EXPIRES_AT")
+    if not token or not expires_at_raw:
+        return None
+    try:
+        expires_at = datetime.fromisoformat(expires_at_raw)
+    except ValueError:
+        return None
+    if datetime.now(timezone.utc) >= expires_at - timedelta(seconds=ACCESS_TOKEN_SAFETY_MARGIN_SECONDS):
+        return None
+    print("[cTrader] Zwischengespeicherten Access-Token wiederverwendet, kein neuer Token-Tausch noetig.")
+    return token
 
 
 async def _exchange_refresh_token() -> str:
@@ -259,7 +293,7 @@ async def _exchange_refresh_token() -> str:
 
     for key in ("refreshToken", "refresh_token"):
         if key in data:
-            _persist_rotated_refresh_token(data[key])
+            _persist_secret("CTRADER_REFRESH_TOKEN", data[key])
             break
 
     # Feldname unverifiziert (help.ctrader.com nicht abrufbar) - live
@@ -269,10 +303,24 @@ async def _exchange_refresh_token() -> str:
     # vs. cTraders sonst uebliches camelCase) werden probiert; schlaegt
     # beides fehl, wird die komplette Antwort zur Diagnose mitgeloggt statt
     # eines nichtssagenden KeyError.
+    access_token = None
     for key in ("accessToken", "access_token"):
         if key in data:
-            return data[key]
-    raise RuntimeError(f"Kein Access-Token in der Antwort gefunden, Felder: {list(data.keys())} - {data}")
+            access_token = data[key]
+            break
+    if access_token is None:
+        raise RuntimeError(f"Kein Access-Token in der Antwort gefunden, Felder: {list(data.keys())} - {data}")
+
+    for key in ("expiresIn", "expires_in"):
+        if key in data:
+            expires_in_seconds = int(data[key])
+            print(f"[cTrader] Access-Token gueltig fuer {expires_in_seconds}s, wird zwischengespeichert.")
+            expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in_seconds)
+            _persist_secret("CTRADER_ACCESS_TOKEN", access_token)
+            _persist_secret("CTRADER_ACCESS_TOKEN_EXPIRES_AT", expires_at.isoformat())
+            break
+
+    return access_token
 
 
 @dataclass
