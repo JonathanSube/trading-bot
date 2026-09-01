@@ -34,10 +34,10 @@
       "order_id": 41333518,
       "qty": 2.95,
       "source_message_id": 71532,
-      "entry_fill": null
+      "entry_fill": 29066.3
     }
   },
   "telegram_update_offset": null,
   "last_channel_message_at": "2026-09-01T13:45:41+00:00",
-  "last_poll_at": "2026-09-01T13:46:01.891652+00:00"
+  "last_poll_at": "2026-09-01T13:46:40.174835+00:00"
 }
