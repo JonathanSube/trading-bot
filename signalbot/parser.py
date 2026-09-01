@@ -15,11 +15,22 @@ beachtet hatte).
 
 import json
 import os
+import time
 
 import requests
 
 GEMINI_MODEL = "gemini-flash-lite-latest"  # siehe trading-bot-spec.md Abschnitt 12 fuer die Modell-Historie
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+
+# Live beobachtet (01.09.2026): ein einzelner Gemini-Aufruf lief in einen
+# Read-Timeout (20s), die Nachricht wurde daraufhin OHNE erneuten Versuch
+# als "kein Signal" behandelt - ein direkt folgendes, zweites Signal in
+# derselben Kanal-Nachrichtenserie wurde normal gehandelt. Ohne Retry geht
+# so ein ganzes Signal verloren, nur weil ein einzelner API-Aufruf
+# voruebergehend haengt - analog zum ACCESS_DENIED-Retry bei cTrader
+# (siehe tradingbot/ctrader.py::get_access_token).
+GEMINI_RETRY_ATTEMPTS = 2
+GEMINI_RETRY_DELAY_SECONDS = 3
 
 SYSTEM_PROMPT = """Du wertest Nachrichten aus einem oeffentlichen Telegram-Kanal fuer \
 Live-Day-Trading-Signale aus. Der Kanal handelt NASDAQ INDEX, DOW JONES INDEX, \
@@ -186,12 +197,17 @@ def parse_signal_message(text: str, history: list[str] | None = None) -> dict | 
         "generationConfig": {"responseMimeType": "application/json"},
     }
 
-    try:
-        resp = requests.post(GEMINI_URL, params={"key": api_key}, json=payload, timeout=20)
-        resp.raise_for_status()
-        data = resp.json()
-        text_out = data["candidates"][0]["content"]["parts"][0]["text"]
-        return json.loads(text_out)
-    except (requests.RequestException, KeyError, IndexError, json.JSONDecodeError) as e:
-        print(f"[SignalBot] Gemini-Auswertung fehlgeschlagen: {e}")
-        raise GeminiError(str(e)) from e
+    last_error: Exception | None = None
+    for attempt in range(1, GEMINI_RETRY_ATTEMPTS + 1):
+        try:
+            resp = requests.post(GEMINI_URL, params={"key": api_key}, json=payload, timeout=20)
+            resp.raise_for_status()
+            data = resp.json()
+            text_out = data["candidates"][0]["content"]["parts"][0]["text"]
+            return json.loads(text_out)
+        except (requests.RequestException, KeyError, IndexError, json.JSONDecodeError) as e:
+            last_error = e
+            print(f"[SignalBot] Gemini-Auswertung {attempt}/{GEMINI_RETRY_ATTEMPTS} fehlgeschlagen: {e}")
+            if attempt < GEMINI_RETRY_ATTEMPTS:
+                time.sleep(GEMINI_RETRY_DELAY_SECONDS)
+    raise GeminiError(str(last_error)) from last_error
