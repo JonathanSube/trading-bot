@@ -143,3 +143,4 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 52818
 
 STOP = 52943","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52818.0, ""stop_level"": 52943.0, ""target_level"": null}",trade_eroeffnet
+2026-09-01T13:36:23+00:00,71530,STOPPED OUT OF DOW MINUS 125,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
