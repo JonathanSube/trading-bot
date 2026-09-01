@@ -1,0 +1,103 @@
+kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
+2026-09-01T06:28:51+00:00,71500,"🚨
+
+🚨
+
+Good morning,
+
+I will start streaming at 9am European time.
+
+Once I am live on YouTube, I will copy the URL and post it here in Telegram. Click on link and you will see me live with live account and charts.
+
+Latency Banished with Audio Feed
+YouTube can have latency, depending on where you live in the world, or the strength of your internet connection. Therefore, I also offer an “audio only” feed, which you can listen to, or combine with YouTube. Latency is 0.5 seconds or less. The feed is found here:
+
+https://divergent.uk/tom/
+
+The audio goes live at 9am as well. If you click on “settings” on the ""divergent.uk/tom"" website, you will see there are 5 servers to select from. Pick anyone that has audio, and if you get disconnected, pick another one. 
+
+Telegram Stream Connection
+You can also simply tune in here in Telegram. An icon will appear at the top of your Telegram app, when I am live streaming. Telegram DOES HAVE latency. 
+
+Disclaimer
+I trade live, with a real account and real money. There is no fucking about with fake accounts or pretending. I win. I lose. It is all on display. However, by being here, or on YouTube/Divergent, you agree to abide by the following conditions:
+
+https://t.me/c/1238535538/50930
+
+Additionally, you acknowledge the stipulations set out on the website TraderTom.Com:
+
+https://tradertom.com/disclaimer/
+
+I will see you in at 9am Central European Time. 
+
+Stay strong and thank you for being here. 
+
+Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T06:29:08+00:00,71501,See you in 20min,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T06:56:46+00:00,71502,https://youtube.com/live/stx4khp2kQI?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T06:57:46+00:00,71504,LIVE ON ALL 3 OUTLETS,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T07:01:07+00:00,71505,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 26,182
+
+STOP = 26,130","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 26182.0, ""stop_level"": 26130.0, ""target_level"": null}",trade_eroeffnet
+2026-09-01T07:03:43+00:00,71506,"STOPPED OUT
+
+MINUS 50","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T07:18:46+00:00,71507,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 26,172
+
+STOP = 26072","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 26172.0, ""stop_level"": 26072.0, ""target_level"": null}",bereits_offen
+2026-09-01T07:20:42+00:00,71508,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 26,191
+
+STOP = 26,091","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 26191.0, ""stop_level"": 26091.0, ""target_level"": null}",bereits_offen
+2026-09-01T07:30:33+00:00,71509,PLEASE USE CAUTION = THE ADVERTS HAVE NOTHING TO DO WITH ME,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T07:34:15+00:00,71510,"STOP LOSS MOVED...... 26,148","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T07:36:28+00:00,71511,"STOPPED OUT OF DAX BOTH
+
+LOSS OF AROUND 70 POINTS","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T07:45:21+00:00,71512,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 26,124
+
+STOP = 26,224","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 26124.0, ""stop_level"": 26224.0, ""target_level"": null}",bereits_offen
+2026-09-01T07:53:55+00:00,71513,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 10774
+
+STOP = 10804","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10774.0, ""stop_level"": 10804.0, ""target_level"": null}",trade_eroeffnet
+2026-09-01T08:08:54+00:00,71514,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 10766.70
+
+STOP = 10806","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10766.7, ""stop_level"": 10806, ""target_level"": null}",bereits_offen
+2026-09-01T08:10:07+00:00,71515,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 10757.7
+
+STOP = 10799","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10757.7, ""stop_level"": 10799, ""target_level"": null}",bereits_offen
+2026-09-01T08:11:27+00:00,71516,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 10753
+
+STOP =10793","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10753.0, ""stop_level"": 10793.0, ""target_level"": null}",bereits_offen
+2026-09-01T08:18:39+00:00,71517,CLOSED 4 and 3 and 2 in FTSE,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-01T08:18:44+00:00,71518,CLOSED DAX,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-01T08:19:45+00:00,71519,CLOSED FTSE,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-01T08:21:24+00:00,71520,CLOSED ALL POSITIONS,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T08:21:29+00:00,71521,TRADES TODAY,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T08:23:48+00:00,71522,I AM CALLING IT A MORNING..... ROCKY START - GOOD FINISH... SEE YOU FOR THE US SESSION,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T08:45:33+00:00,71524,"COMMENT
+
+I spectaculary fucked up that FTSE trade. It is so against my principles. So why did I close? I wanted to stop streaming and I saw it as my excuse. Now, with FTSE at 40 points lower and my 400% short position hypothetically making an extra $16,000, I am upset. That upset is FUEL. That is the kind of trade that goes into the Book of Horror.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
