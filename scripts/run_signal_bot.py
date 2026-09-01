@@ -263,12 +263,30 @@ async def _check_message_edits(session: CTraderSession, state: SignalBotState, n
 
 async def _close_one_open(session: CTraderSession, state: SignalBotState, symbol: str,
                            now: datetime, reason: str) -> None:
+    """Live beobachtet (01.09.2026): close_position() bekommt auf
+    ProtoOAClosePositionReq nur die sofortige "Order angenommen"-Antwort
+    zurueck (orderStatus ORDER_STATUS_ACCEPTED, executedVolume 0, KEIN
+    deal.executionPrice) - der eigentliche Fill kommt als separates,
+    asynchrones Server-Event nach, das aktuell nicht abgewartet wird, siehe
+    tradingbot/ctrader.py::close_position. Bisher fiel der Ausstiegspreis
+    in diesem (haeufigen, nicht dem seltenen) Fall auf den urspruenglichen
+    Entry-Preis zurueck - das ergab IMMER exakt 0,00 PnL, obwohl die
+    Position real zu einem anderen Kurs geschlossen wurde (Nutzer-Feedback
+    01.09.2026: "die Trades standen alle null null, das kann nicht
+    passen"). Fallback jetzt auf den aktuellen Marktkurs statt auf den
+    Entry-Preis - kein exakter Fill, aber naeher an der Realitaet als ein
+    garantiertes Nullergebnis (gleiches Verfahren wie in
+    _check_filled_trades() fuer Stop-/Ziel-Schluesse ohne verifizierten
+    Fill-Preis)."""
     trade = state.open_trades[symbol]
     try:
         exit_price = await close_position(session, trade.order_id, trade.qty)
     except Exception as e:
         print(f"Konnte Trade fuer {symbol} nicht schliessen (oder Ausstiegspreis nicht ermittelbar): {e}")
-        exit_price = trade.signal.entry_price
+        try:
+            exit_price = await get_latest_price(session, symbol)
+        except Exception:
+            exit_price = trade.signal.entry_price
     _log_and_clear(state, symbol, now, exit_price, reason)
 
 
