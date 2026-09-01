@@ -168,3 +168,9 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 29,058
 
 STOP = 28,958","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29058.0, ""stop_level"": 28958.0, ""target_level"": null}",levels_aktualisiert
+2026-09-01T14:01:38+00:00,71534,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 52,940
+
+STOP = 52880","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 52940.0, ""stop_level"": 52880.0, ""target_level"": null}",bereits_offen
