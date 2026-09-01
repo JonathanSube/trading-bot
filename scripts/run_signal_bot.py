@@ -518,8 +518,27 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "order_fehlgeschlagen")
             continue
 
+        # last_seen_edit_date auf den JETZIGEN edit_date der Nachricht
+        # setzen, nicht auf None lassen (Fehler, gefunden 01.09.2026 anhand
+        # eines Nutzer-Berichts ueber ein unerklaertes Stop/Ziel-Update):
+        # Telegram vergibt oft schon kurz nach dem Posten einen edit_date
+        # (z.B. durch Linkvorschau-Generierung), auch ohne inhaltliche
+        # Aenderung. Bliebe last_seen_edit_date bei None, wuerde
+        # _check_message_edits() genau diesen harmlosen, schon beim
+        # Einstieg vorhandenen edit_date beim naechsten Lauf faelschlich
+        # als NEUE Bearbeitung werten und Stop/Ziel unnoetig neu berechnen
+        # (mit leicht abweichenden Werten durch den inzwischen bekannten
+        # tatsaechlichen Fill-Kurs statt des urspruenglichen Signalkurses) -
+        # verwirrend, wenn sich die Kanal-Nachricht gar nicht geaendert hat.
+        try:
+            baseline = await fetch_messages_by_id(CHANNEL, [message_id])
+            initial_edit_date = baseline.get(message_id, (None, None))[1]
+        except Exception:
+            initial_edit_date = None
+
         state.open_trades[symbol] = OpenSignalTrade(
             signal=signal, order_id=position_id, qty=volume, source_message_id=message_id,
+            last_seen_edit_date=initial_edit_date,
         )
         append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "trade_eroeffnet")
         send_notification(
