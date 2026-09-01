@@ -4,7 +4,7 @@
   "initial_equity": 10000.12,
   "total_pnl": 0.0,
   "total_trades": 2,
-  "consecutive_api_errors": 1,
+  "consecutive_api_errors": 0,
   "stopped_permanently": false,
   "open_trades": {
     "US30": {
@@ -19,10 +19,10 @@
       "order_id": 41332497,
       "qty": 2.39,
       "source_message_id": 71529,
-      "entry_fill": null
+      "entry_fill": 52947.97
     }
   },
   "telegram_update_offset": null,
   "last_channel_message_at": "2026-09-01T13:30:28+00:00",
-  "last_poll_at": "2026-09-01T13:31:16.301843+00:00"
+  "last_poll_at": "2026-09-01T13:33:00.562840+00:00"
 }
