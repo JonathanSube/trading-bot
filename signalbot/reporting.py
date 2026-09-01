@@ -8,7 +8,8 @@ cTrader Open API statt synchron von Alpaca.
 import csv
 from pathlib import Path
 
-from tradingbot.ctrader import CTraderSession, get_account_info, get_open_positions
+from tradingbot.ctrader import CTraderSession, get_account_info, get_latest_price, get_open_positions
+from tradingbot.setup_detection import Direction
 
 
 def _money(value: float) -> str:
@@ -20,16 +21,51 @@ def _money(value: float) -> str:
     return f"{sign}{formatted}"
 
 
+async def _open_position_line(session: CTraderSession, symbol: str, pos: dict, state) -> str:
+    """Eine Zeile pro offener Position mit aktuellem Kurs, Abstand zu
+    Stop/Ziel und unrealisierter PnL - Nutzerwunsch (01.09.2026): /status
+    soll den Trade-Status JETZT zeigen, nicht nur Einstiegsdaten."""
+    entry = float(pos["entryPrice"])
+    qty = float(pos["volume"])
+    trade = state.open_trades.get(symbol)
+
+    base = f"  {symbol}: {qty} Lot @ {entry}"
+    if trade is None:
+        # Theoretisch moeglich, wenn eine Position am Broker existiert, die
+        # der Bot (noch) nicht in seinem eigenen Zustand fuehrt - dann
+        # fehlen Stop/Ziel, trotzdem den Kurs zeigen statt abzubrechen.
+        return base
+
+    signal = trade.signal
+    direction_mult = 1 if signal.direction is Direction.LONG else -1
+    try:
+        current = await get_latest_price(session, symbol)
+    except Exception:
+        return (f"{base}\n"
+                f"    Stop {signal.stop:.2f} | Ziel {signal.target:.2f} "
+                f"(aktueller Kurs nicht abrufbar)")
+
+    pnl = direction_mult * (current - entry) * qty
+    to_stop = direction_mult * (signal.stop - current)
+    to_target = direction_mult * (current - signal.target)
+    return (f"{base}\n"
+            f"    Kurs jetzt: {current:.2f} | Stop {signal.stop:.2f} (noch {abs(to_stop):.2f}) "
+            f"| Ziel {signal.target:.2f} (noch {abs(to_target):.2f})\n"
+            f"    Unrealisiert: {_money(pnl)}")
+
+
 async def build_signal_status_report(session: CTraderSession, state, trade_log_path: Path,
                                       n_recent: int = 5) -> str:
     account = await get_account_info(session)
     lines = [f"Kontostand: {_money(account['balance'])}"]
+    if state.paused:
+        lines.append("Status: PAUSIERT (keine neuen Einstiege, siehe /resume)")
 
     open_positions = await get_open_positions(session)
     if open_positions:
         lines.append("Offene Positionen:")
         for symbol, pos in open_positions.items():
-            lines.append(f"  {symbol}: {pos['volume']} Lot @ {pos['entryPrice']}")
+            lines.append(await _open_position_line(session, symbol, pos, state))
     else:
         lines.append("Offene Positionen: keine")
 

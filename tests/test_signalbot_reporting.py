@@ -8,11 +8,14 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import AsyncMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from signalbot.reporting import _money, _recent_trades
+from signalbot.reporting import _money, _open_position_line, _recent_trades
+from signalbot.state import OpenSignalTrade, SignalBotState
 from signalbot.trade_log import SignalTradeLogRow, append_trade
+from tradingbot.orb_strategy import Signal
 from tradingbot.setup_detection import Direction
 
 
@@ -53,6 +56,41 @@ class RecentTradesTests(unittest.TestCase):
             self.assertIn("2026-08-05", lines[0])
             self.assertIn("2026-08-07", lines[-1])
             self.assertIn("NAS100", lines[0])
+
+
+class OpenPositionLineTests(unittest.IsolatedAsyncioTestCase):
+    def _state_with_trade(self, direction, stop, target):
+        state = SignalBotState()
+        state.open_trades["NAS100"] = OpenSignalTrade(
+            signal=Signal(direction=direction, entry_price=500.0, stop=stop, target=target,
+                           risk=2.0, entry_timestamp=datetime(2026, 8, 1, 10, 0)),
+            order_id="1", qty=0.1, source_message_id=1,
+        )
+        return state
+
+    async def test_long_shows_price_distance_and_pnl(self):
+        state = self._state_with_trade(Direction.LONG, stop=498.0, target=504.0)
+        pos = {"entryPrice": 500.0, "volume": 0.1}
+        with patch("signalbot.reporting.get_latest_price", new=AsyncMock(return_value=502.0)):
+            line = await _open_position_line(session=None, symbol="NAS100", pos=pos, state=state)
+        self.assertIn("Kurs jetzt: 502.00", line)
+        self.assertIn("Stop 498.00 (noch 4.00)", line)
+        self.assertIn("Ziel 504.00 (noch 2.00)", line)
+        self.assertIn("+0,20", line)
+
+    async def test_missing_own_state_falls_back_to_broker_data_only(self):
+        state = SignalBotState()
+        pos = {"entryPrice": 500.0, "volume": 0.1}
+        line = await _open_position_line(session=None, symbol="UNTRACKED", pos=pos, state=state)
+        self.assertEqual(line, "  UNTRACKED: 0.1 Lot @ 500.0")
+
+    async def test_price_unavailable_still_shows_stop_and_target(self):
+        state = self._state_with_trade(Direction.SHORT, stop=505.0, target=495.0)
+        pos = {"entryPrice": 500.0, "volume": 0.1}
+        with patch("signalbot.reporting.get_latest_price", new=AsyncMock(side_effect=RuntimeError("kaputt"))):
+            line = await _open_position_line(session=None, symbol="NAS100", pos=pos, state=state)
+        self.assertIn("aktueller Kurs nicht abrufbar", line)
+        self.assertIn("Stop 505.00", line)
 
 
 if __name__ == "__main__":

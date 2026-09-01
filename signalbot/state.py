@@ -43,6 +43,10 @@ class SignalBotState:
     total_trades: int = 0
     consecutive_api_errors: int = 0
     stopped_permanently: bool = False
+    # Per /pause-Telegram-Befehl gesetzt (Nutzerwunsch 01.09.2026) - im
+    # Unterschied zu stopped_permanently NICHT dauerhaft und schliesst keine
+    # offenen Positionen: blockiert nur neue Einstiege, bis /resume kommt.
+    paused: bool = False
     open_trades: dict[str, OpenSignalTrade] = field(default_factory=dict)
     telegram_update_offset: int | None = None
     # Fuer die Ruhe-Drosselung (30 Min. ohne neue Nachricht -> nur noch alle
@@ -105,6 +109,7 @@ def _state_to_dict(state: SignalBotState) -> dict:
         "total_trades": state.total_trades,
         "consecutive_api_errors": state.consecutive_api_errors,
         "stopped_permanently": state.stopped_permanently,
+        "paused": state.paused,
         "open_trades": {symbol: _open_trade_to_dict(t) for symbol, t in state.open_trades.items()},
         "telegram_update_offset": state.telegram_update_offset,
         "last_channel_message_at": (
@@ -135,6 +140,7 @@ def _state_from_dict(data: dict) -> SignalBotState:
         total_trades=data.get("total_trades", 0),
         consecutive_api_errors=data.get("consecutive_api_errors", 0),
         stopped_permanently=data.get("stopped_permanently", False),
+        paused=data.get("paused", False),
         open_trades={
             symbol: _open_trade_from_dict(t) for symbol, t in data.get("open_trades", {}).items()
         },

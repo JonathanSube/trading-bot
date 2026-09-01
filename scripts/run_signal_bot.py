@@ -25,17 +25,19 @@ Ablauf pro Lauf:
 1. Kill-Switch pruefen
 2. Zustand laden, cTrader-Session oeffnen (Access-Token holen, verbinden,
    Demo-Konto automatisch ermitteln - siehe tradingbot/ctrader.py)
-3. Eingehende Telegram-Befehle beantworten (/status, /help - siehe
-   signalbot/reporting.py; bewusst der einzige Bot der beiden, der das
-   noch tut, siehe scripts/run_bot.py)
+3. Eingehende Telegram-Befehle beantworten (/status, /pause, /resume,
+   /help - siehe signalbot/reporting.py; bewusst der einzige Bot der
+   beiden, der das noch tut, siehe scripts/run_bot.py)
 4. Konto abfragen
 5. Offene Trades abgleichen (Fill nachtragen, geschlossene protokollieren)
 6. Sicherheitsschalter pruefen (Gesamtverlust, API-Fehler)
 7. Sessionende je Instrument (5 Min. vorher): betroffene offene Position
    zwangsschliessen - jedes Instrument hat seine eigene Handelszeit
    (US/London/Xetra), kein einzelner globaler EOD-Zeitpunkt
-8. Neue Kanal-Nachrichten holen, per LLM auswerten, ggf. Order platzieren
-9. Zustand speichern
+8. Pausiert per /pause? Dann keine neuen Einstiege, offene Positionen
+   laufen trotzdem normal weiter (Stop/Ziel/Sessionende oben)
+9. Neue Kanal-Nachrichten holen, per LLM auswerten, ggf. Order platzieren
+10. Zustand speichern
 """
 
 import os
@@ -472,8 +474,20 @@ async def handle_telegram_commands(session: CTraderSession, state: SignalBotStat
         if cmd == "/status":
             report = await build_signal_status_report(session, state, TRADE_LOG_PATH)
             send_notification(report)
+        elif cmd == "/pause":
+            state.paused = True
+            send_notification("Signal-Bot pausiert: keine neuen Einstiege mehr, offene Positionen laufen normal weiter (Stop/Ziel/Sessionende). Mit /resume wieder freigeben.")
+        elif cmd == "/resume":
+            state.paused = False
+            send_notification("Signal-Bot fortgesetzt: neue Einstiege wieder erlaubt.")
         elif cmd == "/help":
-            send_notification("Verfuegbare Befehle:\n/status - aktueller Stand\n/help - diese Uebersicht")
+            send_notification(
+                "Verfuegbare Befehle:\n"
+                "/status - Kontostand, offene Positionen mit aktuellem Kurs/Abstand zu Stop&Ziel, letzte Trades\n"
+                "/pause - keine neuen Einstiege mehr (offene Positionen bleiben unberuehrt)\n"
+                "/resume - neue Einstiege wieder erlauben\n"
+                "/help - diese Uebersicht"
+            )
 
 
 async def _run(session: CTraderSession, state: SignalBotState, now: datetime) -> None:
@@ -514,6 +528,11 @@ async def _run(session: CTraderSession, state: SignalBotState, now: datetime) ->
 
     now_utc = datetime.now(timezone.utc)
     await _close_expiring_positions(session, state, now, now_utc)
+
+    if state.paused:
+        print("Per /pause pausiert: keine neuen Einstiege diesen Lauf (offene Positionen laufen weiter).")
+        save_state(state, STATE_PATH)
+        return
 
     market_window_open = _any_session_active(now_utc)
     if market_window_open and _should_poll_channel(state, now_utc):
