@@ -150,3 +150,9 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 52,936
 
 STOP = 52811",,gemini_fehler
+2026-09-01T13:45:41+00:00,71532,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 29,058
+
+STOP = 28,958","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29058, ""stop_level"": 28958, ""target_level"": null}",trade_eroeffnet
