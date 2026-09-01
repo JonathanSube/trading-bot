@@ -137,3 +137,9 @@ Stay strong and thank you for being here.
 Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-01T13:27:09+00:00,71527,https://youtube.com/live/-KdAWK0PwhM?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-01T13:27:20+00:00,71528,LIVE ON ALL 3 OUTLETS,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-01T13:30:28+00:00,71529,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 52818
+
+STOP = 52943","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52818.0, ""stop_level"": 52943.0, ""target_level"": null}",trade_eroeffnet
