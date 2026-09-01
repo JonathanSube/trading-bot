@@ -45,12 +45,26 @@ in diesem Kanal), danach durch eine Trennzeile abgesetzt die NEUE NACHRICHT \
 
 Aufgabe: Erkenne, ob die NEUE NACHRICHT eine Aktion fuer eines dieser vier \
 Instrumente erfordert - entweder ein NEUES, eindeutiges Einstiegssignal \
-("open", long oder short) ODER eine eindeutige Anweisung, eine laufende \
-Position JETZT zu schliessen ("close", z. B. "CLOSE TRADE ALERT... CLOSING \
-<INSTRUMENT> trade now" oder auch "closing the trade now"/"closing both \
-trades now" OHNE erneut genanntes Instrument). Kommentare, Stop-Anpassungen \
-an bereits laufenden Trades (z. B. "MOVING STOP TO BREAKEVEN"), Fragen, \
-Werbung oder Signale zu anderen Instrumenten zaehlen NICHT als Aktion.
+("open", long oder short) ODER eine eindeutige Anweisung/Mitteilung, dass \
+eine laufende Position JETZT geschlossen ist bzw. werden soll ("close"). \
+Das umfasst sowohl ausdrueckliche Anweisungen ("CLOSE TRADE ALERT... \
+CLOSING <INSTRUMENT> trade now", "closing the trade now"/"closing both \
+trades now" OHNE erneut genanntes Instrument) ALS AUCH Ergebnis-Mitteilungen \
+MIT genanntem Instrument, die belegen, dass der Kanal seine eigene Position \
+bereits beendet hat (z. B. "STOPPED OUT OF <INSTRUMENT> MINUS 125", \
+"<INSTRUMENT> HIT TARGET +200", "closed <INSTRUMENT> for +50") - auch wenn \
+kein woertliches "close"/"closing" vorkommt: der Bot bildet die \
+Kanal-Trades nach, sobald der Kanal seinen eigenen Trade fuer beendet \
+erklaert, MUSS die eigene (mitgelaufene) Position ebenfalls beendet werden, \
+sonst laeuft sie unkontrolliert gegen den eigenen Stop weiter (live \
+beobachtet 01.09.2026: eine ignorierte "STOPPED OUT OF DOW MINUS 125"-\
+Nachricht liess die eigene Position 64 Minuten laenger als noetig offen, \
+Verlust 1,75x statt der von Tom tatsaechlich realisierten ~1x). Eine blosse \
+Zahl OHNE genanntes Instrument (z. B. "+100") bleibt weiterhin nicht \
+handelbar, siehe Beispiel unten - dort ist nicht eindeutig, welche Position \
+gemeint ist. Kommentare, Stop-Anpassungen an bereits laufenden Trades (z. B. \
+"MOVING STOP TO BREAKEVEN"), Fragen, Werbung oder Signale zu anderen \
+Instrumenten zaehlen NICHT als Aktion.
 
 Antworte ausschliesslich als JSON nach folgendem Schema:
 {
@@ -129,9 +143,17 @@ Nachricht: "STOP LOSS ALERT \n\n🇩🇪 MOVING STOP TO BREAKEVEN in DAX INDEX n
 Antwort: {"is_signal": false, "action": null, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
 (Grund: eine Anpassung des Stops an einem bereits laufenden Kanal-Trade ist keine Schliess-Anweisung und kein neues Einstiegssignal - wird ignoriert, der Bot verwaltet seinen eigenen Stop unabhaengig vom Kanal.)
 
+Nachricht: "STOPPED OUT OF DOW MINUS 125"
+Antwort: {"is_signal": true, "action": "close", "index": "DOW", "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+(Grund: eindeutige Ergebnis-Mitteilung MIT genanntem Instrument - der Kanal hat seine eigene DOW-Position bereits beendet (per Stop), also muss auch die eigene mitgelaufene Position jetzt geschlossen werden, obwohl kein woertliches "close"/"closing" vorkommt. Live beobachtet (01.09.2026): diese Nachricht wurde zuvor faelschlich als "kein_signal" behandelt, die eigene Position lief dadurch 64 Minuten unnoetig weiter und produzierte einen 1,75x groesseren Verlust als der Kanal selbst hatte.)
+
+Nachricht: "NASDAQ HIT TARGET +180"
+Antwort: {"is_signal": true, "action": "close", "index": "NASDAQ", "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
+(Grund: dasselbe Muster wie oben, hier fuer einen Gewinn-Abschluss statt eines Stops - auch das ist eine abgeschlossene Position, kein neues Signal.)
+
 Nachricht: "+100"
 Antwort: {"is_signal": false, "action": null, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
-(Grund: eine blosse (positive oder negative) Zahl ohne weiteren Kontext ist ein Ergebnis-/PnL-Update zu einem bereits geschlossenen Kanal-Trade, kein neues Einstiegssignal - vgl. das "-8,3"-Beispiel unten.)
+(Grund: eine blosse (positive oder negative) Zahl OHNE genanntes Instrument ist nicht eindeutig zuordenbar - anders als bei "STOPPED OUT OF DOW..." oben fehlt hier das Instrument, also kein handelbares Signal, vgl. das "-8,3"-Beispiel unten.)
 
 Nachricht: "no open orders, no open positions"
 Antwort: {"is_signal": false, "action": null, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
