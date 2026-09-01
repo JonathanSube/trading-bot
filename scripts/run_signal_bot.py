@@ -518,6 +518,36 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "order_fehlgeschlagen")
             continue
 
+        # Stop/Ziel an den TATSAECHLICHEN Fill-Kurs anpassen, nicht am vor
+        # der Order abgefragten instrument_price haengen bleiben -
+        # Nutzerwunsch (01.09.2026), nachdem eine grosse Slippage beim
+        # US30-Einstieg (124 Punkte) den geplanten Risikopuffer bis zum
+        # Stop fast komplett aufgezehrt hatte (Stop lag praktisch direkt am
+        # Fill). Bewusst KEIN neu erfundener Stop-Abstand - dieselbe
+        # prozentuale Distanz aus der Kanal-Nachricht (build_signal_from_
+        # parsed), nur auf den echten Kaufkurs statt der Vorab-Schaetzung
+        # angewendet. Weniger guenstiger Fill -> etwas weniger Gewinn bis
+        # zum Ziel, aber der Stop-Abstand bleibt wie vom Kanal vorgegeben.
+        entry_fill = None
+        try:
+            open_at_broker = await get_open_positions(session)
+            entry_fill = open_at_broker.get(symbol, {}).get("entryPrice")
+        except Exception as e:
+            print(f"Konnte tatsaechlichen Fill-Kurs fuer {symbol} nicht abrufen: {e}")
+
+        if entry_fill is not None and abs(entry_fill - signal.entry_price) > 0.01:
+            corrected_signal = build_signal_from_parsed(parsed, entry_fill, signal.entry_timestamp)
+            if corrected_signal is not None:
+                try:
+                    await amend_position_sltp(session, position_id, corrected_signal.stop, corrected_signal.target)
+                    print(f"Stop/Ziel fuer {symbol} an tatsaechlichen Fill-Kurs {entry_fill:.2f} angepasst "
+                          f"(statt Vorab-Schaetzung {signal.entry_price:.2f}): "
+                          f"Stop {corrected_signal.stop:.2f}, Ziel {corrected_signal.target:.2f}.")
+                    signal = corrected_signal
+                except Exception as e:
+                    print(f"Konnte Stop/Ziel fuer {symbol} nicht an den Fill-Kurs anpassen, "
+                          f"bleibe bei der Vorab-Schaetzung: {e}")
+
         # last_seen_edit_date auf den JETZIGEN edit_date der Nachricht
         # setzen, nicht auf None lassen (Fehler, gefunden 01.09.2026 anhand
         # eines Nutzer-Berichts ueber ein unerklaertes Stop/Ziel-Update):
@@ -526,9 +556,7 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         # Aenderung. Bliebe last_seen_edit_date bei None, wuerde
         # _check_message_edits() genau diesen harmlosen, schon beim
         # Einstieg vorhandenen edit_date beim naechsten Lauf faelschlich
-        # als NEUE Bearbeitung werten und Stop/Ziel unnoetig neu berechnen
-        # (mit leicht abweichenden Werten durch den inzwischen bekannten
-        # tatsaechlichen Fill-Kurs statt des urspruenglichen Signalkurses) -
+        # als NEUE Bearbeitung werten und Stop/Ziel unnoetig neu berechnen -
         # verwirrend, wenn sich die Kanal-Nachricht gar nicht geaendert hat.
         try:
             baseline = await fetch_messages_by_id(CHANNEL, [message_id])
@@ -538,7 +566,7 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
 
         state.open_trades[symbol] = OpenSignalTrade(
             signal=signal, order_id=position_id, qty=volume, source_message_id=message_id,
-            last_seen_edit_date=initial_edit_date,
+            entry_fill=entry_fill, last_seen_edit_date=initial_edit_date,
         )
         append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "trade_eroeffnet")
         send_notification(
