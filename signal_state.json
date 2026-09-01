@@ -1,11 +1,12 @@
 {
   "version": 1,
-  "last_message_id": 71530,
+  "last_message_id": 71531,
   "initial_equity": 10000.12,
   "total_pnl": 0.0,
   "total_trades": 2,
-  "consecutive_api_errors": 0,
+  "consecutive_api_errors": 1,
   "stopped_permanently": false,
+  "paused": false,
   "open_trades": {
     "US30": {
       "signal": {
@@ -23,6 +24,6 @@
     }
   },
   "telegram_update_offset": null,
-  "last_channel_message_at": "2026-09-01T13:36:23+00:00",
-  "last_poll_at": "2026-09-01T13:43:40.084355+00:00"
+  "last_channel_message_at": "2026-09-01T13:44:00+00:00",
+  "last_poll_at": "2026-09-01T13:44:46.207504+00:00"
 }
