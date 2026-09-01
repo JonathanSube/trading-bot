@@ -33,6 +33,11 @@ class OpenSignalTrade:
     qty: float  # Lot-Volumen (cTrader), keine Stueckzahl
     source_message_id: int
     entry_fill: float | None = None
+    # Bearbeitungszeitpunkt der Quellnachricht, wie zuletzt gesehen (siehe
+    # scripts/run_signal_bot.py::_check_message_edits) - None, solange die
+    # Nachricht nie bearbeitet wurde oder eine Bearbeitung noch nicht
+    # verarbeitet wurde.
+    last_seen_edit_date: datetime | None = None
 
 
 @dataclass
@@ -87,6 +92,9 @@ def _open_trade_to_dict(trade: OpenSignalTrade) -> dict:
         "qty": trade.qty,
         "source_message_id": trade.source_message_id,
         "entry_fill": trade.entry_fill,
+        "last_seen_edit_date": (
+            trade.last_seen_edit_date.isoformat() if trade.last_seen_edit_date else None
+        ),
     }
 
 
@@ -97,6 +105,11 @@ def _open_trade_from_dict(data: dict) -> OpenSignalTrade:
         qty=data["qty"],
         source_message_id=data["source_message_id"],
         entry_fill=data.get("entry_fill"),
+        last_seen_edit_date=(
+            _parse_utc_timestamp(data["last_seen_edit_date"])
+            if data.get("last_seen_edit_date")
+            else None
+        ),
     )
 
 

@@ -653,14 +653,24 @@ async def place_market_order(session: CTraderSession, symbol_name: str, signal: 
     order_resp = await _send(session, order_req)
     position_id = order_resp.position.positionId
 
+    await amend_position_sltp(session, position_id, signal.stop, signal.target)
+
+    return position_id
+
+
+async def amend_position_sltp(session: CTraderSession, position_id: int, stop: float, target: float) -> None:
+    """Stop/Ziel einer bestehenden Position setzen oder aendern - genutzt
+    beim initialen Einstieg (place_market_order) UND wenn der Kanal seine
+    Einstiegsnachricht nachtraeglich per Bearbeitung um Stop/Ziel ergaenzt
+    (Nutzerwunsch 01.09.2026, siehe scripts/run_signal_bot.py::
+    _check_message_edits) - dort wird bewusst NIE eine neue Order platziert,
+    nur diese Funktion auf die bereits offene Position angewendet."""
     sltp_req = ProtoOAAmendPositionSLTPReq()
     sltp_req.ctidTraderAccountId = session.account_id
     sltp_req.positionId = position_id
-    sltp_req.stopLoss = round(signal.stop, 2)
-    sltp_req.takeProfit = round(signal.target, 2)
+    sltp_req.stopLoss = round(stop, 2)
+    sltp_req.takeProfit = round(target, 2)
     await _send(session, sltp_req)
-
-    return position_id
 
 
 async def get_open_positions(session: CTraderSession) -> dict[str, dict]:

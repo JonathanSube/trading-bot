@@ -66,6 +66,24 @@ class RoundTripTests(unittest.TestCase):
         self.assertEqual(loaded.last_channel_message_at, datetime(2026, 1, 2, 9, 58, tzinfo=timezone.utc))
         self.assertEqual(loaded.last_poll_at, datetime(2026, 1, 2, 10, 0, tzinfo=timezone.utc))
 
+    def test_last_seen_edit_date_round_trips(self):
+        """Siehe scripts/run_signal_bot.py::_check_message_edits - ohne
+        dieses Feld wuerde nach jedem Neustart jede Bearbeitung einer
+        Quellnachricht erneut als "neu" gelten."""
+        edit_date = datetime(2026, 1, 2, 10, 3, tzinfo=timezone.utc)
+        trade = OpenSignalTrade(make_signal(), "order-1", 10, 42, last_seen_edit_date=edit_date)
+        state = SignalBotState(open_trades={"QQQ": trade})
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "signal_state.json"
+            save_state(state, path)
+            loaded = load_state(path)
+
+        self.assertEqual(loaded.open_trades["QQQ"].last_seen_edit_date, edit_date)
+
+    def test_missing_last_seen_edit_date_defaults_to_none(self):
+        trade = OpenSignalTrade(make_signal(), "order-1", 10, 42)
+        self.assertIsNone(trade.last_seen_edit_date)
+
     def test_legacy_naive_timestamps_are_normalized_to_utc(self):
         """Aeltere Zustandsdateien (vor dem Pyrogram-naive-datetime-Fix)
         koennen last_channel_message_at ohne UTC-Offset enthalten - siehe

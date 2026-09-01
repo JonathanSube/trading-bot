@@ -78,6 +78,27 @@ async def _resolve_invite_link(app: Client, invite_hash: str) -> int:
     return marked_id
 
 
+async def _resolve_chat_id(app: Client, channel: str) -> int | str:
+    match = app.INVITE_LINK_RE.match(channel)
+    if match:
+        return await _resolve_invite_link(app, match.group(1))
+    try:
+        chat = await app.join_chat(channel)
+        return chat.id
+    except UserAlreadyParticipant:
+        return channel
+
+
+def _to_utc(dt: datetime | None) -> datetime | None:
+    """Pyrogram liefert Zeitstempel als offset-naive datetime, der Wert
+    selbst ist aber UTC - ohne tzinfo fuehrt ein Vergleich mit einem
+    tz-aware now_utc sonst zu "can't subtract offset-naive and
+    offset-aware datetimes"."""
+    if dt is not None and dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
 async def fetch_new_messages(
     channel: str, since_message_id: int | None, limit: int = 50
 ) -> list[tuple[int, str, datetime]]:
@@ -89,15 +110,7 @@ async def fetch_new_messages(
     Drosselung in scripts/run_signal_bot.py."""
     app = _client()
     async with app:
-        match = app.INVITE_LINK_RE.match(channel)
-        if match:
-            chat_id = await _resolve_invite_link(app, match.group(1))
-        else:
-            try:
-                chat = await app.join_chat(channel)
-                chat_id = chat.id
-            except UserAlreadyParticipant:
-                chat_id = channel
+        chat_id = await _resolve_chat_id(app, channel)
 
         messages: list[tuple[int, str, datetime]] = []
         async for message in app.get_chat_history(chat_id, limit=limit):
@@ -105,14 +118,42 @@ async def fetch_new_messages(
                 break
             text = message.text or message.caption
             if text:
-                msg_date = message.date
-                if msg_date.tzinfo is None:
-                    # Pyrogram liefert message.date als offset-naiven datetime,
-                    # der Wert selbst ist aber UTC - ohne tzinfo fuehrt der
-                    # Vergleich mit now_utc in _should_poll_channel() sonst zu
-                    # "can't subtract offset-naive and offset-aware datetimes".
-                    msg_date = msg_date.replace(tzinfo=timezone.utc)
-                messages.append((message.id, str(text), msg_date))
+                messages.append((message.id, str(text), _to_utc(message.date)))
 
         messages.reverse()
         return messages
+
+
+async def fetch_messages_by_id(
+    channel: str, message_ids: list[int]
+) -> dict[int, tuple[str, datetime | None]]:
+    """Liefert {message_id: (text, bearbeitungszeitpunkt_utc)} fuer gezielt
+    angefragte Nachrichten (nicht per since_message_id-Fenster wie
+    fetch_new_messages) - Nutzerwunsch (01.09.2026): der Kanal postet einen
+    Einstieg oft zuerst OHNE Stop/Ziel und ergaenzt sie Sekunden spaeter per
+    Nachrichten-Bearbeitung; fetch_new_messages() sieht das nicht (nur neue
+    message_id, keine Edits an bereits gesehenen Nachrichten). Genutzt von
+    scripts/run_signal_bot.py::_check_message_edits, um NUR die
+    Quellnachrichten aktuell offener Trades gezielt erneut abzufragen statt
+    die ganze Historie zu durchsuchen. edit_date ist None, wenn die
+    Nachricht nie bearbeitet wurde (dann kein Grund zur erneuten Auswertung)."""
+    if not message_ids:
+        return {}
+
+    app = _client()
+    async with app:
+        chat_id = await _resolve_chat_id(app, channel)
+
+        messages = await app.get_messages(chat_id, message_ids=message_ids)
+        if not isinstance(messages, list):
+            messages = [messages]
+
+        result: dict[int, tuple[str, datetime | None]] = {}
+        for message in messages:
+            if message is None or message.empty:
+                continue
+            text = message.text or message.caption
+            if not text:
+                continue
+            result[message.id] = (str(text), _to_utc(message.edit_date))
+        return result

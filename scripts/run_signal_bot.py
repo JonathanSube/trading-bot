@@ -30,14 +30,18 @@ Ablauf pro Lauf:
    beiden, der das noch tut, siehe scripts/run_bot.py)
 4. Konto abfragen
 5. Offene Trades abgleichen (Fill nachtragen, geschlossene protokollieren)
-6. Sicherheitsschalter pruefen (Gesamtverlust, API-Fehler)
-7. Sessionende je Instrument (5 Min. vorher): betroffene offene Position
+6. Quellnachrichten offener Trades auf nachtraegliche Bearbeitung pruefen
+   (Kanal ergaenzt Stop/Ziel oft erst per Edit nach dem Einstieg) - nur
+   Stop/Ziel der bestehenden Position aktualisieren, NIE neu kaufen
+   (siehe _check_message_edits)
+7. Sicherheitsschalter pruefen (Gesamtverlust, API-Fehler)
+8. Sessionende je Instrument (5 Min. vorher): betroffene offene Position
    zwangsschliessen - jedes Instrument hat seine eigene Handelszeit
    (US/London/Xetra), kein einzelner globaler EOD-Zeitpunkt
-8. Pausiert per /pause? Dann keine neuen Einstiege, offene Positionen
+9. Pausiert per /pause? Dann keine neuen Einstiege, offene Positionen
    laufen trotzdem normal weiter (Stop/Ziel/Sessionende oben)
-9. Neue Kanal-Nachrichten holen, per LLM auswerten, ggf. Order platzieren
-10. Zustand speichern
+10. Neue Kanal-Nachrichten holen, per LLM auswerten, ggf. Order platzieren
+11. Zustand speichern
 """
 
 import os
@@ -59,10 +63,11 @@ from signalbot.mapping import INDEX_TO_SYMBOL, build_signal_from_parsed, symbol_
 from signalbot.parser import GeminiError, parse_signal_message
 from signalbot.reporting import build_signal_status_report
 from signalbot.state import OpenSignalTrade, SignalBotState, load_state, save_state
-from signalbot.telegram_signals import fetch_new_messages
+from signalbot.telegram_signals import fetch_messages_by_id, fetch_new_messages
 from signalbot.trade_log import SignalTradeLogRow, append_trade
 from tradingbot.ctrader import (
     CTraderSession,
+    amend_position_sltp,
     close_position,
     ctrader_session,
     get_account_info,
@@ -189,6 +194,71 @@ async def _check_filled_trades(session: CTraderSession, state: SignalBotState, n
               f"verifiziert abrufbar (siehe tradingbot/ctrader.py), verwende aktuellen Marktkurs als Naeherung.")
         is_stop = abs(exit_price - signal.stop) < abs(exit_price - signal.target)
         _log_and_clear(state, symbol, now, exit_price, "stop" if is_stop else "target")
+
+
+async def _check_message_edits(session: CTraderSession, state: SignalBotState, now_utc: datetime) -> None:
+    """Nutzerwunsch (01.09.2026): der Kanal postet einen Einstieg oft zuerst
+    OHNE Stop/Ziel und ergaenzt sie Sekunden spaeter per Bearbeitung
+    derselben Nachricht - fetch_new_messages() sieht das nicht (nur neue
+    message_id, keine Edits an bereits gesehenen Nachrichten). Hier werden
+    GEZIELT nur die Quellnachrichten aktuell offener Trades erneut
+    abgefragt (kein Scan der ganzen Historie); nur bei tatsaechlich
+    neuerem edit_date erneut per Gemini ausgewertet. Es wird NIE ein neuer
+    Einstieg ausgeloest - ausschliesslich Stop/Ziel der bereits offenen
+    Position per amend_position_sltp() aktualisiert, falls sich aus den
+    jetzt bekannten Kanal-Levels ein anderer Stop-Abstand ergibt als beim
+    urspruenglichen Einstieg (der zuvor auf DEFAULT_STOP_PCT zurueckfallen
+    musste, siehe signalbot/mapping.py)."""
+    if not CHANNEL or not state.open_trades:
+        return
+
+    message_ids = [trade.source_message_id for trade in state.open_trades.values()]
+    try:
+        edited = await fetch_messages_by_id(CHANNEL, message_ids)
+    except Exception as e:
+        print(f"Konnte Bearbeitungen offener Signal-Nachrichten nicht abrufen: {e}")
+        return
+
+    for symbol, trade in list(state.open_trades.items()):
+        result = edited.get(trade.source_message_id)
+        if result is None:
+            continue
+        text, edit_date = result
+        if edit_date is None or edit_date == trade.last_seen_edit_date:
+            continue
+        trade.last_seen_edit_date = edit_date
+
+        try:
+            history = recent_message_texts(CHANNEL_LOG_PATH, before=now_utc)
+            parsed = parse_signal_message(text, history=history)
+        except GeminiError as e:
+            print(f"Bearbeitete Nachricht {trade.source_message_id} ({symbol}) nicht auswertbar: {e}")
+            continue
+
+        if parsed is None or not parsed.get("is_signal") or parsed.get("action") != "open":
+            continue
+        if symbol_for_index(parsed.get("index")) != symbol:
+            continue
+
+        entry_price = trade.entry_fill if trade.entry_fill is not None else trade.signal.entry_price
+        updated = build_signal_from_parsed(parsed, entry_price, trade.signal.entry_timestamp)
+        if updated is None or abs(updated.stop - trade.signal.stop) < 0.01:
+            continue
+
+        try:
+            await amend_position_sltp(session, trade.order_id, updated.stop, updated.target)
+        except Exception as e:
+            print(f"Konnte Stop/Ziel fuer {symbol} nach Nachrichten-Bearbeitung nicht aktualisieren: {e}")
+            continue
+
+        trade.signal = updated
+        print(f"Stop/Ziel fuer {symbol} nach Bearbeitung der Kanal-Nachricht aktualisiert: "
+              f"Stop {updated.stop:.2f}, Ziel {updated.target:.2f}")
+        send_notification(
+            f"Signal-Update {symbol}: Kanal hat die Einstiegsnachricht bearbeitet, "
+            f"Stop/Ziel angepasst -> Stop {updated.stop:.2f}, Ziel {updated.target:.2f}"
+        )
+        append_channel_message(CHANNEL_LOG_PATH, now_utc, trade.source_message_id, text, parsed, "levels_aktualisiert")
 
 
 async def _close_one_open(session: CTraderSession, state: SignalBotState, symbol: str,
@@ -507,6 +577,7 @@ async def _run(session: CTraderSession, state: SignalBotState, now: datetime) ->
         state.initial_equity = equity
 
     await _check_filled_trades(session, state, now)
+    await _check_message_edits(session, state, datetime.now(timezone.utc))
 
     if state.stopped_permanently:
         save_state(state, STATE_PATH)
