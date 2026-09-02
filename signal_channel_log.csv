@@ -235,3 +235,6 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-02T08:09:41+00:00,71554,"DONT BOTHER COMMENTING... I KNOW WHEN I FUCK UP
+
+LOST 20","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
