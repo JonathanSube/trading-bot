@@ -97,6 +97,18 @@ jobs:
         run: python -u scripts/run_signal_bot.py
 
       - name: Zustand und Protokoll zurückschreiben
+        # if: always() ist entscheidend (02.09.2026 live beobachtet): ohne
+        # das wird dieser Schritt komplett uebersprungen, sobald der
+        # Python-Schritt oben mit einer unbehandelten Exception abstuerzt
+        # (z.B. ein cTrader/Telegram-Timeout mitten im Lauf). main() in
+        # scripts/run_signal_bot.py speichert den Zustand lokal per
+        # save_state() auch im Fehlerfall, BEVOR es die Exception erneut
+        # wirft - ohne always() wuerde dieser lokal gespeicherte Stand nie
+        # committet/gepusht, sondern mit dem Runner-Workspace verworfen.
+        # Bei einem Absturz kurz NACH einer echten Order waere das genau
+        # der Mechanismus, der schon einmal (aus anderem Grund) zu einer
+        # dem Bot unbekannten realen Position gefuehrt hat.
+        if: always()
         run: |
           git config user.name "signal-bot"
           git config user.email "actions@users.noreply.github.com"

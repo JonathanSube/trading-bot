@@ -52,6 +52,13 @@ jobs:
         run: python scripts/run_bot.py
 
       - name: Zustand und Protokoll zurückschreiben
+        # if: always() - ohne das wird dieser Schritt uebersprungen, wenn
+        # der Python-Schritt abstuerzt, obwohl scripts/run_bot.py den
+        # Zustand im Fehlerfall lokal per save_state() sichert, bevor es
+        # die Exception erneut wirft. Gleicher Fix wie in signal-bot.yml
+        # (dort live beobachtet, 02.09.2026) - ohne always() ginge dieser
+        # lokal gesicherte Stand mit dem Runner-Workspace verloren.
+        if: always()
         run: |
           git config user.name "trading-bot"
           git config user.email "actions@users.noreply.github.com"
