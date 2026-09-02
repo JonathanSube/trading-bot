@@ -221,3 +221,11 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 10759
 
 STOP = 10729","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10759.0, ""stop_level"": 10729.0, ""target_level"": null}",bereits_offen
+2026-09-02T07:40:04+00:00,71550,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 25,888.70
+
+STOP = 25,833","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25888.7, ""stop_level"": 25833.0, ""target_level"": null}",trade_eroeffnet
+2026-09-02T07:41:28+00:00,71551,I am trading the SRS as an ANTI today.... it feels like a trading range behavior to me. I take full responsibility for the outcome.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T07:53:06+00:00,71552,CLOSED DAX BEFORE STOP LOSS HIT.. MINUS 44,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
