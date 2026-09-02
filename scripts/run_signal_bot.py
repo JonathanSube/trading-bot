@@ -505,6 +505,25 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "volumen_zu_klein")
             continue
 
+        # Zusaetzliche Sicherung UNMITTELBAR vor der Order (02.09.2026,
+        # nach einem live beobachteten Doppelkauf): der obige
+        # "symbol in state.open_trades"-Check basiert auf dem Git-Zustand
+        # dieses Laufs, der durch ueberlappende Workflow-Laeufe veraltet
+        # sein kann (siehe .github/workflows/signal-bot.yml, ref: master).
+        # Hier wird zusaetzlich der Broker SELBST gefragt - die einzige
+        # Quelle, die eine von einem anderen, gerade parallel laufenden
+        # Prozess bereits platzierte Order kennt, auch wenn deren
+        # Git-Commit noch nicht angekommen ist.
+        try:
+            live_positions = await get_open_positions(session)
+        except Exception as e:
+            print(f"Konnte offene Positionen vor Order-Platzierung nicht vom Broker abrufen: {e}")
+            live_positions = {}
+        if symbol in live_positions:
+            print(f"Signal fuer {symbol}, aber laut Broker bereits eine offene Position (Git-Zustand war veraltet) - uebersprungen.")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "bereits_offen_laut_broker")
+            continue
+
         try:
             position_id = await place_market_order(session, symbol, signal, volume)
         except Exception as e:

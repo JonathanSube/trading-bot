@@ -28,7 +28,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
+      # WICHTIG: ref: master explizit setzen (nicht den Default). Ohne das
+      # checkt actions/checkout den Commit aus, der beim AUSLOESEN des Laufs
+      # aktuell war - nicht den neuesten Stand beim tatsaechlichen Start.
+      # Live beobachtet (02.09.2026): der externe Minuten-Trigger feuert
+      # teils schneller als ein kompletter Lauf braucht (Checkout->Order->
+      # Commit->Push, ca. 45-70s). Zwei kurz hintereinander ausgeloeste
+      # Laeufe sahen dadurch BEIDE denselben (bereits veralteten) Stand OHNE
+      # die vom jeweils anderen frisch eroeffnete Position, hielten ein
+      # Kanal-Signal faelschlich fuer neu und platzierten unabhaengig
+      # voneinander je eine ECHTE Order fuer dasselbe Signal (zwei reale
+      # UK100-Positionen statt einer). ref: master zwingt den Checkout dazu,
+      # den Branch-Namen frisch aufzuloesen (git fetch+checkout des
+      # aktuellen HEAD), statt sich auf die beim Dispatch eingefrorene SHA
+      # zu verlassen - behebt die Ursache, nicht nur das Symptom.
       - uses: actions/checkout@v4
+        with:
+          ref: master
 
       - uses: actions/setup-python@v5
         with:
@@ -96,13 +112,25 @@ jobs:
           # nur im verworfenen Runner-Workspace). Bei einer offenen Position
           # kann das dazu fuehren, dass der Bot sie "vergisst" und nie mehr
           # aktiv schliesst. Deshalb: bei Ablehnung neu holen, per Rebase
-          # obendrauf setzen (die eigene state-Datei gewinnt bei Konflikt -
-          # sie ist der aktuellere Stand), erneut versuchen.
+          # obendrauf setzen, erneut versuchen.
+          #
+          # BUGFIX (02.09.2026): hier stand vorher "-X ours" mit dem
+          # Kommentar "die eigene State-Datei gewinnt bei Konflikt". Das war
+          # falsch - bei `git rebase` ist die ours/theirs-Bedeutung genau
+          # umgekehrt zu einem Merge: "ours" meint waehrend eines Rebase den
+          # Branch, AUF DEN rebased wird (hier: origin/master, also der
+          # FREMDE, bereits vorhandene Stand), "theirs" die eigenen,
+          # gerade wiederaufgespielten Commits. Mit "-X ours" gewann also
+          # bei einem echten Konflikt der AELTERE Fremd-Stand, und der
+          # eigene, in diesem Lauf frisch geschriebene Zustand (z.B. eine
+          # soeben real platzierte Order) wurde beim Push stillschweigend
+          # verworfen - obwohl die Order laengst ausgefuehrt war. "-X
+          # theirs" ist hier richtig: der eigene, aktuellere Lauf gewinnt.
           for attempt in 1 2 3 4 5; do
             git push && exit 0
             echo "Push abgelehnt (Versuch $attempt), hole aktuellen Stand und versuche erneut..."
             git fetch origin master
-            git rebase -X ours origin/master
+            git rebase -X theirs origin/master
             sleep 2
           done
           echo "::error::Push nach 5 Versuchen weiterhin fehlgeschlagen - Zustand dieses Laufs wurde NICHT gesichert."
