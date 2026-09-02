@@ -674,7 +674,21 @@ async def amend_position_sltp(session: CTraderSession, position_id: int, stop: f
 
 
 async def get_open_positions(session: CTraderSession) -> dict[str, dict]:
-    """{Symbolname: Position-Info} der aktuell offenen Positionen."""
+    """{Symbolname: Position-Info} der aktuell offenen Positionen.
+
+    Nimmt an, dass hoechstens EINE Position pro Symbol existiert (die
+    gesamte Architektur des Signal-Bots baut darauf auf, siehe
+    scripts/run_signal_bot.py::state.open_trades). Live beobachtet
+    (02.09.2026): ein Zusammenspiel aus veraltetem Git-Checkout und
+    falscher Rebase-Konfliktloesung (siehe .github/workflows/signal-bot.yml)
+    fuehrte dazu, dass fuer DASSELBE Symbol tatsaechlich ZWEI reale
+    Positionen beim Broker offen waren - diese Funktion haette das
+    lautlos verschluckt (nur die zuletzt iterierte Position landet im
+    Ergebnis-dict, die andere verschwindet unbemerkt aus jeder weiteren
+    Logik). Ab jetzt wird ein solcher Fall laut geloggt, damit er nicht
+    nochmal unbemerkt bleibt - die zugrunde liegende Rennbedingung selbst
+    ist inzwischen behoben (ref: master im Checkout, broker-seitige
+    Pruefung vor jeder neuen Order), dies ist nur noch ein Sicherheitsnetz."""
     symbol_ids = await list_symbols(session)
     id_to_name = {v: k for k, v in symbol_ids.items()}
 
@@ -686,6 +700,11 @@ async def get_open_positions(session: CTraderSession) -> dict[str, dict]:
         name = id_to_name.get(pos.tradeData.symbolId)
         if name is None:
             continue
+        if name in result:
+            print(f"[cTrader] WARNUNG: mehr als eine offene Position fuer {name} beim Broker gefunden "
+                  f"(positionId {result[name]['positionId']} und {pos.positionId}) - nur die zuletzt "
+                  f"gefundene wird hier zurueckgegeben, die andere bleibt fuer die Bot-Logik unsichtbar. "
+                  f"Manuell im Broker pruefen.")
         result[name] = {
             "positionId": pos.positionId,
             "volume": pos.tradeData.volume / 100,

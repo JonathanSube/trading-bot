@@ -25,7 +25,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 4  # deutlich unter dem 5-Minuten-Takt, damit sich Läufe nicht stauen
     steps:
+      # ref: master explizit setzen, damit der Checkout immer den
+      # tatsaechlich neuesten Stand holt statt der beim Dispatch
+      # eingefrorenen SHA - gleicher Fix wie in signal-bot.yml (siehe
+      # dortiger Kommentar), dort live als Ursache eines Doppel-Kaufs
+      # bestaetigt (02.09.2026). Hier deutlich unwahrscheinlicher (5-Min.-
+      # Takt statt Sekunden, max. 1 Trade/Tag), aber dieselbe Absicherung
+      # kostet nichts.
       - uses: actions/checkout@v4
+        with:
+          ref: master
 
       - uses: actions/setup-python@v5
         with:

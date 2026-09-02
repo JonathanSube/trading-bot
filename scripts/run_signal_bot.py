@@ -277,7 +277,22 @@ async def _close_one_open(session: CTraderSession, state: SignalBotState, symbol
     Entry-Preis - kein exakter Fill, aber naeher an der Realitaet als ein
     garantiertes Nullergebnis (gleiches Verfahren wie in
     _check_filled_trades() fuer Stop-/Ziel-Schluesse ohne verifizierten
-    Fill-Preis)."""
+    Fill-Preis).
+
+    ZUSAETZLICHE VERIFIKATION (02.09.2026, nach einer real auf dem Broker
+    liegen gebliebenen "geschlossenen" Position - siehe trading-bot-spec.md):
+    close_position() bekommt nur die "Order angenommen"-Bestaetigung, NICHT
+    die Bestaetigung der tatsaechlichen Ausfuehrung (siehe
+    tradingbot/ctrader.py::close_position) - der Bot hat bisher blind
+    darauf vertraut, dass eine angenommene Schliess-Order auch wirklich
+    ausgefuehrt wurde, und den Trade sofort aus dem eigenen Zustand
+    entfernt. Schlaegt die Ausfuehrung serverseitig fehl (Requote,
+    Margin-Sonderfall, o.ae.), "vergisst" der Bot dadurch eine real noch
+    offene Position komplett. Deshalb wird hier nach dem Schliess-Versuch
+    per get_open_positions() verifiziert, dass die Position beim Broker
+    tatsaechlich weg ist - ist sie es NICHT, bleibt sie im eigenen Zustand
+    offen (statt sie optimistisch als geschlossen zu verbuchen), damit der
+    naechste Lauf es erneut versucht."""
     trade = state.open_trades[symbol]
     try:
         exit_price = await close_position(session, trade.order_id, trade.qty)
@@ -287,6 +302,17 @@ async def _close_one_open(session: CTraderSession, state: SignalBotState, symbol
             exit_price = await get_latest_price(session, symbol)
         except Exception:
             exit_price = trade.signal.entry_price
+
+    try:
+        still_open = await get_open_positions(session)
+    except Exception as e:
+        print(f"Konnte Schliessung fuer {symbol} nicht verifizieren (Broker nicht erreichbar): {e}")
+        still_open = {}
+    if symbol in still_open:
+        print(f"WARNUNG: {symbol} ist laut Broker nach dem Schliess-Versuch weiterhin offen - "
+              f"bleibt im Zustand, naechster Lauf versucht es erneut.")
+        return
+
     _log_and_clear(state, symbol, now, exit_price, reason)
 
 
