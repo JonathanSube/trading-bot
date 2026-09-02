@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from signalbot.parser import _fast_parse
+from signalbot.parser import _fast_parse, mentioned_indices
 
 
 class OpenSignalTests(unittest.TestCase):
@@ -133,6 +133,30 @@ class NoMatchFallsBackToGeminiTests(unittest.TestCase):
 
     def test_ambiguous_multiple_instruments(self):
         self.assertIsNone(_fast_parse("DAX and DOW both look weak today"))
+
+
+class MentionedIndicesTests(unittest.TestCase):
+    """Live beobachtet (02.09.2026): "CLOSED DOW AND NASDAQ" wurde vom
+    Parser (sowohl Schnellweg als auch Gemini) nur als eine einzelne
+    DOW-Schliessung erkannt, die NASDAQ-Position blieb faelschlich offen.
+    mentioned_indices() wird von scripts/run_signal_bot.py zusaetzlich zum
+    geparsten "index" genutzt, um bei Schliess-Nachrichten ALLE genannten
+    Instrumente zu schliessen."""
+
+    def test_two_instruments_in_close_message(self):
+        self.assertEqual(mentioned_indices("CLOSED DOW AND NASDAQ"), ["DOW", "NASDAQ"])
+
+    def test_single_instrument(self):
+        self.assertEqual(mentioned_indices("STOPPED OUT OF DOW MINUS 125"), ["DOW"])
+
+    def test_no_instrument(self):
+        self.assertEqual(mentioned_indices("closing the trade now"), [])
+
+    def test_order_follows_first_occurrence(self):
+        self.assertEqual(mentioned_indices("NASDAQ and DOW both closed"), ["NASDAQ", "DOW"])
+
+    def test_duplicate_mentions_not_repeated(self):
+        self.assertEqual(mentioned_indices("DOW DOW DOW closed"), ["DOW"])
 
 
 if __name__ == "__main__":

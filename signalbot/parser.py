@@ -220,6 +220,27 @@ def _single_index(text: str) -> str | None:
     return found.pop() if len(found) == 1 else None
 
 
+def mentioned_indices(text: str) -> list[str]:
+    """Alle im Rohtext erwaehnten Instrumente, Reihenfolge des ersten
+    Vorkommens - fuer Schliess-Nachrichten mit MEHREREN gleichzeitig
+    genannten Instrumenten (z. B. "CLOSED DOW AND NASDAQ"). Sowohl
+    _fast_parse (ueber _single_index) als auch Gemini (siehe SYSTEM_PROMPT)
+    liefern pro Nachricht bewusst nur EIN "index"-Feld zurueck - live
+    beobachtet (02.09.2026): bei "CLOSED DOW AND NASDAQ" wurde dadurch nur
+    DOW geschlossen, die NASDAQ-Position (NAS100) blieb faelschlich offen,
+    obwohl der Kanal beide fuer beendet erklaert hatte. Der Aufrufer
+    (scripts/run_signal_bot.py) nutzt dies zusaetzlich zum geparsten
+    "index", um bei einer erkannten Schliess-Anweisung ALLE im Rohtext
+    genannten Instrumente zu schliessen, nicht nur das erste."""
+    matches = []
+    for pattern, name in _INDEX_ALIASES:
+        m = pattern.search(text)
+        if m:
+            matches.append((m.start(), name))
+    matches.sort(key=lambda pair: pair[0])
+    return [name for _, name in matches]
+
+
 def _parse_level(raw: str) -> float | None:
     raw = raw.replace(",", "").strip()
     if not raw:

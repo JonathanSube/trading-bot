@@ -60,7 +60,7 @@ load_dotenv(ROOT / ".env")
 
 from signalbot.channel_log import append_channel_message, recent_message_texts
 from signalbot.mapping import INDEX_TO_SYMBOL, build_signal_from_parsed, symbol_for_index
-from signalbot.parser import GeminiError, parse_signal_message
+from signalbot.parser import GeminiError, mentioned_indices, parse_signal_message
 from signalbot.reporting import build_signal_status_report
 from signalbot.state import OpenSignalTrade, SignalBotState, load_state, save_state
 from signalbot.telegram_signals import fetch_messages_by_id, fetch_new_messages
@@ -500,8 +500,28 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             # solche Nachricht zuvor ignoriert und stattdessen passiv auf
             # den eigenen Stop gewartet) - nur wirksam, wenn ueberhaupt
             # eine offene Position in diesem Instrument besteht.
-            if symbol in state.open_trades:
-                await _close_one_open(session, state, symbol, datetime.now(NY), "channel_close_signal")
+            #
+            # Sowohl _fast_parse als auch Gemini liefern pro Nachricht nur
+            # EIN "index"-Feld (siehe signalbot/parser.py). Live beobachtet
+            # (02.09.2026): "CLOSED DOW AND NASDAQ" wurde dadurch nur als
+            # DOW-Schliessung erkannt, die NAS100-Position blieb faelschlich
+            # offen. Deshalb hier zusaetzlich der Rohtext selbst nach ALLEN
+            # genannten Instrumenten durchsucht (mentioned_indices) - jede
+            # davon, fuer die eine offene Position besteht, wird geschlossen,
+            # nicht nur die vom Parser gelieferte.
+            symbols_to_close = {symbol}
+            for other_index in mentioned_indices(text):
+                other_symbol = symbol_for_index(other_index)
+                if other_symbol:
+                    symbols_to_close.add(other_symbol)
+
+            closed_any = False
+            for sym in symbols_to_close:
+                if sym in state.open_trades:
+                    await _close_one_open(session, state, sym, datetime.now(NY), "channel_close_signal")
+                    closed_any = True
+
+            if closed_any:
                 append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "trade_geschlossen")
             else:
                 print(f"Schliess-Anweisung fuer {symbol}, aber keine offene Position - ignoriert.")
