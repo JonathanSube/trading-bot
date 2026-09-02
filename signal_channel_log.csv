@@ -254,3 +254,6 @@ STOP = 25,897","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", 
 2026-09-02T08:23:19+00:00,71558,My gut tells me I am a good reverse indicator today.... I should stop trading now....,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-02T08:24:53+00:00,71559,"I will run this DAX and if I add to it, I will post it here in Telegram....","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-02T08:26:05+00:00,71560,AUDIT,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T09:46:19+00:00,71562,"TRADE- CLOSE ALERT
+Tom doesnt have access to his telegram right now.
+Tom Just closed his DAX at 25761 for ~90pt","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
