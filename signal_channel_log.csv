@@ -257,3 +257,4 @@ STOP = 25,897","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", 
 2026-09-02T09:46:19+00:00,71562,"TRADE- CLOSE ALERT
 Tom doesnt have access to his telegram right now.
 Tom Just closed his DAX at 25761 for ~90pt","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-02T10:43:34+00:00,71563,JUST BACK - thank you Andi for helping me out. I had no way of contacting Telegram to update you.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
