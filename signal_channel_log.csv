@@ -185,3 +185,26 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direc
 2026-09-01T14:19:15+00:00,71538,CLOSED DOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-01T14:19:56+00:00,71539,STATUS,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-01T14:39:52+00:00,71541,😂,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T06:46:27+00:00,71543,"Good morning
+
+It is Wednesday and you have me today. 
+
+I will see you shortly. 
+
+A brief message - on how I would use the three outlets you see me and Andi make available (namely YouTube, Divergent and Telegram)
+
+1/ I would use YouTube for visual - but mute the sound
+
+2/ I would use Divergent for my audio source - as there is almost ZERO latency. 
+
+3/ Telegram I would only use if I was out and about.
+
+YouTube has latency. Divergent has nothing because it is audio only. The combo makes visuals with zero latency. 
+
+Here is the post that shows the path to Divergent: https://t.me/c/1238535538/71500
+
+See you shortly.
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T06:55:06+00:00,71545,https://youtube.com/live/s6xZOo8yhH8?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T06:55:23+00:00,71546,I should be live on all 3 outlets,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
