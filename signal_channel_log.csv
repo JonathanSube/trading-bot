@@ -289,3 +289,18 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",bereits_offen
+2026-09-02T13:47:09+00:00,71573,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 29,019
+
+STOP = 28995","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29019.0, ""stop_level"": 28995.0, ""target_level"": null}",bereits_offen
+2026-09-02T13:52:15+00:00,71574,"MOVED STOP LOSS IN NASDAQ TO 28,969","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T13:55:39+00:00,71575,CLOSED DOW MINUS 32 and MINUS 10 I think,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-02T13:56:19+00:00,71576,HERE ARE THE ENTRIES AND EXITS,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T14:01:14+00:00,71577,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 53,080
+
+STOP = 52955","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53080.0, ""stop_level"": 52955.0, ""target_level"": null}",trade_eroeffnet
