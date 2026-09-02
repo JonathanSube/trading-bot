@@ -29,7 +29,13 @@ GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_M
 # so ein ganzes Signal verloren, nur weil ein einzelner API-Aufruf
 # voruebergehend haengt - analog zum ACCESS_DENIED-Retry bei cTrader
 # (siehe tradingbot/ctrader.py::get_access_token).
-GEMINI_RETRY_ATTEMPTS = 2
+#
+# Auf 3 erhoeht (02.09.2026): trotz 2 Versuchen ging eine eindeutige
+# Schliess-Nachricht ("CLOSED FTSE.... MINUS 8 and MINUS 5") erneut per
+# gemini_fehler verloren - die betroffene Position wurde dadurch nicht per
+# Kanal-Anweisung, sondern erst spaeter ueber den eigenen (weiter
+# entfernten) Stop geschlossen, mit groesserem Verlust als noetig.
+GEMINI_RETRY_ATTEMPTS = 3
 GEMINI_RETRY_DELAY_SECONDS = 3
 
 SYSTEM_PROMPT = """Du wertest Nachrichten aus einem oeffentlichen Telegram-Kanal fuer \
