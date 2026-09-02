@@ -15,6 +15,7 @@ beachtet hatte).
 
 import json
 import os
+import re
 import time
 
 import requests
@@ -171,6 +172,103 @@ Nachricht: "-8,3"
 Antwort: {"is_signal": false, "action": null, "index": null, "direction": null, "entry_level": null, "stop_level": null, "target_level": null}
 (Grund: eine blosse Zahl ohne Kontext ist vermutlich ein Ergebnis-/PnL-Update, kein neues Einstiegssignal.)"""
 
+# Regelbasierte Schnellerkennung (02.09.2026, Nutzerwunsch: "in Sekunden
+# reagieren", nachdem Gemini-Latenz/-Timeouts mehrfach echte Signale
+# verzoegert oder verpasst haben, siehe GEMINI_RETRY_ATTEMPTS oben). Die
+# grosse Mehrheit der Kanal-Nachrichten folgt einem von zwei starren
+# Mustern (Einstieg mit INDEX-Kopfzeile + BOUGHT LONG/SOLD SHORT +
+# ENTRY=/STOP=, oder eine Schliess-Mitteilung mit eindeutigem
+# Schluesselwort) - die lassen sich ohne jeden Netzwerk-Aufruf zuverlaessig
+# erkennen. Bewusst KONSERVATIV: nur bei eindeutigem Treffer (genau EIN
+# erkanntes Instrument, klar erkennbares Muster, keine widerspruechliche
+# Kombination aus Einstiegs- und Schliess-Indizien) wird ueberhaupt ein
+# Ergebnis geliefert - in jedem unklaren Fall None, dann greift wie bisher
+# Gemini (inkl. der Kontextaufloesung fuer instrumentlose Schliess-
+# Nachrichten wie "closing the trade now", die dieser Schnellweg bewusst
+# NICHT behandelt, da er keine Historie kennt).
+_INDEX_ALIASES = [
+    (re.compile(r"\bNASDAQ\b", re.IGNORECASE), "NASDAQ"),
+    (re.compile(r"\bDOW\b", re.IGNORECASE), "DOW"),
+    (re.compile(r"\bDAX\b", re.IGNORECASE), "DAX"),
+    (re.compile(r"\bFTSE\b", re.IGNORECASE), "FTSE"),
+]
+
+_OPEN_RE = re.compile(
+    r"\bINDEX\b.*?\b(BOUGHT\s+LONG|SOLD\s+SHORT)\b.*?ENTRY\s*=\s*([\d,\.]*)\s*.*?STOP\s*=\s*([\d,\.]*)",
+    re.IGNORECASE | re.DOTALL,
+)
+
+# Jedes einzelne Muster hier wurde live in genau diesem Kanal beobachtet
+# (siehe trading-bot-spec.md, Aenderungsprotokoll 01./02.09.2026) - keine
+# geratenen Formulierungen.
+_CLOSE_RE = re.compile(
+    r"(\bSTOPPED\s+OUT\s+OF\b"
+    r"|\bCLOSE\s+TRADE\s+ALERT\b"
+    r"|\bTRADE[\s-]*CLOSE\s+ALERT\b"
+    r"|^\s*CLOSED\b"
+    r"|\bCLOSING\s+\S+(?:\s+\S+)?\s+INDEX\s+trade\s+now\b"
+    r"|\bHIT\s+TARGET\b)",
+    re.IGNORECASE,
+)
+
+
+def _single_index(text: str) -> str | None:
+    """Nur bei GENAU einem erkannten Instrument eindeutig - bei null oder
+    mehreren wird lieber Gemini gefragt (bzw. bei mehreren gleichzeitig
+    genannten Instrumenten ist ohnehin nicht klar, welches gemeint ist)."""
+    found = {name for pattern, name in _INDEX_ALIASES if pattern.search(text)}
+    return found.pop() if len(found) == 1 else None
+
+
+def _parse_level(raw: str) -> float | None:
+    raw = raw.replace(",", "").strip()
+    if not raw:
+        return None
+    try:
+        return float(raw)
+    except ValueError:
+        return None
+
+
+def _fast_parse(text: str) -> dict | None:
+    """Liefert dasselbe dict-Format wie Gemini, oder None (dann uebernimmt
+    parse_signal_message() wie gewohnt den Gemini-Aufruf)."""
+    index = _single_index(text)
+    if index is None:
+        return None
+
+    open_match = _OPEN_RE.search(text)
+    close_match = _CLOSE_RE.search(text)
+
+    if open_match and close_match:
+        return None  # widerspruechlich - lieber Gemini entscheiden lassen statt zu raten
+
+    if open_match:
+        direction = "long" if open_match.group(1).upper().startswith("BOUGHT") else "short"
+        return {
+            "is_signal": True,
+            "action": "open",
+            "index": index,
+            "direction": direction,
+            "entry_level": _parse_level(open_match.group(2)),
+            "stop_level": _parse_level(open_match.group(3)),
+            "target_level": None,
+        }
+
+    if close_match:
+        return {
+            "is_signal": True,
+            "action": "close",
+            "index": index,
+            "direction": None,
+            "entry_level": None,
+            "stop_level": None,
+            "target_level": None,
+        }
+
+    return None
+
+
 class GeminiError(RuntimeError):
     """Der Gemini-Aufruf selbst ist fehlgeschlagen (Netzwerk, Ratenlimit,
     unparsebare Antwort) - bewusst von "Nachricht ist kein Signal"
@@ -205,9 +303,23 @@ def parse_signal_message(text: str, history: list[str] | None = None) -> dict | 
     (Netzwerk, Ratenlimit, unparsebare Antwort) loest GeminiError aus,
     damit der Aufrufer das von einer echten "kein Signal"-Klassifizierung
     unterscheiden und protokollieren/zaehlen kann (siehe
-    scripts/run_signal_bot.py, signalbot/channel_log.py)."""
+    scripts/run_signal_bot.py, signalbot/channel_log.py).
+
+    Versucht ZUERST die regelbasierte Schnellerkennung (_fast_parse, siehe
+    dort) - liefert die ein Ergebnis, entfaellt der Gemini-Aufruf
+    komplett (Sekunden statt oft zehn-plus Sekunden, kein Timeout-Risiko).
+    Nur bei einem unklaren Fall (None von _fast_parse) wird wie bisher
+    Gemini gefragt."""
+    if not text.strip():
+        return None
+
+    fast = _fast_parse(text)
+    if fast is not None:
+        print(f"[SignalBot] Schnellerkennung (ohne Gemini-Aufruf): action={fast['action']} index={fast['index']}")
+        return fast
+
     api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key or not text.strip():
+    if not api_key:
         return None
 
     if history:
