@@ -215,3 +215,9 @@ ENTRY =
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-02T07:14:34+00:00,71548,DAMN...MINUS 12,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T07:15:17+00:00,71549,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 10759
+
+STOP = 10729","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10759.0, ""stop_level"": 10729.0, ""target_level"": null}",bereits_offen
