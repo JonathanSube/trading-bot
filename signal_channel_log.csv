@@ -244,3 +244,13 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 10761.9
 
 STOP = 10749","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10761.9, ""stop_level"": 10749, ""target_level"": null}",bereits_offen
+2026-09-02T08:21:06+00:00,71556,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 25,847
+
+STOP = 25,897","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25847.0, ""stop_level"": 25897.0, ""target_level"": null}",bereits_offen
+2026-09-02T08:22:06+00:00,71557,CLOSED FTSE.... MINUS 8 and MINUS 5,,gemini_fehler
+2026-09-02T08:23:19+00:00,71558,My gut tells me I am a good reverse indicator today.... I should stop trading now....,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T08:24:53+00:00,71559,"I will run this DAX and if I add to it, I will post it here in Telegram....","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-02T08:26:05+00:00,71560,AUDIT,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
