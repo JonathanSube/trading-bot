@@ -419,3 +419,15 @@ STOP = 25,850","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", 
 Please see this post: https://t.me/c/1238535538/71564","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T13:28:46+00:00,71615,https://youtube.com/live/phXJXdjeliI?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T13:28:51+00:00,71616,LIVE ON ALL 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-03T13:39:39+00:00,71617,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 29,258
+
+STOP = 29,158","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29258.0, ""stop_level"": 29158.0, ""target_level"": null}",trade_eroeffnet
+2026-09-03T13:40:06+00:00,71618,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 29,279
+
+STOP = 29,179","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29279.0, ""stop_level"": 29179.0, ""target_level"": null}",bereits_offen
