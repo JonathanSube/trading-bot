@@ -348,3 +348,10 @@ STOP =53060","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""
 2026-09-02T14:20:08+00:00,71589,CLOSED EVERYTHING,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-02T14:20:14+00:00,71590,These are the trades for today....,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-02T14:20:24+00:00,71591,Today will be a little shorter... but I will see you tomorrow..,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-03T06:51:41+00:00,71593,"Good morning 
+
+I will see you shortly.
+
+Please see this post: https://t.me/c/1238535538/71500
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
