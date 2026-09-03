@@ -61,6 +61,16 @@ class SignalBotState:
     # tatsaechlichen Kanal-Abrufs (nicht jeder Lauf fragt wirklich ab).
     last_channel_message_at: datetime | None = None
     last_poll_at: datetime | None = None
+    # Zwischengespeicherte Aufloesung des Kanal-Einladungslinks (marked
+    # peer id + access_hash, siehe signalbot/telegram_signals.py) - live
+    # beobachtet (03.09.2026): ohne Zwischenspeicherung ruft jeder Lauf
+    # (im Minutentakt) Telegrams CheckChatInvite-API erneut auf, was
+    # Telegram irgendwann als Flood wertet (FloodWait ueber 1500 Sekunden
+    # beobachtet) - waehrend der Sperre schlaegt der komplette
+    # Kanal-Abruf fehl, echte Signale gehen dadurch verloren. None,
+    # solange noch nie aufgeloest.
+    telegram_peer_id: int | None = None
+    telegram_peer_access_hash: int | None = None
 
 
 def _signal_to_dict(signal: Signal) -> dict:
@@ -129,6 +139,8 @@ def _state_to_dict(state: SignalBotState) -> dict:
             state.last_channel_message_at.isoformat() if state.last_channel_message_at else None
         ),
         "last_poll_at": state.last_poll_at.isoformat() if state.last_poll_at else None,
+        "telegram_peer_id": state.telegram_peer_id,
+        "telegram_peer_access_hash": state.telegram_peer_access_hash,
     }
 
 
@@ -164,6 +176,8 @@ def _state_from_dict(data: dict) -> SignalBotState:
             else None
         ),
         last_poll_at=_parse_utc_timestamp(data["last_poll_at"]) if data.get("last_poll_at") else None,
+        telegram_peer_id=data.get("telegram_peer_id"),
+        telegram_peer_access_hash=data.get("telegram_peer_access_hash"),
     )
 
 

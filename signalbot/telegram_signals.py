@@ -50,7 +50,9 @@ def _client() -> Client:
     )
 
 
-async def _resolve_invite_link(app: Client, invite_hash: str) -> int:
+async def _resolve_invite_link(
+    app: Client, invite_hash: str, cached_peer: tuple[int, int] | None
+) -> tuple[int, tuple[int, int] | None]:
     """Loest einen Einladungslink auf eine chat_id auf, die get_chat_history
     versteht. get_chat_history kann mit dem Link selbst nichts anfangen
     (versucht ihn als Nutzername/ID aufzuloesen, scheitert mit
@@ -59,34 +61,48 @@ async def _resolve_invite_link(app: Client, invite_hash: str) -> int:
     Chat-Objekts (jeder Lauf ist ein neuer, leerer in-memory-Client ohne
     Peer-Cache aus vorherigen Laeufen, siehe Modul-Docstring).
 
-    CheckChatInvite loest den Link unabhaengig vom Mitgliedsstatus auf und
-    liefert bei bereits erfolgter Mitgliedschaft (ChatInviteAlready) das
-    volle Channel-Objekt inklusive access_hash direkt mit - der wird hier
-    manuell in Pyrograms Peer-Speicher eingetragen (get_channel_id fuer die
-    von Pyrogram erwartete "marked" ID, siehe pyrogram.utils), weil ein
-    reiner CheckChatInvite-Aufruf das nicht automatisch tut."""
+    cached_peer: (marked_id, access_hash) aus einem frueheren Lauf (siehe
+    signalbot/state.py::SignalBotState.telegram_peer_id/_access_hash). Ist
+    das gesetzt, wird der Peer OHNE weiteren API-Aufruf direkt in Pyrograms
+    Peer-Speicher eingetragen - live beobachtet (03.09.2026): ohne diesen
+    Cache ruft JEDER Lauf (im Minutentakt) CheckChatInvite erneut auf, was
+    Telegram nach einer Weile als Flood wertet (FloodWait > 1500 Sekunden
+    beobachtet); waehrend der Sperre schlaegt der gesamte Kanal-Abruf fehl,
+    echte Handelssignale gehen dadurch verloren.
+
+    Liefert (chat_id, neuer_cache_wert) - neuer_cache_wert ist None, wenn
+    nichts frisch aufgeloest wurde (Cache-Treffer oder der seltene
+    Erst-Beitritt-Zweig unten, aus dem sich kein access_hash gewinnen
+    laesst) und daher der bisherige State-Wert unveraendert bleiben soll."""
+    if cached_peer is not None:
+        marked_id, access_hash = cached_peer
+        await app.storage.update_peers([(marked_id, access_hash, "channel", None, None)])
+        return marked_id, None
+
     result = await app.invoke(CheckChatInvite(hash=invite_hash))
 
     if isinstance(result, ChatInviteAlready):
         channel = result.chat
     else:
         chat = await app.join_chat(f"https://t.me/+{invite_hash}")
-        return chat.id
+        return chat.id, None
 
     marked_id = get_channel_id(channel.id)
     await app.storage.update_peers([(marked_id, channel.access_hash, "channel", None, None)])
-    return marked_id
+    return marked_id, (marked_id, channel.access_hash)
 
 
-async def _resolve_chat_id(app: Client, channel: str) -> int | str:
+async def _resolve_chat_id(
+    app: Client, channel: str, cached_peer: tuple[int, int] | None = None
+) -> tuple[int | str, tuple[int, int] | None]:
     match = app.INVITE_LINK_RE.match(channel)
     if match:
-        return await _resolve_invite_link(app, match.group(1))
+        return await _resolve_invite_link(app, match.group(1), cached_peer)
     try:
         chat = await app.join_chat(channel)
-        return chat.id
+        return chat.id, None
     except UserAlreadyParticipant:
-        return channel
+        return channel, None
 
 
 def _to_utc(dt: datetime | None) -> datetime | None:
@@ -100,17 +116,27 @@ def _to_utc(dt: datetime | None) -> datetime | None:
 
 
 async def fetch_new_messages(
-    channel: str, since_message_id: int | None, limit: int = 50
-) -> list[tuple[int, str, datetime]]:
-    """Liefert (message_id, text, zeitstempel_utc) fuer alle Nachrichten
-    neuer als since_message_id, chronologisch aufsteigend (aeltere zuerst) -
-    so verarbeitet der Aufrufer sie in der richtigen Reihenfolge. Der
-    Zeitstempel ist Telegrams eigener Sendezeitpunkt (nicht der lokale
-    Abrufzeitpunkt) - Basis fuer die "seit X Minuten keine neue Nachricht"-
-    Drosselung in scripts/run_signal_bot.py."""
+    channel: str,
+    since_message_id: int | None,
+    limit: int = 50,
+    cached_peer: tuple[int, int] | None = None,
+) -> tuple[list[tuple[int, str, datetime]], tuple[int, int] | None]:
+    """Liefert (messages, neuer_cache_wert). messages: (message_id, text,
+    zeitstempel_utc) fuer alle Nachrichten neuer als since_message_id,
+    chronologisch aufsteigend (aeltere zuerst) - so verarbeitet der
+    Aufrufer sie in der richtigen Reihenfolge. Der Zeitstempel ist
+    Telegrams eigener Sendezeitpunkt (nicht der lokale Abrufzeitpunkt) -
+    Basis fuer die "seit X Minuten keine neue Nachricht"-Drosselung in
+    scripts/run_signal_bot.py.
+
+    cached_peer/neuer_cache_wert: siehe _resolve_invite_link - der
+    Aufrufer soll einen frueher erhaltenen Cache-Wert hier hineinreichen
+    und einen NICHT-None-Rueckgabewert dauerhaft speichern (siehe
+    SignalBotState.telegram_peer_id/_access_hash), sonst droht erneut ein
+    FloodWait (siehe dortiger Kommentar)."""
     app = _client()
     async with app:
-        chat_id = await _resolve_chat_id(app, channel)
+        chat_id, new_cached_peer = await _resolve_chat_id(app, channel, cached_peer)
 
         messages: list[tuple[int, str, datetime]] = []
         async for message in app.get_chat_history(chat_id, limit=limit):
@@ -121,28 +147,32 @@ async def fetch_new_messages(
                 messages.append((message.id, str(text), _to_utc(message.date)))
 
         messages.reverse()
-        return messages
+        return messages, new_cached_peer
 
 
 async def fetch_messages_by_id(
-    channel: str, message_ids: list[int]
-) -> dict[int, tuple[str, datetime | None]]:
-    """Liefert {message_id: (text, bearbeitungszeitpunkt_utc)} fuer gezielt
-    angefragte Nachrichten (nicht per since_message_id-Fenster wie
-    fetch_new_messages) - Nutzerwunsch (01.09.2026): der Kanal postet einen
-    Einstieg oft zuerst OHNE Stop/Ziel und ergaenzt sie Sekunden spaeter per
+    channel: str, message_ids: list[int], cached_peer: tuple[int, int] | None = None
+) -> tuple[dict[int, tuple[str, datetime | None]], tuple[int, int] | None]:
+    """Liefert (result, neuer_cache_wert). result:
+    {message_id: (text, bearbeitungszeitpunkt_utc)} fuer gezielt angefragte
+    Nachrichten (nicht per since_message_id-Fenster wie fetch_new_messages) -
+    Nutzerwunsch (01.09.2026): der Kanal postet einen Einstieg oft zuerst
+    OHNE Stop/Ziel und ergaenzt sie Sekunden spaeter per
     Nachrichten-Bearbeitung; fetch_new_messages() sieht das nicht (nur neue
     message_id, keine Edits an bereits gesehenen Nachrichten). Genutzt von
     scripts/run_signal_bot.py::_check_message_edits, um NUR die
     Quellnachrichten aktuell offener Trades gezielt erneut abzufragen statt
     die ganze Historie zu durchsuchen. edit_date ist None, wenn die
-    Nachricht nie bearbeitet wurde (dann kein Grund zur erneuten Auswertung)."""
+    Nachricht nie bearbeitet wurde (dann kein Grund zur erneuten Auswertung).
+
+    cached_peer/neuer_cache_wert: siehe fetch_new_messages/
+    _resolve_invite_link."""
     if not message_ids:
-        return {}
+        return {}, None
 
     app = _client()
     async with app:
-        chat_id = await _resolve_chat_id(app, channel)
+        chat_id, new_cached_peer = await _resolve_chat_id(app, channel, cached_peer)
 
         messages = await app.get_messages(chat_id, message_ids=message_ids)
         if not isinstance(messages, list):
@@ -156,4 +186,4 @@ async def fetch_messages_by_id(
             if not text:
                 continue
             result[message.id] = (str(text), _to_utc(message.edit_date))
-        return result
+        return result, new_cached_peer

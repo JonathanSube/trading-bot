@@ -31,7 +31,7 @@ async def main() -> None:
     channel = os.environ["SIGNAL_CHANNEL"]
     app = _client()
     async with app:
-        chat_id = await _resolve_chat_id(app, channel)
+        chat_id, _ = await _resolve_chat_id(app, channel)
         async for message in app.get_chat_history(chat_id, limit=LOOKBACK_MESSAGES):
             text = message.text or message.caption
             media = message.media.value if message.media else None

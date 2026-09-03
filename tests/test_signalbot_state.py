@@ -66,6 +66,41 @@ class RoundTripTests(unittest.TestCase):
         self.assertEqual(loaded.last_channel_message_at, datetime(2026, 1, 2, 9, 58, tzinfo=timezone.utc))
         self.assertEqual(loaded.last_poll_at, datetime(2026, 1, 2, 10, 0, tzinfo=timezone.utc))
 
+    def test_telegram_peer_cache_round_trips(self):
+        """Siehe signalbot/telegram_signals.py::_resolve_invite_link -
+        ohne diesen Cache ruft jeder Lauf erneut Telegrams CheckChatInvite
+        auf, was live (03.09.2026) zu einem FloodWait > 1500 Sekunden
+        gefuehrt hat (kompletter Kanal-Abruf schlug waehrenddessen fehl)."""
+        state = SignalBotState(telegram_peer_id=12345, telegram_peer_access_hash=67890)
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "signal_state.json"
+            save_state(state, path)
+            loaded = load_state(path)
+
+        self.assertEqual(loaded.telegram_peer_id, 12345)
+        self.assertEqual(loaded.telegram_peer_access_hash, 67890)
+
+    def test_missing_telegram_peer_cache_defaults_to_none(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "signal_state.json"
+            path.write_text(json.dumps({
+                "version": 1,
+                "last_message_id": None,
+                "initial_equity": None,
+                "total_pnl": 0.0,
+                "total_trades": 0,
+                "consecutive_api_errors": 0,
+                "stopped_permanently": False,
+                "open_trades": {},
+                "telegram_update_offset": None,
+                "last_channel_message_at": None,
+                "last_poll_at": None,
+            }))
+            loaded = load_state(path)
+
+        self.assertIsNone(loaded.telegram_peer_id)
+        self.assertIsNone(loaded.telegram_peer_access_hash)
+
     def test_last_seen_edit_date_round_trips(self):
         """Siehe scripts/run_signal_bot.py::_check_message_edits - ohne
         dieses Feld wuerde nach jedem Neustart jede Bearbeitung einer

@@ -196,6 +196,19 @@ async def _check_filled_trades(session: CTraderSession, state: SignalBotState, n
         _log_and_clear(state, symbol, now, exit_price, "stop" if is_stop else "target")
 
 
+def _cached_peer(state: SignalBotState) -> tuple[int, int] | None:
+    """Siehe signalbot/telegram_signals.py::_resolve_invite_link zur
+    Begruendung (FloodWait-Vermeidung)."""
+    if state.telegram_peer_id is None:
+        return None
+    return (state.telegram_peer_id, state.telegram_peer_access_hash)
+
+
+def _store_peer_cache(state: SignalBotState, new_cached_peer: tuple[int, int] | None) -> None:
+    if new_cached_peer is not None:
+        state.telegram_peer_id, state.telegram_peer_access_hash = new_cached_peer
+
+
 async def _check_message_edits(session: CTraderSession, state: SignalBotState, now_utc: datetime) -> None:
     """Nutzerwunsch (01.09.2026): der Kanal postet einen Einstieg oft zuerst
     OHNE Stop/Ziel und ergaenzt sie Sekunden spaeter per Bearbeitung
@@ -214,10 +227,13 @@ async def _check_message_edits(session: CTraderSession, state: SignalBotState, n
 
     message_ids = [trade.source_message_id for trade in state.open_trades.values()]
     try:
-        edited = await fetch_messages_by_id(CHANNEL, message_ids)
+        edited, new_cached_peer = await fetch_messages_by_id(
+            CHANNEL, message_ids, cached_peer=_cached_peer(state)
+        )
     except Exception as e:
         print(f"Konnte Bearbeitungen offener Signal-Nachrichten nicht abrufen: {e}")
         return
+    _store_peer_cache(state, new_cached_peer)
 
     for symbol, trade in list(state.open_trades.items()):
         result = edited.get(trade.source_message_id)
@@ -423,11 +439,14 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
     is_first_run = state.last_message_id is None
 
     try:
-        messages = await fetch_new_messages(CHANNEL, state.last_message_id)
+        messages, new_cached_peer = await fetch_new_messages(
+            CHANNEL, state.last_message_id, cached_peer=_cached_peer(state)
+        )
     except Exception as e:
         state.consecutive_api_errors += 1
         print(f"API-Fehler beim Telegram-Abruf: {e}")
         return
+    _store_peer_cache(state, new_cached_peer)
 
     state.last_poll_at = now_utc
     if messages:
@@ -624,7 +643,10 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         # als NEUE Bearbeitung werten und Stop/Ziel unnoetig neu berechnen -
         # verwirrend, wenn sich die Kanal-Nachricht gar nicht geaendert hat.
         try:
-            baseline = await fetch_messages_by_id(CHANNEL, [message_id])
+            baseline, new_cached_peer = await fetch_messages_by_id(
+                CHANNEL, [message_id], cached_peer=_cached_peer(state)
+            )
+            _store_peer_cache(state, new_cached_peer)
             initial_edit_date = baseline.get(message_id, (None, None))[1]
         except Exception:
             initial_edit_date = None

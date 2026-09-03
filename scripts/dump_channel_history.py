@@ -29,7 +29,7 @@ OUTPUT_PATH = ROOT / "channel_history.json"
 
 async def main() -> None:
     channel = os.environ["SIGNAL_CHANNEL"]
-    messages = await fetch_new_messages(channel, since_message_id=None, limit=1000)
+    messages, _ = await fetch_new_messages(channel, since_message_id=None, limit=1000)
 
     cutoff = datetime.now(timezone.utc) - timedelta(days=LOOKBACK_DAYS)
     recent = [

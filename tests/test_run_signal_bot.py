@@ -12,9 +12,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from scripts.run_signal_bot import (
+    _cached_peer,
     _is_in_session,
     _session_end_approaching,
     _should_poll_channel,
+    _store_peer_cache,
 )
 from signalbot.mapping import INDEX_TO_SYMBOL
 from signalbot.state import SignalBotState
@@ -194,6 +196,32 @@ class ShouldPollChannelTests(unittest.TestCase):
         self.assertTrue(_should_poll_channel(state, utc(2026, 8, 26, 13, 25)))
         self.assertTrue(_should_poll_channel(state, utc(2026, 8, 26, 14, 0)))
         self.assertTrue(_should_poll_channel(state, utc(2026, 8, 26, 14, 30)))
+
+
+class TelegramPeerCacheTests(unittest.TestCase):
+    """Siehe signalbot/telegram_signals.py::_resolve_invite_link - ohne
+    diesen Cache ruft jeder Lauf erneut Telegrams CheckChatInvite auf, was
+    live (03.09.2026) zu einem FloodWait > 1500 Sekunden gefuehrt hat."""
+
+    def test_no_cache_yet_returns_none(self):
+        state = SignalBotState()
+        self.assertIsNone(_cached_peer(state))
+
+    def test_cached_values_are_returned_as_tuple(self):
+        state = SignalBotState(telegram_peer_id=111, telegram_peer_access_hash=222)
+        self.assertEqual(_cached_peer(state), (111, 222))
+
+    def test_store_writes_new_value_into_state(self):
+        state = SignalBotState()
+        _store_peer_cache(state, (111, 222))
+        self.assertEqual((state.telegram_peer_id, state.telegram_peer_access_hash), (111, 222))
+
+    def test_store_none_leaves_existing_cache_untouched(self):
+        # None bedeutet "nichts frisch aufgeloest" (Cache-Treffer) - der
+        # bestehende State-Wert darf dabei NICHT geloescht werden.
+        state = SignalBotState(telegram_peer_id=111, telegram_peer_access_hash=222)
+        _store_peer_cache(state, None)
+        self.assertEqual((state.telegram_peer_id, state.telegram_peer_access_hash), (111, 222))
 
 
 if __name__ == "__main__":
