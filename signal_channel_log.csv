@@ -414,3 +414,6 @@ STOP = 25,850","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", 
 2026-09-03T08:31:21+00:00,71607,I AM DONE.. CLOSED EVERYTHING,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-03T08:31:44+00:00,71608,I LOST 1300 today. I think that is a bloody miracle considering the price action!¬!!!!!,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T09:01:34+00:00,71612,I am back for the US session in about 4 hours.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-03T13:24:05+00:00,71613,"I will be live shortly. 
+
+Please see this post: https://t.me/c/1238535538/71564","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
