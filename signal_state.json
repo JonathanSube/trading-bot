@@ -27,21 +27,21 @@
       "signal": {
         "direction": "long",
         "entry_price": 53411.32,
-        "stop": 53144.263399999996,
-        "target": 53945.43320000001,
-        "risk": 267.0566000000035,
+        "stop": 53288.33538133214,
+        "target": 53657.289237335724,
+        "risk": 122.98461866786238,
         "entry_timestamp": "2026-09-03T10:02:15.903664-04:00"
       },
       "order_id": 41388788,
       "qty": 0.97,
       "source_message_id": 71622,
       "entry_fill": 53411.32,
-      "last_seen_edit_date": "2026-09-03T14:02:00+00:00"
+      "last_seen_edit_date": "2026-09-03T14:04:39+00:00"
     }
   },
   "telegram_update_offset": 700987114,
   "last_channel_message_at": "2026-09-03T14:01:43+00:00",
-  "last_poll_at": "2026-09-03T14:03:43.189648+00:00",
+  "last_poll_at": "2026-09-03T14:04:48.552830+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
