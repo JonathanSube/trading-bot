@@ -356,3 +356,9 @@ Please see this post: https://t.me/c/1238535538/71500
 
 Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T06:56:22+00:00,71595,https://youtube.com/live/uv_O2eN8t9g?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-03T07:01:08+00:00,71596,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 25,830
+
+STOP = 25870","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25830.0, ""stop_level"": 25870.0, ""target_level"": null}",trade_eroeffnet
