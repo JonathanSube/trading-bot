@@ -444,3 +444,9 @@ ENTRY =
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",bereits_offen
 2026-09-03T13:51:35+00:00,71621,"EASING EXPOSURE... CLOSED 4 and 3 and 2.. I think ""4"" actually lost me a point. I will check later","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-03T14:01:43+00:00,71622,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =53,418 42182","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": 53418.0, ""target_level"": null}",trade_eroeffnet
