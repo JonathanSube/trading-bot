@@ -7,10 +7,21 @@ Pepperstone-Demokonto ueber die cTrader Open API seit dem Broker-Umstieg
 (Aenderungsprotokoll), der ORB-Bot bleibt auf Alpaca.
 
 Im Unterschied zum ORB-Bot (hoechstens ein Trade pro Tag, ein Instrument)
-kann hier gleichzeitig je eine offene Position in mehreren Instrumenten
-bestehen (die vier Symbole aus signalbot/mapping.py::INDEX_TO_SYMBOL -
-verschiedene Signalquellen-Instrumente) - deshalb open_trades als dict
-statt einzelnem Feld.
+kann hier gleichzeitig in mehreren Instrumenten UND je Instrument mehrere
+Teilpositionen offen sein (die vier Symbole aus
+signalbot/mapping.py::INDEX_TO_SYMBOL - verschiedene
+Signalquellen-Instrumente) - deshalb open_trades als
+dict[str, list[OpenSignalTrade]] statt einzelnem Feld.
+
+Vor dem 03.09.2026 war open_trades[symbol] noch EIN einzelnes
+OpenSignalTrade statt einer Liste (der Kanal handelt aktiv mit mehreren
+gleichzeitigen Teilpositionen pro Instrument - "Pyramiding", live
+beobachtet bis zu 4x im selben Instrument hintereinander - das alte
+Modell konnte davon nur die erste Position abbilden und hat dadurch
+systematisch genau die oft gewinnbringend gescalpten weiteren
+Teilpositionen verpasst, Nutzer-Feedback 03.09.2026). _open_trade_from_dict
+unten liest beide Formen (Liste ODER ein einzelnes Objekt-dict), damit
+eine bereits committete alte signal_state.json nicht crasht.
 """
 
 import json
@@ -52,7 +63,7 @@ class SignalBotState:
     # Unterschied zu stopped_permanently NICHT dauerhaft und schliesst keine
     # offenen Positionen: blockiert nur neue Einstiege, bis /resume kommt.
     paused: bool = False
-    open_trades: dict[str, OpenSignalTrade] = field(default_factory=dict)
+    open_trades: dict[str, list[OpenSignalTrade]] = field(default_factory=dict)
     telegram_update_offset: int | None = None
     # Fuer die Ruhe-Drosselung (30 Min. ohne neue Nachricht -> nur noch alle
     # 5 Min. tatsaechlich abfragen, siehe scripts/run_signal_bot.py):
@@ -133,7 +144,10 @@ def _state_to_dict(state: SignalBotState) -> dict:
         "consecutive_api_errors": state.consecutive_api_errors,
         "stopped_permanently": state.stopped_permanently,
         "paused": state.paused,
-        "open_trades": {symbol: _open_trade_to_dict(t) for symbol, t in state.open_trades.items()},
+        "open_trades": {
+            symbol: [_open_trade_to_dict(t) for t in trades]
+            for symbol, trades in state.open_trades.items()
+        },
         "telegram_update_offset": state.telegram_update_offset,
         "last_channel_message_at": (
             state.last_channel_message_at.isoformat() if state.last_channel_message_at else None
@@ -167,7 +181,12 @@ def _state_from_dict(data: dict) -> SignalBotState:
         stopped_permanently=data.get("stopped_permanently", False),
         paused=data.get("paused", False),
         open_trades={
-            symbol: _open_trade_from_dict(t) for symbol, t in data.get("open_trades", {}).items()
+            symbol: (
+                [_open_trade_from_dict(t) for t in value]
+                if isinstance(value, list)
+                else [_open_trade_from_dict(value)]  # Altformat vor 03.09.2026, siehe Moduldocstring
+            )
+            for symbol, value in data.get("open_trades", {}).items()
         },
         telegram_update_offset=data.get("telegram_update_offset"),
         last_channel_message_at=(

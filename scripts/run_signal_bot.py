@@ -123,11 +123,29 @@ QUIET_POLL_INTERVAL_MINUTES = 5  # und wird nur noch in diesem Abstand abgefragt
 # nur der Signal-Bot soll aggressiver dimensionieren, der ORB-Bot bleibt
 # unangetastet bei 1%).
 SIGNAL_RISK_PCT = 0.03
+# Obergrenze gleichzeitig offener Teilpositionen PRO Instrument
+# (Nutzerwunsch 03.09.2026, nachdem der Bot zuvor nur EINE Position pro
+# Instrument fuehren konnte und dadurch systematisch die zusaetzlichen,
+# oft gewinnbringend gescalpten Teilpositionen verpasst hat - live
+# beobachtet: der Kanal baut bis zu 4 NASDAQ-Teilpositionen hintereinander
+# auf, siehe signalbot/state.py). Jede Teilposition bekommt weiterhin ihr
+# eigenes volles Risiko ueber position_size() - das Gesamtrisiko pro
+# Instrument steigt dadurch bewusst bis auf das MAX_POSITIONS_PER_SYMBOL-
+# fache von SIGNAL_RISK_PCT, das ist der explizit gewuenschte Tradeoff.
+MAX_POSITIONS_PER_SYMBOL = 4
 
 
-def _log_and_clear(state: SignalBotState, symbol: str, now: datetime,
+def _log_and_clear(state: SignalBotState, symbol: str, trade: OpenSignalTrade, now: datetime,
                     exit_price: float, exit_reason: str) -> None:
-    trade = state.open_trades.pop(symbol)
+    """Entfernt GENAU diese eine Teilposition aus state.open_trades[symbol]
+    (dort koennen mehrere gleichzeitig stehen, siehe signalbot/state.py) -
+    identifiziert per Objekt-Identitaet, nicht mehr per blossem Symbol."""
+    trades = state.open_trades.get(symbol, [])
+    if trade in trades:
+        trades.remove(trade)
+    if not trades:
+        state.open_trades.pop(symbol, None)
+
     signal = trade.signal
     entry_actual = trade.entry_fill if trade.entry_fill is not None else signal.entry_price
     direction_mult = 1 if signal.direction is Direction.LONG else -1
@@ -166,34 +184,43 @@ def _log_and_clear(state: SignalBotState, symbol: str, now: datetime,
 
 async def _check_filled_trades(session: CTraderSession, state: SignalBotState, now: datetime) -> None:
     """cTrader fuellt Market-Orders synchron (kein Filled-Polling wie bei
-    Alpaca noetig), aber Stop/Ziel laufen serverseitig weiter - ein
-    Trade, der nicht mehr unter den offenen Positionen auftaucht, wurde
-    durch Stop oder Ziel geschlossen."""
+    Alpaca noetig), aber Stop/Ziel laufen serverseitig weiter - eine
+    Teilposition, deren order_id (positionId) nicht mehr unter den
+    offenen Broker-Positionen fuer ihr Symbol auftaucht, wurde durch Stop
+    oder Ziel geschlossen.
+
+    Zuordnung per order_id, NICHT mehr per Symbol (seit 03.09.2026): es
+    koennen mehrere Teilpositionen im selben Instrument gleichzeitig offen
+    sein (siehe signalbot/state.py), die einzeln unterschiedliche
+    Stop-/Zielabstaende haben koennen."""
     open_at_broker = await get_open_positions(session)
     for symbol in list(state.open_trades.keys()):
-        trade = state.open_trades[symbol]
+        broker_positions_by_id = {p["positionId"]: p for p in open_at_broker.get(symbol, [])}
 
-        if symbol in open_at_broker:
-            trade.entry_fill = float(open_at_broker[symbol]["entryPrice"])
-            continue
+        for trade in list(state.open_trades.get(symbol, [])):
+            broker_pos = broker_positions_by_id.get(trade.order_id)
+            if broker_pos is not None:
+                trade.entry_fill = float(broker_pos["entryPrice"])
+                continue
 
-        # cTrader liefert (anders als IG/MetaApi) hier keinen einfachen
-        # "Schlusskurs der zuletzt geschlossenen Position"-Aufruf, ohne die
-        # noch unverifizierte Deal-Historie separat abzufragen - solange
-        # das nicht gegen den echten Account geprueft ist (siehe
-        # tradingbot/ctrader.py), wird der aktuelle Marktkurs als Naeherung
-        # fuer den Ausstiegspreis verwendet (kein Datenverlust, nur eine
-        # leicht ungenaue PnL-Zahl bis zur Verifikation) - naeher an Stop
-        # oder Ziel entscheidet wie gewohnt den Log-Grund.
-        signal = trade.signal
-        try:
-            exit_price = await get_latest_price(session, symbol)
-        except Exception:
-            exit_price = signal.stop
-        print(f"Trade fuer {symbol} nicht mehr offen - genauer Ausstiegspreis noch nicht "
-              f"verifiziert abrufbar (siehe tradingbot/ctrader.py), verwende aktuellen Marktkurs als Naeherung.")
-        is_stop = abs(exit_price - signal.stop) < abs(exit_price - signal.target)
-        _log_and_clear(state, symbol, now, exit_price, "stop" if is_stop else "target")
+            # cTrader liefert (anders als IG/MetaApi) hier keinen einfachen
+            # "Schlusskurs der zuletzt geschlossenen Position"-Aufruf, ohne die
+            # noch unverifizierte Deal-Historie separat abzufragen - solange
+            # das nicht gegen den echten Account geprueft ist (siehe
+            # tradingbot/ctrader.py), wird der aktuelle Marktkurs als Naeherung
+            # fuer den Ausstiegspreis verwendet (kein Datenverlust, nur eine
+            # leicht ungenaue PnL-Zahl bis zur Verifikation) - naeher an Stop
+            # oder Ziel entscheidet wie gewohnt den Log-Grund.
+            signal = trade.signal
+            try:
+                exit_price = await get_latest_price(session, symbol)
+            except Exception:
+                exit_price = signal.stop
+            print(f"Position {trade.order_id} ({symbol}) nicht mehr offen - genauer Ausstiegspreis "
+                  f"noch nicht verifiziert abrufbar (siehe tradingbot/ctrader.py), verwende aktuellen "
+                  f"Marktkurs als Naeherung.")
+            is_stop = abs(exit_price - signal.stop) < abs(exit_price - signal.target)
+            _log_and_clear(state, symbol, trade, now, exit_price, "stop" if is_stop else "target")
 
 
 def _cached_peer(state: SignalBotState) -> tuple[int, int] | None:
@@ -222,10 +249,13 @@ async def _check_message_edits(session: CTraderSession, state: SignalBotState, n
     jetzt bekannten Kanal-Levels ein anderer Stop-Abstand ergibt als beim
     urspruenglichen Einstieg (der zuvor auf DEFAULT_STOP_PCT zurueckfallen
     musste, siehe signalbot/mapping.py)."""
-    if not CHANNEL or not state.open_trades:
+    all_trades = [
+        (symbol, trade) for symbol, trades in state.open_trades.items() for trade in trades
+    ]
+    if not CHANNEL or not all_trades:
         return
 
-    message_ids = [trade.source_message_id for trade in state.open_trades.values()]
+    message_ids = [trade.source_message_id for _, trade in all_trades]
     try:
         edited, new_cached_peer = await fetch_messages_by_id(
             CHANNEL, message_ids, cached_peer=_cached_peer(state)
@@ -235,7 +265,7 @@ async def _check_message_edits(session: CTraderSession, state: SignalBotState, n
         return
     _store_peer_cache(state, new_cached_peer)
 
-    for symbol, trade in list(state.open_trades.items()):
+    for symbol, trade in all_trades:
         result = edited.get(trade.source_message_id)
         if result is None:
             continue
@@ -277,9 +307,14 @@ async def _check_message_edits(session: CTraderSession, state: SignalBotState, n
         append_channel_message(CHANNEL_LOG_PATH, now_utc, trade.source_message_id, text, parsed, "levels_aktualisiert")
 
 
-async def _close_one_open(session: CTraderSession, state: SignalBotState, symbol: str,
-                           now: datetime, reason: str) -> None:
-    """Live beobachtet (01.09.2026): close_position() bekommt auf
+async def _close_trade(session: CTraderSession, state: SignalBotState, symbol: str,
+                        trade: OpenSignalTrade, now: datetime, reason: str) -> None:
+    """Schliesst GENAU diese eine Teilposition (identifiziert ueber
+    trade.order_id, die echte cTrader-positionId) - seit 03.09.2026 koennen
+    mehrere Teilpositionen im selben Instrument gleichzeitig offen sein
+    (siehe signalbot/state.py), die anderen bleiben unangetastet.
+
+    Live beobachtet (01.09.2026): close_position() bekommt auf
     ProtoOAClosePositionReq nur die sofortige "Order angenommen"-Antwort
     zurueck (orderStatus ORDER_STATUS_ACCEPTED, executedVolume 0, KEIN
     deal.executionPrice) - der eigentliche Fill kommt als separates,
@@ -309,11 +344,11 @@ async def _close_one_open(session: CTraderSession, state: SignalBotState, symbol
     tatsaechlich weg ist - ist sie es NICHT, bleibt sie im eigenen Zustand
     offen (statt sie optimistisch als geschlossen zu verbuchen), damit der
     naechste Lauf es erneut versucht."""
-    trade = state.open_trades[symbol]
     try:
         exit_price = await close_position(session, trade.order_id, trade.qty)
     except Exception as e:
-        print(f"Konnte Trade fuer {symbol} nicht schliessen (oder Ausstiegspreis nicht ermittelbar): {e}")
+        print(f"Konnte Position {trade.order_id} ({symbol}) nicht schliessen (oder Ausstiegspreis "
+              f"nicht ermittelbar): {e}")
         try:
             exit_price = await get_latest_price(session, symbol)
         except Exception:
@@ -322,19 +357,21 @@ async def _close_one_open(session: CTraderSession, state: SignalBotState, symbol
     try:
         still_open = await get_open_positions(session)
     except Exception as e:
-        print(f"Konnte Schliessung fuer {symbol} nicht verifizieren (Broker nicht erreichbar): {e}")
+        print(f"Konnte Schliessung von {trade.order_id} ({symbol}) nicht verifizieren (Broker nicht erreichbar): {e}")
         still_open = {}
-    if symbol in still_open:
-        print(f"WARNUNG: {symbol} ist laut Broker nach dem Schliess-Versuch weiterhin offen - "
-              f"bleibt im Zustand, naechster Lauf versucht es erneut.")
+    still_open_ids = {p["positionId"] for p in still_open.get(symbol, [])}
+    if trade.order_id in still_open_ids:
+        print(f"WARNUNG: Position {trade.order_id} ({symbol}) ist laut Broker nach dem Schliess-Versuch "
+              f"weiterhin offen - bleibt im Zustand, naechster Lauf versucht es erneut.")
         return
 
-    _log_and_clear(state, symbol, now, exit_price, reason)
+    _log_and_clear(state, symbol, trade, now, exit_price, reason)
 
 
 async def _close_all_open(session: CTraderSession, state: SignalBotState, now: datetime, reason: str) -> None:
     for symbol in list(state.open_trades.keys()):
-        await _close_one_open(session, state, symbol, now, reason)
+        for trade in list(state.open_trades.get(symbol, [])):
+            await _close_trade(session, state, symbol, trade, now, reason)
 
 
 async def _close_expiring_positions(session: CTraderSession, state: SignalBotState,
@@ -344,7 +381,8 @@ async def _close_expiring_positions(session: CTraderSession, state: SignalBotSta
     eigene Handelszeiten haben (siehe SESSIONS oben)."""
     for symbol in list(state.open_trades.keys()):
         if _session_end_approaching(now_utc, symbol):
-            await _close_one_open(session, state, symbol, now, "eod")
+            for trade in list(state.open_trades.get(symbol, [])):
+                await _close_trade(session, state, symbol, trade, now, "eod")
 
 
 GEMINI_CALL_DELAY_SECONDS = 4  # Freikontingent-Ratenlimit, siehe trading-bot-spec.md Abschnitt 12
@@ -528,16 +566,27 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             # genannten Instrumenten durchsucht (mentioned_indices) - jede
             # davon, fuer die eine offene Position besteht, wird geschlossen,
             # nicht nur die vom Parser gelieferte.
-            symbols_to_close = {symbol}
-            for other_index in mentioned_indices(text):
-                other_symbol = symbol_for_index(other_index)
-                if other_symbol:
-                    symbols_to_close.add(other_symbol)
-
+            #
+            # Seit 03.09.2026 kann pro Instrument MEHR als eine Teilposition
+            # offen sein (Pyramiding, siehe signalbot/state.py). Der Kanal
+            # bezeichnet einzelne Teilpositionen manchmal ueber eine eigene
+            # Nummerierung ("CLOSED 4 and 3 and 2"), die sich NICHT
+            # zuverlaessig auf konkrete Bot-Positionen abbilden laesst (der
+            # Bot kennt weder Toms Zaehlweise noch, welche seiner eigenen
+            # Positionen welcher Nummer entspricht) - so ein Fall bleibt
+            # weiterhin kein_signal (kein Instrument im Text erkennbar).
+            # Sobald aber ein Instrument eindeutig genannt UND eine
+            # Schliess-Absicht erkannt ist (z.B. "STOPPED OUT OF DOW",
+            # "CLOSED FTSE"), werden bewusst ALLE offenen Teilpositionen
+            # dieses Instruments geschlossen statt zu raten, welche gemeint
+            # ist - offene Restposition unbekannter Groesse ist das groessere
+            # Risiko als eine ggf. zu frueh geschlossene Teilposition.
             closed_any = False
-            for sym in symbols_to_close:
-                if sym in state.open_trades:
-                    await _close_one_open(session, state, sym, datetime.now(NY), "channel_close_signal")
+            for sym in {symbol} | {
+                s for idx in mentioned_indices(text) if (s := symbol_for_index(idx))
+            }:
+                for trade in list(state.open_trades.get(sym, [])):
+                    await _close_trade(session, state, sym, trade, datetime.now(NY), "channel_close_signal")
                     closed_any = True
 
             if closed_any:
@@ -547,9 +596,11 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
                 append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "schliessung_ohne_position")
             continue
 
-        if symbol in state.open_trades:
-            print(f"Signal fuer {symbol}, aber bereits eine offene Position - uebersprungen.")
-            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "bereits_offen")
+        open_count = len(state.open_trades.get(symbol, []))
+        if open_count >= MAX_POSITIONS_PER_SYMBOL:
+            print(f"Signal fuer {symbol}, aber bereits {open_count} offene Teilpositionen "
+                  f"(Maximum {MAX_POSITIONS_PER_SYMBOL} erreicht) - uebersprungen.")
+            append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "maximum_positionen_erreicht")
             continue
 
         try:
@@ -572,20 +623,22 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
 
         # Zusaetzliche Sicherung UNMITTELBAR vor der Order (02.09.2026,
         # nach einem live beobachteten Doppelkauf): der obige
-        # "symbol in state.open_trades"-Check basiert auf dem Git-Zustand
-        # dieses Laufs, der durch ueberlappende Workflow-Laeufe veraltet
-        # sein kann (siehe .github/workflows/signal-bot.yml, ref: master).
-        # Hier wird zusaetzlich der Broker SELBST gefragt - die einzige
-        # Quelle, die eine von einem anderen, gerade parallel laufenden
-        # Prozess bereits platzierte Order kennt, auch wenn deren
-        # Git-Commit noch nicht angekommen ist.
+        # Zaehl-Check basiert auf dem Git-Zustand dieses Laufs, der durch
+        # ueberlappende Workflow-Laeufe veraltet sein kann (siehe
+        # .github/workflows/signal-bot.yml, ref: master). Hier wird
+        # zusaetzlich der Broker SELBST gefragt - die einzige Quelle, die
+        # eine von einem anderen, gerade parallel laufenden Prozess bereits
+        # platzierte Order kennt, auch wenn deren Git-Commit noch nicht
+        # angekommen ist.
         try:
             live_positions = await get_open_positions(session)
         except Exception as e:
             print(f"Konnte offene Positionen vor Order-Platzierung nicht vom Broker abrufen: {e}")
             live_positions = {}
-        if symbol in live_positions:
-            print(f"Signal fuer {symbol}, aber laut Broker bereits eine offene Position (Git-Zustand war veraltet) - uebersprungen.")
+        live_count = len(live_positions.get(symbol, []))
+        if live_count >= MAX_POSITIONS_PER_SYMBOL:
+            print(f"Signal fuer {symbol}, aber laut Broker bereits {live_count} offene Teilpositionen "
+                  f"(Git-Zustand war veraltet) - uebersprungen.")
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "bereits_offen_laut_broker")
             continue
 
@@ -615,7 +668,10 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         entry_fill = None
         try:
             open_at_broker = await get_open_positions(session)
-            entry_fill = open_at_broker.get(symbol, {}).get("entryPrice")
+            entry_fill = next(
+                (p["entryPrice"] for p in open_at_broker.get(symbol, []) if p["positionId"] == position_id),
+                None,
+            )
         except Exception as e:
             print(f"Konnte tatsaechlichen Fill-Kurs fuer {symbol} nicht abrufen: {e}")
 
@@ -651,10 +707,10 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         except Exception:
             initial_edit_date = None
 
-        state.open_trades[symbol] = OpenSignalTrade(
+        state.open_trades.setdefault(symbol, []).append(OpenSignalTrade(
             signal=signal, order_id=position_id, qty=volume, source_message_id=message_id,
             entry_fill=entry_fill, last_seen_edit_date=initial_edit_date,
-        )
+        ))
         append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "trade_eroeffnet")
         send_notification(
             f"Signal-Einstieg {signal.direction.value} {volume}x {symbol} @ ~{signal.entry_price:.2f} "

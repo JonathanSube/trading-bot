@@ -673,43 +673,40 @@ async def amend_position_sltp(session: CTraderSession, position_id: int, stop: f
     await _send(session, sltp_req)
 
 
-async def get_open_positions(session: CTraderSession) -> dict[str, dict]:
-    """{Symbolname: Position-Info} der aktuell offenen Positionen.
+async def get_open_positions(session: CTraderSession) -> dict[str, list[dict]]:
+    """{Symbolname: [Position-Info, ...]} der aktuell offenen Positionen.
 
-    Nimmt an, dass hoechstens EINE Position pro Symbol existiert (die
-    gesamte Architektur des Signal-Bots baut darauf auf, siehe
-    scripts/run_signal_bot.py::state.open_trades). Live beobachtet
-    (02.09.2026): ein Zusammenspiel aus veraltetem Git-Checkout und
-    falscher Rebase-Konfliktloesung (siehe .github/workflows/signal-bot.yml)
-    fuehrte dazu, dass fuer DASSELBE Symbol tatsaechlich ZWEI reale
-    Positionen beim Broker offen waren - diese Funktion haette das
-    lautlos verschluckt (nur die zuletzt iterierte Position landet im
-    Ergebnis-dict, die andere verschwindet unbemerkt aus jeder weiteren
-    Logik). Ab jetzt wird ein solcher Fall laut geloggt, damit er nicht
-    nochmal unbemerkt bleibt - die zugrunde liegende Rennbedingung selbst
-    ist inzwischen behoben (ref: master im Checkout, broker-seitige
-    Pruefung vor jeder neuen Order), dies ist nur noch ein Sicherheitsnetz."""
+    Liefert pro Symbol eine LISTE (nicht mehr hoechstens eine Position) -
+    Nutzerwunsch (03.09.2026): der Kanal handelt aktiv mit mehreren
+    gleichzeitig offenen Teilpositionen im selben Instrument
+    ("Pyramiding", live beobachtet bis zu 4 NASDAQ-Positionen
+    hintereinander), das vorherige "nur eine Position pro Symbol"-Modell
+    (siehe scripts/run_signal_bot.py::state.open_trades) hat dadurch
+    systematisch genau die zusaetzlichen, oft gewinnbringend gescalpten
+    Teilpositionen verpasst (Nutzer-Feedback: "der Bot macht nur die
+    Trades, wo er Verluste macht").
+
+    Frueher (bis 03.09.2026) nahm diese Funktion hoechstens eine Position
+    pro Symbol an und ueberschrieb/verschluckte jede weitere lautlos -
+    das ist mit der Liste hier obsolet, jede Position bleibt sichtbar und
+    wird vom Aufrufer ueber ihre eigene positionId (nicht mehr nur ueber
+    das Symbol) verfolgt (siehe OpenSignalTrade.order_id)."""
     symbol_ids = await list_symbols(session)
     id_to_name = {v: k for k, v in symbol_ids.items()}
 
     req = ProtoOAReconcileReq()
     req.ctidTraderAccountId = session.account_id
     resp = await _send(session, req)
-    result = {}
+    result: dict[str, list[dict]] = {}
     for pos in resp.position:
         name = id_to_name.get(pos.tradeData.symbolId)
         if name is None:
             continue
-        if name in result:
-            print(f"[cTrader] WARNUNG: mehr als eine offene Position fuer {name} beim Broker gefunden "
-                  f"(positionId {result[name]['positionId']} und {pos.positionId}) - nur die zuletzt "
-                  f"gefundene wird hier zurueckgegeben, die andere bleibt fuer die Bot-Logik unsichtbar. "
-                  f"Manuell im Broker pruefen.")
-        result[name] = {
+        result.setdefault(name, []).append({
             "positionId": pos.positionId,
             "volume": pos.tradeData.volume / 100,
             "entryPrice": pos.price,
-        }
+        })
     return result
 
 

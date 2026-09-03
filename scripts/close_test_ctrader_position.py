@@ -29,10 +29,11 @@ async def main() -> None:
             print("Keine offenen Positionen gefunden - nichts zu schliessen.")
             return
 
-        for symbol, position in positions.items():
-            print(f"Schliesse {symbol}: {position}")
-            exit_price = await close_position(session, position["positionId"], position["volume"])
-            print(f"  Geschlossen, Ausstiegspreis: {exit_price}")
+        for symbol, symbol_positions in positions.items():
+            for position in symbol_positions:
+                print(f"Schliesse {symbol}: {position}")
+                exit_price = await close_position(session, position["positionId"], position["volume"])
+                print(f"  Geschlossen, Ausstiegspreis: {exit_price}")
 
 
 if __name__ == "__main__":

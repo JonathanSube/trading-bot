@@ -22,12 +22,22 @@ def _money(value: float) -> str:
 
 
 async def _open_position_line(session: CTraderSession, symbol: str, pos: dict, state) -> str:
-    """Eine Zeile pro offener Position mit aktuellem Kurs, Abstand zu
+    """Eine Zeile pro offener Teilposition mit aktuellem Kurs, Abstand zu
     Stop/Ziel und unrealisierter PnL - Nutzerwunsch (01.09.2026): /status
-    soll den Trade-Status JETZT zeigen, nicht nur Einstiegsdaten."""
+    soll den Trade-Status JETZT zeigen, nicht nur Einstiegsdaten.
+
+    Seit 03.09.2026 koennen mehrere Teilpositionen im selben Instrument
+    offen sein (siehe signalbot/state.py) - `pos` ist hier GENAU eine
+    Broker-Position, ueber ihre positionId wird die zugehoerige eigene
+    Teilposition (mit Stop/Ziel) herausgesucht, nicht mehr pauschal die
+    erste/einzige des Symbols."""
     entry = float(pos["entryPrice"])
     qty = float(pos["volume"])
-    trade = state.open_trades.get(symbol)
+    position_id = pos.get("positionId")
+    trade = next(
+        (t for t in state.open_trades.get(symbol, []) if t.order_id == position_id),
+        None,
+    )
 
     base = f"  {symbol}: {qty} Lot @ {entry}"
     if trade is None:
@@ -64,8 +74,9 @@ async def build_signal_status_report(session: CTraderSession, state, trade_log_p
     open_positions = await get_open_positions(session)
     if open_positions:
         lines.append("Offene Positionen:")
-        for symbol, pos in open_positions.items():
-            lines.append(await _open_position_line(session, symbol, pos, state))
+        for symbol, symbol_positions in open_positions.items():
+            for pos in symbol_positions:
+                lines.append(await _open_position_line(session, symbol, pos, state))
     else:
         lines.append("Offene Positionen: keine")
 

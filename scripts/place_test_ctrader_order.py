@@ -69,8 +69,9 @@ async def main() -> None:
         print(f"Order platziert: positionId={position_id}")
 
         print("\nAktuelle offene Positionen:")
-        for symbol, position in (await get_open_positions(session)).items():
-            print(f"  {symbol}: {position}")
+        for symbol, symbol_positions in (await get_open_positions(session)).items():
+            for position in symbol_positions:
+                print(f"  {symbol}: {position}")
 
 
 if __name__ == "__main__":
