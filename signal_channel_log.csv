@@ -464,3 +464,5 @@ ENTRY =
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",bereits_offen
 2026-09-03T14:21:08+00:00,71625,CLOSED ALL,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-03T14:23:48+00:00,71626,I believe these are all the live trades. I was scalping a bit behind the scenes so I cut them out.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-03T14:24:37+00:00,71627,BIT OF A MEAL MADE  by me today..sorry... I think I will go and work on this headache,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
