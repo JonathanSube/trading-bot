@@ -4,7 +4,7 @@
   "initial_equity": 10000.12,
   "total_pnl": -719.5299000000559,
   "total_trades": 14,
-  "consecutive_api_errors": 0,
+  "consecutive_api_errors": 1,
   "stopped_permanently": false,
   "paused": false,
   "open_trades": {
