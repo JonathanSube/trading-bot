@@ -537,3 +537,10 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direc
 
 I am live in a few minutes",,gemini_fehler
 2026-09-04T13:29:46+00:00,71651,https://youtube.com/live/NbOUXRCZWZI?feature=share,,gemini_fehler
+2026-09-04T13:31:20+00:00,71654,LIVE ON ALL 3,,gemini_fehler
+2026-09-04T13:31:24+00:00,71655,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 53,558
+
+STOP = 53433","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53558.0, ""stop_level"": 53433.0, ""target_level"": null}",trade_eroeffnet
