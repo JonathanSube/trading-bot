@@ -86,6 +86,22 @@ class CloseSignalTests(unittest.TestCase):
         self.assertEqual(r["action"], "close")
         self.assertEqual(r["index"], "NASDAQ")
 
+    def test_stopped_myself_out_of(self):
+        # Live beobachtet (04.09.2026): Variante von "STOPPED OUT OF" mit
+        # zusaetzlichem "MYSELF" - ging vorher an Gemini, das an diesem
+        # Nachmittag mehrfach fehlschlug (vermutlich Ratenlimit).
+        r = _fast_parse("STOPPED MYSELF OUT OF DOW... MINUS 40")
+        self.assertEqual(r["action"], "close")
+        self.assertEqual(r["index"], "DOW")
+
+    def test_closing_and_calling_it_a_day(self):
+        # Live beobachtet (04.09.2026): "CLOSING NASDAQ AND CALLING IT A
+        # DAY... NASDAQ SMALL PROFIT" - ging vorher an Gemini, das an
+        # diesem Nachmittag mehrfach fehlschlug.
+        r = _fast_parse("CLOSING NASDAQ AND CALLING IT A DAY... NASDAQ SMALL PROFIT")
+        self.assertEqual(r["action"], "close")
+        self.assertEqual(r["index"], "NASDAQ")
+
 
 class NoMatchFallsBackToGeminiTests(unittest.TestCase):
     """Diese Faelle MUESSEN None liefern, sonst wuerde die Schnellerkennung

@@ -200,13 +200,20 @@ _OPEN_RE = re.compile(
 
 # Jedes einzelne Muster hier wurde live in genau diesem Kanal beobachtet
 # (siehe trading-bot-spec.md, Aenderungsprotokoll 01./02.09.2026) - keine
-# geratenen Formulierungen.
+# geratenen Formulierungen. "STOPPED (MYSELF )?OUT OF" und "CLOSING X AND
+# CALLING IT A DAY" am 04.09.2026 ergaenzt, nachdem beide Formulierungen
+# live auftraten, hier noch nicht erkannt wurden und dadurch unnoetig an
+# Gemini gingen - dort schlugen an diesem Nachmittag mehrere Aufrufe fehl
+# (vermutlich Ratenlimit durch viele Nachrichten in kurzer Folge), die
+# Schliess-Anweisungen gingen dadurch als "gemini_fehler" verloren statt
+# sofort (ohne Netzwerk-Aufruf) per Schnellerkennung gehandelt zu werden.
 _CLOSE_RE = re.compile(
-    r"(\bSTOPPED\s+OUT\s+OF\b"
+    r"(\bSTOPPED\s+(?:MYSELF\s+)?OUT\s+OF\b"
     r"|\bCLOSE\s+TRADE\s+ALERT\b"
     r"|\bTRADE[\s-]*CLOSE\s+ALERT\b"
     r"|^\s*CLOSED\b"
     r"|\bCLOSING\s+\S+(?:\s+\S+)?\s+INDEX\s+trade\s+now\b"
+    r"|\bCLOSING\s+\S+\s+AND\s+CALLING\s+IT\s+A\s+DAY\b"
     r"|\bHIT\s+TARGET\b)",
     re.IGNORECASE,
 )
