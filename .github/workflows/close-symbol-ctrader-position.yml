@@ -1,0 +1,41 @@
+name: Close Symbol cTrader Position
+
+# Einmaliges manuelles Werkzeug (siehe scripts/close_symbol_ctrader_position.py)
+# - schliesst NUR die offenen Positionen eines einzelnen Symbols, andere
+# Instrumente bleiben unberuehrt. Nicht Teil des automatisierten
+# Signal-Bot-Takts, nur per Hand ausgeloest.
+on:
+  workflow_dispatch:
+    inputs:
+      symbol:
+        description: "cTrader-Symbol, dessen Positionen geschlossen werden sollen (z.B. NAS100)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  close-symbol-position:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Position schliessen
+        env:
+          CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
+          CTRADER_CLIENT_SECRET: ${{ secrets.CTRADER_CLIENT_SECRET }}
+          CTRADER_REFRESH_TOKEN: ${{ secrets.CTRADER_REFRESH_TOKEN }}
+          CTRADER_ACCESS_TOKEN: ${{ secrets.CTRADER_ACCESS_TOKEN }}
+          CTRADER_ACCESS_TOKEN_EXPIRES_AT: ${{ secrets.CTRADER_ACCESS_TOKEN_EXPIRES_AT }}
+          GH_SECRETS_PAT: ${{ secrets.GH_SECRETS_PAT }}
+          CLOSE_SYMBOL: ${{ inputs.symbol }}
+        run: python scripts/close_symbol_ctrader_position.py
