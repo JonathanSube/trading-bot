@@ -492,3 +492,15 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 25,985
 
 STOP = 26,035","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25985.0, ""stop_level"": 26035.0, ""target_level"": null}",trade_eroeffnet
+2026-09-04T07:05:19+00:00,71637,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 10791
+
+STOP = 10756","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10791.0, ""stop_level"": 10756.0, ""target_level"": null}",trade_eroeffnet
+2026-09-04T07:05:46+00:00,71638,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
