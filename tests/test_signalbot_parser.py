@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from signalbot.parser import _fast_parse, mentioned_indices
+from signalbot.parser import _fast_parse, closes_everything, mentioned_indices
 
 
 class OpenSignalTests(unittest.TestCase):
@@ -157,6 +157,36 @@ class MentionedIndicesTests(unittest.TestCase):
 
     def test_duplicate_mentions_not_repeated(self):
         self.assertEqual(mentioned_indices("DOW DOW DOW closed"), ["DOW"])
+
+
+class ClosesEverythingTests(unittest.TestCase):
+    """Live beobachtet (04.09.2026): "CLOSED ALL" schloss nur DAX (per
+    geparstem "index"), zwei echte UK100-Positionen blieben unbemerkt
+    offen - "ALL" nennt keinen Instrumentnamen, mentioned_indices() bleibt
+    dafuer leer. closes_everything() erkennt diesen Fall separat, damit
+    scripts/run_signal_bot.py dann wirklich ALLE offenen Instrumente
+    schliesst."""
+
+    def test_closed_all(self):
+        self.assertTrue(closes_everything("CLOSED ALL"))
+
+    def test_closed_everything(self):
+        self.assertTrue(closes_everything("I AM DONE.. CLOSED EVERYTHING"))
+
+    def test_closing_both_trades_now(self):
+        self.assertTrue(closes_everything("closing both trades now"))
+
+    def test_close_all_lowercase(self):
+        self.assertTrue(closes_everything("close all please"))
+
+    def test_single_instrument_close_is_not_everything(self):
+        self.assertFalse(closes_everything("CLOSED DAX BEFORE STOP LOSS HIT.. MINUS 44"))
+
+    def test_open_signal_is_not_everything(self):
+        self.assertFalse(closes_everything("BOUGHT LONG NASDAQ INDEX"))
+
+    def test_unrelated_text_is_not_everything(self):
+        self.assertFalse(closes_everything("TRADES SO FAR"))
 
 
 if __name__ == "__main__":

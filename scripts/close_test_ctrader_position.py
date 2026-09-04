@@ -32,8 +32,19 @@ async def main() -> None:
         for symbol, symbol_positions in positions.items():
             for position in symbol_positions:
                 print(f"Schliesse {symbol}: {position}")
-                exit_price = await close_position(session, position["positionId"], position["volume"])
-                print(f"  Geschlossen, Ausstiegspreis: {exit_price}")
+                try:
+                    exit_price = await close_position(session, position["positionId"], position["volume"])
+                    print(f"  Geschlossen, Ausstiegspreis: {exit_price}")
+                except Exception as e:
+                    # close_position() liefert oft nur die "Order
+                    # angenommen"-Bestaetigung ohne Ausstiegspreis (siehe
+                    # dortiger Docstring, UNVERIFIZIERT) - das ist kein
+                    # Fehlschlag der Schliessung selbst, nur ein fehlender
+                    # Preis. Live beobachtet (04.09.2026): ohne dieses
+                    # Abfangen brach die Schleife hier komplett ab, weitere
+                    # offene Positionen wurden dadurch gar nicht erst
+                    # versucht zu schliessen.
+                    print(f"  Order vermutlich angenommen, aber kein Ausstiegspreis in der Antwort: {e}")
 
 
 if __name__ == "__main__":

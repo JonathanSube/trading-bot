@@ -241,6 +241,34 @@ def mentioned_indices(text: str) -> list[str]:
     return [name for _, name in matches]
 
 
+_CLOSE_EVERYTHING_RE = re.compile(
+    r"\bCLOS(?:E|ED|ING)\s+(ALL|EVERYTHING|BOTH)\b",
+    re.IGNORECASE,
+)
+
+
+def closes_everything(text: str) -> bool:
+    """True bei Schliess-Nachrichten, die sich auf ALLE aktuell offenen
+    Positionen beziehen statt auf ein einzelnes Instrument (z. B. "CLOSED
+    ALL", "CLOSED EVERYTHING", "closing both trades now" - alle drei live
+    in genau diesem Kanal beobachtet).
+
+    Sowohl _fast_parse als auch Gemini liefern pro Nachricht bewusst nur
+    EIN "index"-Feld (siehe SYSTEM_PROMPT) - bei so einer Nachricht mit
+    mehreren gleichzeitig offenen Instrumenten wurde dadurch bisher nur
+    EINES geschlossen, das/die andere(n) blieben faelschlich offen. Live
+    beobachtet (04.09.2026): "CLOSED ALL" schloss beide DAX-Teilpositionen
+    (per mentioned_indices() bereits korrekt erkannt, da "DAX" im
+    umgebenden Kontext genannt war), liess aber zwei echte UK100-
+    Positionen unbemerkt offen, weil "ALL" selbst keinen Instrumentnamen
+    enthaelt und mentioned_indices() dafuer leer bleibt.
+
+    scripts/run_signal_bot.py nutzt dies zusaetzlich zu mentioned_indices(),
+    um bei Treffer ALLE aktuell getrackten offenen Positionen zu
+    schliessen, unabhaengig vom Instrument."""
+    return bool(_CLOSE_EVERYTHING_RE.search(text))
+
+
 def _parse_level(raw: str) -> float | None:
     raw = raw.replace(",", "").strip()
     if not raw:

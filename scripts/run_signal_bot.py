@@ -60,7 +60,7 @@ load_dotenv(ROOT / ".env")
 
 from signalbot.channel_log import append_channel_message, recent_message_texts
 from signalbot.mapping import INDEX_TO_SYMBOL, build_signal_from_parsed, symbol_for_index
-from signalbot.parser import GeminiError, mentioned_indices, parse_signal_message
+from signalbot.parser import GeminiError, closes_everything, mentioned_indices, parse_signal_message
 from signalbot.reporting import build_signal_status_report
 from signalbot.state import OpenSignalTrade, SignalBotState, load_state, save_state
 from signalbot.telegram_signals import fetch_messages_by_id, fetch_new_messages
@@ -581,10 +581,22 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             # dieses Instruments geschlossen statt zu raten, welche gemeint
             # ist - offene Restposition unbekannter Groesse ist das groessere
             # Risiko als eine ggf. zu frueh geschlossene Teilposition.
-            closed_any = False
-            for sym in {symbol} | {
+            #
+            # "CLOSED ALL"/"CLOSED EVERYTHING" nennen gar KEIN Instrument
+            # (mentioned_indices() bleibt dafuer leer) - live beobachtet
+            # (04.09.2026): "CLOSED ALL" schloss dadurch nur DAX (per
+            # geparstem "index"), zwei echte UK100-Positionen blieben
+            # unbemerkt offen. closes_everything() erkennt diesen Fall
+            # separat und schliesst dann wirklich ALLE aktuell getrackten
+            # Instrumente, nicht nur das eine geparste.
+            symbols_to_close = {symbol} | {
                 s for idx in mentioned_indices(text) if (s := symbol_for_index(idx))
-            }:
+            }
+            if closes_everything(text):
+                symbols_to_close |= set(state.open_trades.keys())
+
+            closed_any = False
+            for sym in symbols_to_close:
                 for trade in list(state.open_trades.get(sym, [])):
                     await _close_trade(session, state, sym, trade, datetime.now(NY), "channel_close_signal")
                     closed_any = True
