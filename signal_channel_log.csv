@@ -563,3 +563,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 53560
 
 STOP = 53420","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53560.0, ""stop_level"": 53420.0, ""target_level"": null}",trade_eroeffnet
+2026-09-04T13:51:21+00:00,71660,STOPPED MYSELF OUT OF DOW... MINUS 40,,gemini_fehler
