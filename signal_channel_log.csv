@@ -557,3 +557,9 @@ ENTRY = 29,592
 
 STOP = 29492","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29592.0, ""stop_level"": 29492.0, ""target_level"": null}",trade_eroeffnet
 2026-09-04T13:46:01+00:00,71658,think I am being disconnected from Telegram,,gemini_fehler
+2026-09-04T13:49:18+00:00,71659,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 53560
+
+STOP = 53420","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53560.0, ""stop_level"": 53420.0, ""target_level"": null}",trade_eroeffnet
