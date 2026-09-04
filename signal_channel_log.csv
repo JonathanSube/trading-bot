@@ -486,3 +486,9 @@ Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": n
  see you in an hour","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-04T06:55:57+00:00,71634,https://youtube.com/live/Pxa03Iogf5E?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-04T06:56:01+00:00,71635,LIVE ON ALL 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-04T07:00:22+00:00,71636,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 25,985
+
+STOP = 26,035","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25985.0, ""stop_level"": 26035.0, ""target_level"": null}",trade_eroeffnet
