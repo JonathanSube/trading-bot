@@ -556,3 +556,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 29,592
 
 STOP = 29492","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29592.0, ""stop_level"": 29492.0, ""target_level"": null}",trade_eroeffnet
+2026-09-04T13:46:01+00:00,71658,think I am being disconnected from Telegram,,gemini_fehler
