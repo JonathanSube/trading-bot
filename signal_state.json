@@ -4,7 +4,7 @@
   "initial_equity": 10000.12,
   "total_pnl": -1038.0699000000388,
   "total_trades": 25,
-  "consecutive_api_errors": 1,
+  "consecutive_api_errors": 0,
   "stopped_permanently": false,
   "paused": false,
   "open_trades": {
@@ -60,7 +60,7 @@
   },
   "telegram_update_offset": 700987115,
   "last_channel_message_at": "2026-09-04T13:46:01+00:00",
-  "last_poll_at": "2026-09-04T13:46:47.738855+00:00",
+  "last_poll_at": "2026-09-04T13:48:10.206176+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
