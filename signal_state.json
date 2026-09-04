@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "last_message_id": 71642,
+  "last_message_id": 71644,
   "initial_equity": 10000.12,
   "total_pnl": -1042.449900000051,
   "total_trades": 21,
@@ -23,6 +23,21 @@
         "source_message_id": 71641,
         "entry_fill": 26019.03,
         "last_seen_edit_date": "2026-09-04T07:15:29+00:00"
+      },
+      {
+        "signal": {
+          "direction": "long",
+          "entry_price": 26037.03,
+          "stop": 25906.844849999998,
+          "target": 26297.4003,
+          "risk": 130.18515000000116,
+          "entry_timestamp": "2026-09-04T03:17:48.608005-04:00"
+        },
+        "order_id": 41406539,
+        "qty": 1.99,
+        "source_message_id": 71644,
+        "entry_fill": 26037.03,
+        "last_seen_edit_date": null
       }
     ],
     "UK100": [
@@ -40,12 +55,27 @@
         "source_message_id": 71642,
         "entry_fill": 10814.23,
         "last_seen_edit_date": "2026-09-04T07:15:43+00:00"
+      },
+      {
+        "signal": {
+          "direction": "long",
+          "entry_price": 10824.73,
+          "stop": 10770.60635,
+          "target": 10932.977299999999,
+          "risk": 54.12364999999954,
+          "entry_timestamp": "2026-09-04T03:17:42.097800-04:00"
+        },
+        "order_id": 41406537,
+        "qty": 4.8,
+        "source_message_id": 71643,
+        "entry_fill": 10824.73,
+        "last_seen_edit_date": null
       }
     ]
   },
   "telegram_update_offset": 700987114,
-  "last_channel_message_at": "2026-09-04T07:15:01+00:00",
-  "last_poll_at": "2026-09-04T07:16:54.829048+00:00",
+  "last_channel_message_at": "2026-09-04T07:17:33+00:00",
+  "last_poll_at": "2026-09-04T07:17:40.861919+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
