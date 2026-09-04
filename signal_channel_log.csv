@@ -564,3 +564,9 @@ ENTRY = 53560
 
 STOP = 53420","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53560.0, ""stop_level"": 53420.0, ""target_level"": null}",trade_eroeffnet
 2026-09-04T13:51:21+00:00,71660,STOPPED MYSELF OUT OF DOW... MINUS 40,,gemini_fehler
+2026-09-04T13:54:32+00:00,71661,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
