@@ -583,3 +583,10 @@ ENTRY = 29628
 
 STOP =29,528","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29628.0, ""stop_level"": 29528.0, ""target_level"": null}",trade_eroeffnet
 2026-09-04T13:57:03+00:00,71663,CLOSED ALL NASDAQ,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-04T13:59:42+00:00,71664,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-04T14:01:27+00:00,71665,FTSE plus 6 scalp,,gemini_fehler
