@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "last_message_id": 71668,
+  "last_message_id": 71669,
   "initial_equity": 10000.12,
   "total_pnl": -1104.4869000000301,
   "total_trades": 31,
@@ -24,11 +24,28 @@
         "entry_fill": 10817.73,
         "last_seen_edit_date": null
       }
+    ],
+    "NAS100": [
+      {
+        "signal": {
+          "direction": "short",
+          "entry_price": 29544.22,
+          "stop": 29644.2478304442,
+          "target": 29344.1643391116,
+          "risk": 100.02783044419994,
+          "entry_timestamp": "2026-09-04T10:21:07.617712-04:00"
+        },
+        "order_id": 41420171,
+        "qty": 2.58,
+        "source_message_id": 71669,
+        "entry_fill": 29544.22,
+        "last_seen_edit_date": "2026-09-04T14:21:03+00:00"
+      }
     ]
   },
   "telegram_update_offset": 700987115,
-  "last_channel_message_at": "2026-09-04T14:16:59+00:00",
-  "last_poll_at": "2026-09-04T14:19:52.913484+00:00",
+  "last_channel_message_at": "2026-09-04T14:20:31+00:00",
+  "last_poll_at": "2026-09-04T14:21:06.110754+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }

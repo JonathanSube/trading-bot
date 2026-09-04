@@ -593,3 +593,9 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""dire
 2026-09-04T14:02:51+00:00,71666,STOPPED OUT OF DOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-04T14:03:35+00:00,71667,trades during the session,,gemini_fehler
 2026-09-04T14:16:59+00:00,71668,closed my 1/2 nasdaq,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-04T14:20:31+00:00,71669,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 29,536
+
+STOP =29,636","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 29536.0, ""stop_level"": 29636.0, ""target_level"": null}",trade_eroeffnet
