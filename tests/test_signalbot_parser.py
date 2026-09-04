@@ -188,6 +188,14 @@ class ClosesEverythingTests(unittest.TestCase):
     def test_unrelated_text_is_not_everything(self):
         self.assertFalse(closes_everything("TRADES SO FAR"))
 
+    def test_closed_all_with_named_instrument_is_not_everything(self):
+        # Live beobachtet (04.09.2026): "CLOSED ALL NASDAQ" meint "alle
+        # meine NASDAQ-Positionen", NICHT "alles schliessen" - das
+        # nachfolgende Instrument grenzt "ALL" ein. mentioned_indices()
+        # deckt diesen Fall bereits korrekt ab, closes_everything() darf
+        # hier nicht zusaetzlich auch DAX/FTSE/DOW mitschliessen.
+        self.assertFalse(closes_everything("CLOSED ALL NASDAQ"))
+
 
 if __name__ == "__main__":
     unittest.main()

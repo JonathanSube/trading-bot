@@ -265,7 +265,20 @@ def closes_everything(text: str) -> bool:
 
     scripts/run_signal_bot.py nutzt dies zusaetzlich zu mentioned_indices(),
     um bei Treffer ALLE aktuell getrackten offenen Positionen zu
-    schliessen, unabhaengig vom Instrument."""
+    schliessen, unabhaengig vom Instrument.
+
+    WICHTIG: liefert False, sobald der Text zusaetzlich ein konkretes
+    Instrument nennt (z. B. "CLOSED ALL NASDAQ") - live beobachtet
+    (04.09.2026): der urspruengliche, rein wortbasierte Regex-Treffer
+    ignorierte das nachfolgende "NASDAQ" komplett und haette JEDES Mal
+    faelschlich ALLE Instrumente geschlossen statt nur der genannten NASDAQ-
+    Positionen (an diesem Tag zufaellig folgenlos, weil ohnehin auch die
+    DOW-Position geschlossen werden sollte - aber falsch, sobald das nicht
+    zutrifft). "ALL"/"EVERYTHING"/"BOTH" OHNE genanntes Instrument bleibt
+    weiterhin der Ausloeser - dann uebernimmt mentioned_indices() die
+    Instrument-eingrenzung bereits korrekt."""
+    if mentioned_indices(text):
+        return False
     return bool(_CLOSE_EVERYTHING_RE.search(text))
 
 
