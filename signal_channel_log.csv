@@ -672,3 +672,15 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-07T07:15:55.910660+00:00,71686,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 26038
+
+STOP = 25,938","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 26038.0, ""stop_level"": 25938.0, ""target_level"": null}",levels_aktualisiert
+2026-09-07T07:15:28+00:00,71687,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 10827
+
+STOP = 108000","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10827.0, ""stop_level"": 108000.0, ""target_level"": null}",volumen_zu_klein
