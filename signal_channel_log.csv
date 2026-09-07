@@ -660,3 +660,15 @@ ENTRY = 10819
 
 STOP = 10784","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10819.0, ""stop_level"": 10784.0, ""target_level"": null}",levels_aktualisiert
 2026-09-07T07:10:50+00:00,71684,STOPPED OUT OF DAX MINUS 12 I think...give or take,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-07T07:13:49+00:00,71685,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 10821
+
+STOP = 10800","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10821.0, ""stop_level"": 10800.0, ""target_level"": null}",trade_eroeffnet
+2026-09-07T07:14:41+00:00,71686,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
