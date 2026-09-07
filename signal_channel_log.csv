@@ -629,3 +629,9 @@ Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": n
 
 I will start streaming in a few minutes","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-07T06:57:43+00:00,71680,https://youtube.com/live/o7VKuMjjXu8?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-07T07:02:19+00:00,71681,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 26,028
+
+STOP = 25080","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 26028.0, ""stop_level"": 25080.0, ""target_level"": null}",trade_eroeffnet
