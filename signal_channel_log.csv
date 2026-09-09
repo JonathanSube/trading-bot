@@ -1,24 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-02T07:01:59+00:00,71547,"🇬🇧 FTSE 100 INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-02T07:14:34+00:00,71548,DAMN...MINUS 12,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-02T07:15:17+00:00,71549,"🇬🇧 FTSE 100 INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 10759
-
-STOP = 10729","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10759.0, ""stop_level"": 10729.0, ""target_level"": null}",bereits_offen
-2026-09-02T07:40:04+00:00,71550,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 25,888.70
-
-STOP = 25,833","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25888.7, ""stop_level"": 25833.0, ""target_level"": null}",trade_eroeffnet
-2026-09-02T07:41:28+00:00,71551,I am trading the SRS as an ANTI today.... it feels like a trading range behavior to me. I take full responsibility for the outcome.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-02T07:53:06+00:00,71552,CLOSED DAX BEFORE STOP LOSS HIT.. MINUS 44,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-02T08:04:26+00:00,71553,"🇩🇪  GERMAN DAX INDEX
 BOUGHT LONG ⬆️️ = 100%
@@ -706,3 +686,152 @@ See you at 08:55 CEST.
 Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T06:54:55+00:00,71731,https://youtube.com/live/SJz1yIiaBII?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T06:55:08+00:00,71732,Live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-07T08:04:59+00:00,71701,I HAVE STOPPED STREAMING. I WILL POST STATUS ONCE OR IF I AM STOPPED OUT OF DAX AND FTSE,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-07T08:05:10+00:00,71702,STOPPED OUT OF FTSE NOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-07T08:06:09+00:00,71704,STOPPED OUT OF DAX TOO,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-07T08:07:41+00:00,71706,"I lost 11k dollars this morning.
+
+I am back for the US session.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-07T12:59:04+00:00,71707,"ANNOUNCEMENT
+
+I admit I don't know if the session called the US session is just the futures, which means the BID ASK spread is wider. Perhaps I just need to see what is going on at the open of the US and then decide if I should stream. I am a tad confused what will be trading at 09:30AM US Eastern time. 
+
+I will come back to you after the US ""open"", whatever that may look like.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-07T13:31:25+00:00,71708,"OK. So the Bid Ask spread is the same as when the stock market is open. That is the good news. The US will trade for 3.5 hours now, but it is with the stock market closed. I think I will leave it alone. I will post my entries here, using orders, and it will be School Run. 
+
+Stand by.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-07T13:44:32+00:00,71709,You immediately sense there is not the same participation in the volume compared to normal trading days.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-07T13:54:12+00:00,71710,"I am back tomorrow. I will leave this market be :).
+
+See you tomorrow morning for the EU session.
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-08T05:11:16+00:00,71711,"Good morning,
+
+I am cancelling this mornings session. I am feeling subpar and I suspect trading would be a bad idea. I will update you later today.
+
+I apologise for the short notice and the inconvenience.
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-08T08:14:03+00:00,71712,"UPDATE
+
+The US session will go ahead as planned. Thank you for your patience.
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-08T13:18:19+00:00,71713,"🚨
+
+🚨
+
+Good morning America,
+
+I will start streaming at 15:30 European time/09:30 Eastern Time - when the US markets open. 
+
+Once I am live on YouTube, I will copy the URL and post it here in Telegram. Click on link and you will see me live with live account and charts.
+
+Latency Banished with Audio Feed
+YouTube can have latency, depending on where you live in the world, or the strength of your internet connection. Therefore, I also offer an “audio only” feed, which you can listen to, or combine with YouTube. Latency is 0.5 seconds or less. The feed is found here:
+
+https://divergent.uk/tom/
+
+The audio goes live at 15.30 CET/ 09:30 EST as well. If you click on “settings” on the ""divergent.uk/tom"" website, you will see there are 5 servers to select from. Pick anyone that has audio, and if you get disconnected, pick another one. 
+
+Telegram Stream Connection
+You can also simply tune in here in Telegram. An icon will appear at the top of your Telegram app, when I am live streaming. Telegram DOES HAVE latency. 
+
+Disclaimer
+I trade live, with a real account and real money. There is no fucking about with fake accounts or pretending. I win. I lose. It is all on display. However, by being here, or on YouTube/Divergent, you agree to abide by the following conditions:
+
+https://t.me/c/1238535538/50930
+
+Additionally, you acknowledge the stipulations set out on the website TraderTom.Com:
+
+https://tradertom.com/disclaimer/
+
+I will see you in at 15:30 Central European Time. 
+
+Stay strong and thank you for being here. 
+
+Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-08T13:26:44+00:00,71714,https://youtube.com/live/CCCFDjbEKII?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-08T13:28:50+00:00,71718,LIVE ON ALL 3 OUTLETS,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-08T13:42:42+00:00,71719,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 52,920
+
+STOP = 52,795","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 52920.0, ""stop_level"": 52795.0, ""target_level"": null}",kurs_nicht_ladbar
+2026-09-08T14:03:45+00:00,71720,STOPPED OUT OF DOW.... MINUS 125,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-08T14:31:05+00:00,71722,I am done for the day. Rough one :). I am back Thursday. Andi is here tomorrow. Andi will then take over Friday and he will run the channel the whole next week.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-08T14:40:14+00:00,71723,"I have had some concerning messages about my trading today. Yes, it is real money. I had to let a friend of mine trade my bigger account. I wanted to trade the size I trade on that account. It would seem that I am taking a double blow today as my friend, as per my instructions, also lost. 
+
+Yes, it stings to lose 50+ dollars live, but I have made a decision a long time ago to display my trading, warts and all.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-08T16:01:38+00:00,71724,"I have been answering questions regarding trading size. I don't normally show you my bigger size, and it just happened you saw it today, and it just so happened that was a day where things did not quite go well. I want to show you a FTSE trade I am currently in. Maybe it will go much lower. Maybe it will not. The thing about trading size is that over time you become less sensitive to the stress of the amounts. I think I may have shocked a few of you today. I hope you are ok, and that you can sleep well tonight. 
+
+Stay strong - goals are for dreamers, process is for achievers.
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-08T19:22:01+00:00,71725,"I think the hardest lesson to learn is to let winners run. Especially after a rough day, like today, and then later —- through patience and grit you have fought your way back to close to breakeven on the day. You wouldn't be human if you weren't a little tempted to let the cash register ring.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T05:35:58+00:00,71726,"Good morning,
+
+I’ll start today’s European session at 08:55 CEST, 5 minutes before the DAX open.
+
+Once I’m live on Tom’s YouTube channel, I’ll share the link here.
+
+YouTube can have some latency. A low-latency audio feed is also available:
+https://divergent.uk/tom/
+
+If your connection allows it, you can combine the YouTube video with the Divergent audio for the best experience.
+
+Comments are disabled both on YouTube and in this Telegram group, in line with Tom’s policy. If I answer questions during the stream, they usually reach me via private Telegram messages.
+
+Disclaimer
+
+I trade live using a real account. This is not financial advice.
+
+Trading involves risk, and past performance is not indicative of future results. Always do your own research.
+
+This stream and its recordings are for educational purposes only and are governed by the terms set out at:
+https://tradertom.com/disclaimer/
+
+See you at 08:55 CEST.
+
+Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T06:54:55+00:00,71731,https://youtube.com/live/SJz1yIiaBII?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T06:55:08+00:00,71732,Live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T07:01:33+00:00,71734,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 25841.8
+
+STOP =25791.8","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25841.8, ""stop_level"": 25791.8, ""target_level"": null}",kurs_nicht_ladbar
+2026-09-09T07:01:45+00:00,71735,deleting short order,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T07:03:02+00:00,71736,"CLOSE TRADE ALERT 
+
+🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-09T07:03:04+00:00,71737,+28,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T07:10:48+00:00,71738,Sorry was muted on Telegram. Again. I am unmuting myself now for the 3rd time.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T07:19:09+00:00,71739,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 10792.9
+
+STOP = 10767.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10792.9, ""stop_level"": 10767.9, ""target_level"": null}",kurs_nicht_ladbar
+2026-09-09T07:20:52+00:00,71740,SL to 10776.4,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T07:21:44+00:00,71741,"STOP LOSS ALERT 
+
+🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T07:22:37+00:00,71742,closed half for +10 (+5),"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T07:25:18+00:00,71743,"CLOSE TRADE ALERT 
+
+🇬🇧 CLOSING FTSE INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-09T07:25:47+00:00,71744,+11 (+5.5),"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T07:39:18+00:00,71746,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 50%
+
+ENTRY = 25908.1
+
+STOP = 25800","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25908.1, ""stop_level"": 25800.0, ""target_level"": null}",kurs_nicht_ladbar
+2026-09-09T07:43:03+00:00,71747,I might mistype here. Watch YouTube to see my screen.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T07:43:37+00:00,71748,"STOP LOSS ALERT 
+
+🇩🇪 MOVING STOP TO BREAKEVEN in DAX INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
