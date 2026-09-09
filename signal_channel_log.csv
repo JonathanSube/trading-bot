@@ -1,10 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-02T13:33:54+00:00,71570,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 53,011
-
-STOP = 52,935","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53011.0, ""stop_level"": 52935.0, ""target_level"": null}",trade_eroeffnet
 2026-09-02T13:37:17+00:00,71571,"🇺🇸 NASDAQ INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -993,3 +987,14 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direc
 2026-09-09T13:33:48+00:00,71767,"STOP LOSS ALERT 
 
 🇺🇸 MOVING STOP TO BREAKEVEN in DOW INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T13:34:17+00:00,71768,stopped out for zero in Dow,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-09T13:34:22+00:00,71769,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-09T13:35:18+00:00,71770,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-09T13:35:22+00:00,71771,closed for zero,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
