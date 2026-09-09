@@ -1,7 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-02T14:20:08+00:00,71589,CLOSED EVERYTHING,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-02T14:20:14+00:00,71590,These are the trades for today....,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-02T14:20:24+00:00,71591,Today will be a little shorter... but I will see you tomorrow..,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T06:51:41+00:00,71593,"Good morning 
 
 I will see you shortly.
@@ -996,3 +993,5 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 52361.3
 
 STOP = 52461.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52361.3, ""stop_level"": 52461.3, ""target_level"": null}",levels_aktualisiert
+2026-09-09T14:24:22+00:00,71791,Telegram is for some reason self-muting,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T14:24:29+00:00,71792,switch to  divergent or YT,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
