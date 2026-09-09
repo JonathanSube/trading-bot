@@ -1,7 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-02T13:52:15+00:00,71574,"MOVED STOP LOSS IN NASDAQ TO 28,969","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-02T13:55:39+00:00,71575,CLOSED DOW MINUS 32 and MINUS 10 I think,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-02T13:56:19+00:00,71576,HERE ARE THE ENTRIES AND EXITS,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-02T14:01:14+00:00,71577,"🇺🇸 DOW JONES INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -1015,3 +1012,4 @@ ENTRY = 52413.6
 
 STOP = 52513.6","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52413.6, ""stop_level"": 52513.6, ""target_level"": null}",trade_eroeffnet
 2026-09-09T13:51:24+00:00,71782,SL to 52479,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T14:00:31+00:00,71783,SL to 52472.8,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
