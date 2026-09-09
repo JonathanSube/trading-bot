@@ -1,17 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-02T14:15:56+00:00,71586,TRADES TODAY SO FAR,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-02T14:17:30+00:00,71587,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",bereits_offen
-2026-09-02T14:18:24+00:00,71588,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 53117.70
-
-STOP =53060","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53117.7, ""stop_level"": 53060.0, ""target_level"": null}",trade_eroeffnet
 2026-09-02T14:20:08+00:00,71589,CLOSED EVERYTHING,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-02T14:20:14+00:00,71590,These are the trades for today....,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-02T14:20:24+00:00,71591,Today will be a little shorter... but I will see you tomorrow..,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
@@ -990,3 +977,16 @@ ENTRY =  29456.5
 STOP = 29433","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29456.5, ""stop_level"": 29433.0, ""target_level"": null}",trade_eroeffnet
 2026-09-09T14:04:51+00:00,71786,Stopped out of dow for 0,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-09T14:12:13+00:00,71787,SL in Nasdaq to 29452.6,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T14:17:45+00:00,71788,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 52361.3
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52361.3, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-09T14:18:25+00:00,71789,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-09T14:18:42+00:00,71790,"stopped myself out of Nasdaq, reversed","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
