@@ -13,22 +13,22 @@
         "signal": {
           "direction": "short",
           "entry_price": 52385.55,
-          "stop": 52647.47775,
-          "target": 51861.69450000001,
-          "risk": 261.9277499999953,
+          "stop": 52485.596312830276,
+          "target": 52185.45737433946,
+          "risk": 100.04631283027265,
           "entry_timestamp": "2026-09-09T10:18:47.439207-04:00"
         },
         "order_id": 42656409,
         "qty": 0.91,
         "source_message_id": 71788,
         "entry_fill": 52385.55,
-        "last_seen_edit_date": "2026-09-09T14:18:20+00:00"
+        "last_seen_edit_date": "2026-09-09T14:18:53+00:00"
       }
     ]
   },
   "telegram_update_offset": 700987115,
   "last_channel_message_at": "2026-09-09T14:18:42+00:00",
-  "last_poll_at": "2026-09-09T14:18:46.262040+00:00",
+  "last_poll_at": "2026-09-09T14:19:48.432641+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }

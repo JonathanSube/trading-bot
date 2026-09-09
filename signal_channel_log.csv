@@ -990,3 +990,9 @@ ENTRY =
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-09T14:18:42+00:00,71790,"stopped myself out of Nasdaq, reversed","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-09T14:19:46.444167+00:00,71788,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 52361.3
+
+STOP = 52461.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52361.3, ""stop_level"": 52461.3, ""target_level"": null}",levels_aktualisiert
