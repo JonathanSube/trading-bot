@@ -1014,3 +1014,4 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 52413.6
 
 STOP = 52513.6","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52413.6, ""stop_level"": 52513.6, ""target_level"": null}",trade_eroeffnet
+2026-09-09T13:51:24+00:00,71782,SL to 52479,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
