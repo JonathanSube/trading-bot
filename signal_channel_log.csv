@@ -1008,3 +1008,9 @@ STOP = 29425.7","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-09T13:44:17+00:00,71779,-35,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T13:47:59+00:00,71780,no open orders,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T13:50:26+00:00,71781,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 52413.6
+
+STOP = 52513.6","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52413.6, ""stop_level"": 52513.6, ""target_level"": null}",trade_eroeffnet
