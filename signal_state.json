@@ -5,7 +5,7 @@
   "total_pnl": -1392.685500000008,
   "total_trades": 39,
   "consecutive_api_errors": 0,
-  "stopped_permanently": false,
+  "stopped_permanently": true,
   "paused": false,
   "open_trades": {},
   "telegram_update_offset": 700987115,
