@@ -60,7 +60,9 @@ load_dotenv(ROOT / ".env")
 
 from signalbot.channel_log import append_channel_message, recent_message_texts
 from signalbot.mapping import INDEX_TO_SYMBOL, build_signal_from_parsed, symbol_for_index
-from signalbot.parser import GeminiError, closes_everything, mentioned_indices, parse_signal_message
+from signalbot.parser import (
+    GeminiError, _fast_parse, closes_everything, mentioned_indices, parse_signal_message,
+)
 from signalbot.reporting import build_signal_status_report
 from signalbot.state import OpenSignalTrade, SignalBotState, load_state, save_state
 from signalbot.telegram_signals import fetch_messages_by_id, fetch_new_messages
@@ -509,7 +511,18 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
     for i, (message_id, text, msg_date) in enumerate(messages):
         state.last_message_id = message_id
 
-        if i > 0:
+        # Nur pausieren, wenn diese Nachricht tatsaechlich einen Gemini-
+        # Aufruf braucht - die regelbasierte Schnellerkennung (_fast_parse)
+        # macht keinen Netzwerk-Aufruf und braucht daher auch keine
+        # Ratenlimit-Pause. Gefunden 09.09.2026: bei einem groesseren
+        # Nachrichtenstau (z.B. nach einer laengeren Pause) sorgte die
+        # bisherige Pause VOR JEDER Nachricht dafuer, dass der Lauf das
+        # 4-Minuten-Timeout des Workflows riss, bevor er fertig war - der
+        # Lauf wurde dann mitten im Stapel abgebrochen, ohne je bis zum
+        # abschliessenden Speichern zu kommen (siehe die save_state()-
+        # Aufrufe unten, die genau dafuer jetzt nach jeder Nachricht statt
+        # nur am Ende des Laufs passieren).
+        if i > 0 and _fast_parse(text) is None:
             time_module.sleep(GEMINI_CALL_DELAY_SECONDS)
 
         # JEDE ausgewertete Nachricht wird protokolliert (nicht nur die,
@@ -525,10 +538,12 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             state.consecutive_api_errors += 1
             print(f"Nachricht {message_id} uebersprungen (Gemini-Fehler): {e}")
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, None, "gemini_fehler")
+            save_state(state, STATE_PATH)
             continue
 
         if parsed is None or not parsed.get("is_signal"):
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "kein_signal")
+            save_state(state, STATE_PATH)
             continue
 
         # Rohdaten mitloggen (Nutzerwunsch, nach einer Nachfrage zu
@@ -548,6 +563,7 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             print(f"Signal fuer Index '{parsed.get('index')}' erkannt, aber nicht unterstuetzt "
                   f"(nur NASDAQ/DOW/DAX/FTSE werden gehandelt) - uebersprungen.")
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "index_nicht_unterstuetzt")
+            save_state(state, STATE_PATH)
             continue
 
         if parsed.get("action") == "close":
@@ -605,6 +621,7 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             else:
                 print(f"Schliess-Anweisung fuer {symbol}, aber keine offene Position - ignoriert.")
                 append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "schliessung_ohne_position")
+            save_state(state, STATE_PATH)
             continue
 
         open_count = len(state.open_trades.get(symbol, []))
@@ -612,6 +629,7 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             print(f"Signal fuer {symbol}, aber bereits {open_count} offene Teilpositionen "
                   f"(Maximum {MAX_POSITIONS_PER_SYMBOL} erreicht) - uebersprungen.")
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "maximum_positionen_erreicht")
+            save_state(state, STATE_PATH)
             continue
 
         try:
@@ -619,17 +637,20 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         except Exception as e:
             print(f"Konnte aktuellen Kurs fuer {symbol} nicht laden: {e}")
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "kurs_nicht_ladbar")
+            save_state(state, STATE_PATH)
             continue
 
         signal = build_signal_from_parsed(parsed, instrument_price, datetime.now(NY))
         if signal is None:
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "kein_gueltiges_signal")
+            save_state(state, STATE_PATH)
             continue
 
         volume = position_size(signal, equity, risk_pct=SIGNAL_RISK_PCT)
         if volume < 0.01:
             print(f"Signal fuer {symbol} erkannt, aber Lot-Volumen < 0.01 - ausgelassen.")
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "volumen_zu_klein")
+            save_state(state, STATE_PATH)
             continue
 
         # Zusaetzliche Sicherung UNMITTELBAR vor der Order (02.09.2026,
@@ -651,6 +672,7 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             print(f"Signal fuer {symbol}, aber laut Broker bereits {live_count} offene Teilpositionen "
                   f"(Git-Zustand war veraltet) - uebersprungen.")
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "bereits_offen_laut_broker")
+            save_state(state, STATE_PATH)
             continue
 
         try:
@@ -664,6 +686,7 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             state.consecutive_api_errors += 1
             print(f"Order fuer {symbol} fehlgeschlagen: {e}")
             append_channel_message(CHANNEL_LOG_PATH, msg_date, message_id, text, parsed, "order_fehlgeschlagen")
+            save_state(state, STATE_PATH)
             continue
 
         # Stop/Ziel an den TATSAECHLICHEN Fill-Kurs anpassen, nicht am vor
@@ -727,6 +750,7 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
             f"Signal-Einstieg {signal.direction.value} {volume}x {symbol} @ ~{signal.entry_price:.2f} "
             f"(Kanal-Signal), Stop {signal.stop:.2f}, Ziel {signal.target:.2f}"
         )
+        save_state(state, STATE_PATH)
 
 
 async def main() -> None:
