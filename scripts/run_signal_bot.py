@@ -34,7 +34,7 @@ Ablauf pro Lauf:
    (Kanal ergaenzt Stop/Ziel oft erst per Edit nach dem Einstieg) - nur
    Stop/Ziel der bestehenden Position aktualisieren, NIE neu kaufen
    (siehe _check_message_edits)
-7. Sicherheitsschalter pruefen (Gesamtverlust, API-Fehler)
+7. Sicherheitsschalter pruefen (API-Fehler in Folge)
 8. Sessionende je Instrument (5 Min. vorher): betroffene offene Position
    zwangsschliessen - jedes Instrument hat seine eigene Handelszeit
    (US/London/Xetra), kein einzelner globaler EOD-Zeitpunkt
@@ -89,7 +89,6 @@ KILL_SWITCH_PATH = ROOT / "STOP"
 TRADE_LOG_PATH = ROOT / "signal_trades.csv"
 CHANNEL_LOG_PATH = ROOT / "signal_channel_log.csv"
 CHANNEL = os.environ.get("SIGNAL_CHANNEL", "")
-TOTAL_LOSS_LIMIT = -0.15
 API_ERROR_LIMIT = 5
 
 # Handelszeiten je Instrument (Zeitzone, Sessionbeginn lokal, Sessionende
@@ -173,7 +172,7 @@ def _log_and_clear(state: SignalBotState, symbol: str, trade: OpenSignalTrade, n
     state.total_trades += 1
 
     exit_labels = {"stop": "Stop getroffen", "target": "Ziel getroffen",
-                   "eod": "Sessionende-Schluss", "safety_stop": "Sicherheitsschalter-Schluss",
+                   "eod": "Sessionende-Schluss",
                    "channel_close_signal": "Kanal-Schliess-Anweisung befolgt"}
     send_notification(
         f"Signal-Trade geschlossen: {signal.direction.value.upper()} {symbol}, "
@@ -800,15 +799,6 @@ async def _run(session: CTraderSession, state: SignalBotState, now: datetime) ->
     await _check_message_edits(session, state, datetime.now(timezone.utc))
 
     if state.stopped_permanently:
-        save_state(state, STATE_PATH)
-        return
-
-    total_loss = (equity - state.initial_equity) / state.initial_equity if state.initial_equity else 0.0
-    if total_loss <= TOTAL_LOSS_LIMIT:
-        print(f"Sicherheitsschalter: Gesamtverlust {total_loss * 100:.1f}%")
-        send_notification(f"Signal-Bot Sicherheitsschalter: Gesamtverlust {total_loss * 100:.1f}%, stoppe dauerhaft.")
-        await _close_all_open(session, state, now, "safety_stop")
-        state.stopped_permanently = True
         save_state(state, STATE_PATH)
         return
 
