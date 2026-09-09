@@ -1,34 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-02T07:53:06+00:00,71552,CLOSED DAX BEFORE STOP LOSS HIT.. MINUS 44,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-02T08:04:26+00:00,71553,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-02T08:09:41+00:00,71554,"DONT BOTHER COMMENTING... I KNOW WHEN I FUCK UP
-
-LOST 20","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-02T08:15:36+00:00,71555,"🇬🇧 FTSE 100 INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 10761.9
-
-STOP = 10749","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10761.9, ""stop_level"": 10749, ""target_level"": null}",bereits_offen
-2026-09-02T08:21:06+00:00,71556,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 25,847
-
-STOP = 25,897","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25847.0, ""stop_level"": 25897.0, ""target_level"": null}",bereits_offen
-2026-09-02T08:22:06+00:00,71557,CLOSED FTSE.... MINUS 8 and MINUS 5,,gemini_fehler
-2026-09-02T08:23:19+00:00,71558,My gut tells me I am a good reverse indicator today.... I should stop trading now....,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-02T08:24:53+00:00,71559,"I will run this DAX and if I add to it, I will post it here in Telegram....","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-02T08:26:05+00:00,71560,AUDIT,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-02T09:46:19+00:00,71562,"TRADE- CLOSE ALERT
-Tom doesnt have access to his telegram right now.
-Tom Just closed his DAX at 25761 for ~90pt","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-02T10:43:34+00:00,71563,JUST BACK - thank you Andi for helping me out. I had no way of contacting Telegram to update you.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-02T12:53:11+00:00,71564,"Good morning America,
 
 I hope you are well. 
@@ -989,3 +959,4 @@ STOP = 25800","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", "
 🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-09T07:44:44+00:00,71751,+10,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T07:46:38+00:00,71752,Status,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T11:28:45+00:00,71754,See you for the US session,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
