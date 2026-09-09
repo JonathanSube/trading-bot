@@ -995,3 +995,5 @@ ENTRY = 52361.3
 STOP = 52461.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52361.3, ""stop_level"": 52461.3, ""target_level"": null}",levels_aktualisiert
 2026-09-09T14:24:22+00:00,71791,Telegram is for some reason self-muting,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T14:24:29+00:00,71792,switch to  divergent or YT,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-09T14:28:51+00:00,71793,Stopped out of Dow,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-09T14:28:53+00:00,71794,-100,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
