@@ -1009,3 +1009,7 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 29477.3
 
 STOP = 29425.7","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29477.3, ""stop_level"": 29425.7, ""target_level"": null}",trade_eroeffnet
+2026-09-09T13:44:12+00:00,71778,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-09T13:44:17+00:00,71779,-35,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
