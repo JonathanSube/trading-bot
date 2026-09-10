@@ -1,7 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T13:24:05+00:00,71613,"I will be live shortly. 
-
-Please see this post: https://t.me/c/1238535538/71564","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T13:28:46+00:00,71615,https://youtube.com/live/phXJXdjeliI?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T13:28:51+00:00,71616,LIVE ON ALL 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T13:39:39+00:00,71617,"🇺🇸 NASDAQ INDEX
@@ -1190,3 +1187,7 @@ STOP =52209.1","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", 
 2026-09-10T13:08:51+00:00,71861,will add more to the Nasdaq below 016,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T13:09:51+00:00,71862,all Stops in Dow to 52236,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T13:22:07+00:00,71863,"holding these positions into the open is a risk, but I am now committed","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T13:24:17+00:00,71865,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-10T13:24:30+00:00,71866,-20,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
