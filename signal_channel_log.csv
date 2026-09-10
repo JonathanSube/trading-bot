@@ -1082,3 +1082,7 @@ ENTRY = 10661.5
 
 STOP = 10686.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10661.5, ""stop_level"": 10686.5, ""target_level"": null}",levels_aktualisiert
 2026-09-10T07:55:14+00:00,71827,moving both stopps in the FTSE to 10679,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T07:59:43+00:00,71828,closing one DAX and one FTSE at entry to reduce exposure. Scratch trades,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-10T08:01:05+00:00,71829,"STOP LOSS ALERT 
+
+🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
