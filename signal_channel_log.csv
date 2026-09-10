@@ -1,13 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T14:15:42+00:00,71624,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",bereits_offen
-2026-09-03T14:21:08+00:00,71625,CLOSED ALL,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-03T14:23:48+00:00,71626,I believe these are all the live trades. I was scalping a bit behind the scenes so I cut them out.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-03T14:24:37+00:00,71627,BIT OF A MEAL MADE  by me today..sorry... I think I will go and work on this headache,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T14:26:52+00:00,71629,"Dear everyone,
 
 I am back tomorrow. I have struggled with a headache all day yesterday and again today. I am unsure of the cause. I will stop trading now and get away from the screen. I look forward to seeing you tomorrow morning. 
@@ -1215,3 +1206,4 @@ SOLD SHORT 🔻 = 50%
 ENTRY = 52019.4
 
 STOP = 52220.1","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52019.4, ""stop_level"": 52220.1, ""target_level"": null}",levels_aktualisiert
+2026-09-10T14:25:00+00:00,71883,big spike. Stopped out of both,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
