@@ -1081,3 +1081,4 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 10661.5
 
 STOP = 10686.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10661.5, ""stop_level"": 10686.5, ""target_level"": null}",levels_aktualisiert
+2026-09-10T07:55:14+00:00,71827,moving both stopps in the FTSE to 10679,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
