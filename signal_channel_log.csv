@@ -1216,3 +1216,9 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direc
 
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-10T13:33:35+00:00,71874,"+100 on Dow, scratch on Nasdaq","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-10T13:35:28+00:00,71875,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 29101.5
+
+STOP = 29026.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29101.5, ""stop_level"": 29026.5, ""target_level"": null}",trade_eroeffnet
