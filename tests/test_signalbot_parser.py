@@ -94,6 +94,16 @@ class CloseSignalTests(unittest.TestCase):
         self.assertEqual(r["action"], "close")
         self.assertEqual(r["index"], "DOW")
 
+    def test_stopping_myself_out_of(self):
+        # Live beobachtet (10.09.2026): Gerundium-Variante "stopping myself
+        # out of the dow" statt "STOPPED" - traf die bisherige Regex nicht,
+        # ging an Gemini, das genau diesen Aufruf mit gemini_fehler
+        # quittierte. Die Schliess-Anweisung ging dadurch komplett verloren,
+        # die eigene Position blieb faelschlich offen.
+        r = _fast_parse("stopping myself out of the dow")
+        self.assertEqual(r["action"], "close")
+        self.assertEqual(r["index"], "DOW")
+
     def test_closing_and_calling_it_a_day(self):
         # Live beobachtet (04.09.2026): "CLOSING NASDAQ AND CALLING IT A
         # DAY... NASDAQ SMALL PROFIT" - ging vorher an Gemini, das an

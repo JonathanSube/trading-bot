@@ -208,7 +208,7 @@ _OPEN_RE = re.compile(
 # Schliess-Anweisungen gingen dadurch als "gemini_fehler" verloren statt
 # sofort (ohne Netzwerk-Aufruf) per Schnellerkennung gehandelt zu werden.
 _CLOSE_RE = re.compile(
-    r"(\bSTOPPED\s+(?:MYSELF\s+)?OUT\s+OF\b"
+    r"(\bSTOPP(?:ED|ING)\s+(?:MYSELF\s+)?OUT\s+OF\b"
     r"|\bCLOSE\s+TRADE\s+ALERT\b"
     r"|\bTRADE[\s-]*CLOSE\s+ALERT\b"
     r"|^\s*CLOSED\b"
