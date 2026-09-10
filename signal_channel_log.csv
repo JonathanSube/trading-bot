@@ -1,10 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T07:06:55.845853+00:00,71598,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 25,884
-
-STOP = 25,844","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25884.0, ""stop_level"": 25844.0, ""target_level"": null}",levels_aktualisiert
 2026-09-03T07:25:33+00:00,71599,"🇬🇧 FTSE 100 INDEX
 SOLD SHORT 🔻 = 100%
 
@@ -1025,3 +1019,9 @@ ENTRY =
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-10T07:06:26+00:00,71811,Stopped out,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-10T07:06:52+00:00,71812,-26.4 and -11.8,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T07:09:40+00:00,71815,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
