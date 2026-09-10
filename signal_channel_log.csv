@@ -1069,3 +1069,9 @@ ENTRY = 25543.4
 
 STOP = 25583.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25543.4, ""stop_level"": 25583.5, ""target_level"": null}",levels_aktualisiert
 2026-09-10T07:49:40+00:00,71825,Moving both stopps in the DAX to 600,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T07:53:41+00:00,71826,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
