@@ -1,13 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T07:05:00+00:00,71597,"STOPPED OUT
-
-MINUS 40","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-03T07:05:54+00:00,71598,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-03T07:06:55.845853+00:00,71598,"🇩🇪  GERMAN DAX INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -1032,3 +1023,5 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-10T07:06:26+00:00,71811,Stopped out,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-10T07:06:52+00:00,71812,-26.4 and -11.8,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
