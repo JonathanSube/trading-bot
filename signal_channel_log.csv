@@ -1031,3 +1031,9 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 25603
 
 STOP =25546","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25603.0, ""stop_level"": 25546.0, ""target_level"": null}",levels_aktualisiert
+2026-09-10T07:18:29+00:00,71816,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 10684.5
+
+STOP = 10659.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10684.5, ""stop_level"": 10659.5, ""target_level"": null}",trade_eroeffnet
