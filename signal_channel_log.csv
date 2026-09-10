@@ -1,10 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T07:01:08+00:00,71596,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 25,830
-
-STOP = 25870","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25830.0, ""stop_level"": 25870.0, ""target_level"": null}",trade_eroeffnet
 2026-09-03T07:05:00+00:00,71597,"STOPPED OUT
 
 MINUS 40","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
@@ -1027,6 +1021,12 @@ Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direc
 2026-09-10T06:54:27+00:00,71807,https://youtube.com/live/llcz7lGsapE?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T06:54:30+00:00,71808,LIVE ON ALL 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T07:00:13+00:00,71809,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-10T07:03:52+00:00,71810,"🇩🇪  GERMAN DAX INDEX
 SOLD SHORT 🔻 = 100%
 
 ENTRY = 
