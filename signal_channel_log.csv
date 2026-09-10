@@ -1,10 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T08:03:59+00:00,71604,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 10755
-
-STOP = 10770","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10755.0, ""stop_level"": 10770.0, ""target_level"": null}",trade_eroeffnet
 2026-09-03T08:11:20+00:00,71605,There is one position missing on the DAX short that also lost 1200...,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T08:20:49+00:00,71606,"🇩🇪  GERMAN DAX INDEX
 BOUGHT LONG ⬆️️ = 100%
@@ -1087,3 +1081,10 @@ STOP = 10686.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE""
 
 🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T08:03:25+00:00,71832,"Unlucky so far. Tried long, reversed short. Currently two open positions","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T08:04:17+00:00,71833,Moving SL in the DAX to 588,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T08:04:40+00:00,71834,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
