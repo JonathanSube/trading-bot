@@ -1168,3 +1168,9 @@ STOP = 29079","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ""
 2026-09-10T12:57:52+00:00,71855,stopping myself out of the dow,,gemini_fehler
 2026-09-10T12:58:09+00:00,71856,-18,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T13:01:36+00:00,71857,re-entering Dow at 52280.9,"{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 52280.9, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-10T13:02:46+00:00,71858,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
