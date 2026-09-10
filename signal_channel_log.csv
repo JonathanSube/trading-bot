@@ -1086,3 +1086,4 @@ STOP = 10686.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE""
 2026-09-10T08:01:05+00:00,71829,"STOP LOSS ALERT 
 
 🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T08:03:25+00:00,71832,"Unlucky so far. Tried long, reversed short. Currently two open positions","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
