@@ -1038,3 +1038,9 @@ ENTRY = 10684.5
 
 STOP = 10659.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10684.5, ""stop_level"": 10659.5, ""target_level"": null}",trade_eroeffnet
 2026-09-10T07:20:26+00:00,71817,Moving SL in DAX to 25568.2,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T07:23:52+00:00,71818,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 25612.7
+
+STOP = 25572.7","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25612.7, ""stop_level"": 25572.7, ""target_level"": null}",trade_eroeffnet
