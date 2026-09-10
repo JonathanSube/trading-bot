@@ -1152,3 +1152,4 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 29045.9
 
 STOP = 29088.8","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 29045.9, ""stop_level"": 29088.8, ""target_level"": null}",levels_aktualisiert
+2026-09-10T12:55:51+00:00,71853,uh oh - Trump Post,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
