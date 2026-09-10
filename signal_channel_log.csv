@@ -1191,3 +1191,4 @@ STOP =52209.1","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", 
 
 🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-10T13:24:30+00:00,71866,-20,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T13:25:09+00:00,71867,stopped out of second dow,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
