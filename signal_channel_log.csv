@@ -1,16 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T13:39:39+00:00,71617,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 29,258
-
-STOP = 29,158","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29258.0, ""stop_level"": 29158.0, ""target_level"": null}",trade_eroeffnet
-2026-09-03T13:40:06+00:00,71618,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 29,279
-
-STOP = 29,179","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29279.0, ""stop_level"": 29179.0, ""target_level"": null}",bereits_offen
 2026-09-03T13:45:10+00:00,71619,"🇺🇸 NASDAQ INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -1227,3 +1215,5 @@ STOP = 29026.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-10T13:38:13+00:00,71877,closed nasdaq for zero,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-10T13:38:24+00:00,71878,"no open orders, no open postions","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T13:41:47+00:00,71879,https://youtube.com/live/JE_6dPW2WW4?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T13:42:26+00:00,71880,LIVE on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
