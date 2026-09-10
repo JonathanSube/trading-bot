@@ -1138,3 +1138,11 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 52278
 
 STOP = 52202","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 52278.0, ""stop_level"": 52202.0, ""target_level"": null}",trade_eroeffnet
+2026-09-10T12:52:14+00:00,71850,Nasdaq orders,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T12:52:32+00:00,71851,Dow flip order,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T12:52:46+00:00,71852,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
