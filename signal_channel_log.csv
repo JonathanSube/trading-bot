@@ -1,29 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T13:45:10+00:00,71619,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 29,289
-
-STOP = 29,189","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29289.0, ""stop_level"": 29189.0, ""target_level"": null}",bereits_offen
-2026-09-03T13:49:39+00:00,71620,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",bereits_offen
-2026-09-03T13:51:35+00:00,71621,"EASING EXPOSURE... CLOSED 4 and 3 and 2.. I think ""4"" actually lost me a point. I will check later","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-03T14:01:43+00:00,71622,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =53,418 42182","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": 53418.0, ""target_level"": null}",trade_eroeffnet
-2026-09-03T14:04:46.239352+00:00,71622,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 53,418
-
-STOP = 53,295","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53418.0, ""stop_level"": 53295.0, ""target_level"": null}",levels_aktualisiert
 2026-09-03T14:09:58+00:00,71623,STOPPED OUT OF DOW... MINUS 125,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-03T14:15:42+00:00,71624,"🇺🇸 NASDAQ INDEX
 BOUGHT LONG ⬆️️ = 100%
@@ -1217,3 +1192,9 @@ STOP = 29026.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ
 2026-09-10T13:38:24+00:00,71878,"no open orders, no open postions","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T13:41:47+00:00,71879,https://youtube.com/live/JE_6dPW2WW4?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T13:42:26+00:00,71880,LIVE on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T14:05:03+00:00,71881,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 50%
+
+ENTRY = 52045
+
+STOP = 52265.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52045.0, ""stop_level"": 52265.9, ""target_level"": null}",trade_eroeffnet
