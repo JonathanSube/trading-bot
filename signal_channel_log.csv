@@ -1209,3 +1209,9 @@ SOLD SHORT 🔻 = 50%
 ENTRY = 52019.4
 
 STOP = 52119.4","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52019.4, ""stop_level"": 52119.4, ""target_level"": null}",levels_aktualisiert
+2026-09-10T14:12:57.200510+00:00,71882,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 50%
+
+ENTRY = 52019.4
+
+STOP = 52220.1","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52019.4, ""stop_level"": 52220.1, ""target_level"": null}",levels_aktualisiert
