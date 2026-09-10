@@ -1188,3 +1188,4 @@ ENTRY = 52309.1
 STOP =52209.1","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 52309.1, ""stop_level"": 52209.1, ""target_level"": null}",trade_eroeffnet
 2026-09-10T13:07:26+00:00,71860,will buy more Dow at 324,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T13:08:51+00:00,71861,will add more to the Nasdaq below 016,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T13:09:51+00:00,71862,all Stops in Dow to 52236,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
