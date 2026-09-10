@@ -1,11 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T06:51:41+00:00,71593,"Good morning 
-
-I will see you shortly.
-
-Please see this post: https://t.me/c/1238535538/71500
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T06:56:22+00:00,71595,https://youtube.com/live/uv_O2eN8t9g?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-03T07:01:08+00:00,71596,"🇩🇪  GERMAN DAX INDEX
 SOLD SHORT 🔻 = 100%
@@ -1005,3 +998,32 @@ STOP = 52461.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"",
 2026-09-09T15:13:00+00:00,71802,See you again tomorrow,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T15:13:07+00:00,71803,"Stay strong, as Tom uses to say","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T16:07:33+00:00,71804,This pretty much resembles today's trading,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T06:00:32+00:00,71805,"Good morning,
+
+I’ll start today’s European session at 08:55 CEST, 5 minutes before the DAX open.
+
+I’ll be flying solo again throughout the rest of this week and next, covering both the European and US sessions.
+
+Once I’m live on Tom’s YouTube channel, I’ll share the link here.
+
+YouTube can have some latency. A low-latency audio feed is also available:
+https://divergent.uk/tom/
+
+If your connection allows it, you can combine the YouTube video with the Divergent audio for the best experience.
+
+Comments are disabled both on YouTube and in this Telegram group, in line with Tom’s policy. If I answer questions during the stream, they usually reach me via private Telegram messages.
+
+Disclaimer
+
+I trade live using a real account. This is not financial advice.
+
+Trading involves risk, and past performance is not indicative of future results. Always do your own research.
+
+This stream and its recordings are for educational purposes only and are governed by the terms set out at:
+https://tradertom.com/disclaimer/
+
+See you at 08:55 CEST.
+
+Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T06:54:27+00:00,71807,https://youtube.com/live/llcz7lGsapE?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T06:54:30+00:00,71808,LIVE ON ALL 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
