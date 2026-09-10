@@ -1214,3 +1214,4 @@ ENTRY = 52260.8
 STOP = 52056.4","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 52260.8, ""stop_level"": 52056.4, ""target_level"": null}",trade_eroeffnet
 2026-09-10T14:26:57+00:00,71886,"no open orders. 2 long positions, each in dow and nasdaq","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T14:31:37+00:00,71887,Move SL in Nasdaq up to 29125.9,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-10T14:32:54+00:00,71888,Move SL in DOW to 52107.1,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
