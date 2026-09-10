@@ -1095,3 +1095,6 @@ STOP = 10669.2","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE""
 2026-09-10T08:33:48+00:00,71838,"CLOSE TRADE ALERT 
 
 🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-10T08:33:49+00:00,71839,"CLOSE TRADE ALERT 
+
+🇬🇧 CLOSING FTSE INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
