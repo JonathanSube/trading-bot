@@ -28,16 +28,16 @@
         "signal": {
           "direction": "short",
           "entry_price": 10661.42,
-          "stop": 10714.727099999998,
-          "target": 10554.805800000004,
-          "risk": 53.30709999999817,
+          "stop": 10681.605270123346,
+          "target": 10621.049459753309,
+          "risk": 20.185270123345617,
           "entry_timestamp": "2026-09-10T03:32:10.899616-04:00"
         },
         "order_id": 42688094,
         "qty": 4.41,
         "source_message_id": 71821,
         "entry_fill": 10661.42,
-        "last_seen_edit_date": null
+        "last_seen_edit_date": "2026-09-10T07:33:16+00:00"
       }
     ],
     "GER40": [
@@ -45,22 +45,22 @@
         "signal": {
           "direction": "short",
           "entry_price": 25558.29,
-          "stop": 25686.081449999998,
-          "target": 25302.707100000007,
-          "risk": 127.79144999999698,
+          "stop": 25598.269805406082,
+          "target": 25478.33038918784,
+          "risk": 39.97980540608114,
           "entry_timestamp": "2026-09-10T03:32:48.652470-04:00"
         },
         "order_id": 42688111,
         "qty": 1.78,
         "source_message_id": 71823,
         "entry_fill": 25558.29,
-        "last_seen_edit_date": null
+        "last_seen_edit_date": "2026-09-10T07:32:56+00:00"
       }
     ]
   },
   "telegram_update_offset": 700987115,
   "last_channel_message_at": "2026-09-10T07:32:26+00:00",
-  "last_poll_at": "2026-09-10T07:32:47.652250+00:00",
+  "last_poll_at": "2026-09-10T07:33:23.147321+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
