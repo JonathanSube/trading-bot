@@ -1159,3 +1159,11 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-10T12:58:07.811599+00:00,71854,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 29016
+
+STOP = 29079","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 29016.0, ""stop_level"": 29079.0, ""target_level"": null}",levels_aktualisiert
+2026-09-10T12:57:52+00:00,71855,stopping myself out of the dow,,gemini_fehler
+2026-09-10T12:58:09+00:00,71856,-18,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
