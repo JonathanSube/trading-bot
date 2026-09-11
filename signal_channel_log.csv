@@ -1,5 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-04T13:29:46+00:00,71651,https://youtube.com/live/NbOUXRCZWZI?feature=share,,gemini_fehler
 2026-09-04T13:31:20+00:00,71654,LIVE ON ALL 3,,gemini_fehler
 2026-09-04T13:31:24+00:00,71655,"🇺🇸 DOW JONES INDEX
 BOUGHT LONG ⬆️️ = 100%
@@ -1309,3 +1308,15 @@ I'm genuinely happy to answer questions, but I'm not a personal search engine. I
 Remember: I don't know those URLs by heart either. If you ask me for one, I have to stop what I'm doing, search for it, and send it to you. At that point we're both spending the same amount of time, except only one of us chose to.
 Save the DMs for questions that actually require experience or judgement. I'm always happy to help with those.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-11T13:29:46+00:00,71925,"might need amend, watch youtube","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T13:30:07+00:00,71926,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-11T13:30:21+00:00,71927,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-11T13:30:23+00:00,71928,+26.7,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T13:30:52+00:00,71929,no open orders,,gemini_fehler
+2026-09-11T13:30:56+00:00,71930,no open positions,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
