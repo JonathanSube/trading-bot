@@ -1229,3 +1229,7 @@ ENTRY = 25436.1
 
 STOP = 25396.1","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25436.1, ""stop_level"": 25396.1, ""target_level"": null}",levels_aktualisiert
 2026-09-11T07:37:24+00:00,71906,"This is a SRS ANTI. Reason: expecting a rather choppy and rangebound 90 minutes before the CPI release, according to prep. So far... position is under water.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T07:59:40+00:00,71907,"CLOSE TRADE ALERT 
+
+🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-11T07:59:42+00:00,71908,-10,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
