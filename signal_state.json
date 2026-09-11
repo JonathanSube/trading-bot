@@ -22,13 +22,13 @@
         "qty": 1.52,
         "source_message_id": 71900,
         "entry_fill": 25479.49,
-        "last_seen_edit_date": null
+        "last_seen_edit_date": "2026-09-11T07:06:41+00:00"
       }
     ]
   },
   "telegram_update_offset": 700987115,
   "last_channel_message_at": "2026-09-11T07:02:34+00:00",
-  "last_poll_at": "2026-09-11T07:05:50.743113+00:00",
+  "last_poll_at": "2026-09-11T07:06:47.045157+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
