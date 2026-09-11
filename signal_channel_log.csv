@@ -1,56 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-04T13:31:20+00:00,71654,LIVE ON ALL 3,,gemini_fehler
-2026-09-04T13:31:24+00:00,71655,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 53,558
-
-STOP = 53433","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53558.0, ""stop_level"": 53433.0, ""target_level"": null}",trade_eroeffnet
-2026-09-04T13:35:22+00:00,71656,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 29,580
-
-STOP = 29480","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29580.0, ""stop_level"": 29480.0, ""target_level"": null}",trade_eroeffnet
-2026-09-04T13:44:09+00:00,71657,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 29,592
-
-STOP = 29492","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29592.0, ""stop_level"": 29492.0, ""target_level"": null}",trade_eroeffnet
-2026-09-04T13:46:01+00:00,71658,think I am being disconnected from Telegram,,gemini_fehler
-2026-09-04T13:49:18+00:00,71659,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 53560
-
-STOP = 53420","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 53560.0, ""stop_level"": 53420.0, ""target_level"": null}",trade_eroeffnet
-2026-09-04T13:51:21+00:00,71660,STOPPED MYSELF OUT OF DOW... MINUS 40,,gemini_fehler
-2026-09-04T13:54:32+00:00,71661,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-04T13:55:50.355279+00:00,71661,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 29610
-
-STOP = 29,510","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29610.0, ""stop_level"": 29510.0, ""target_level"": null}",levels_aktualisiert
-2026-09-04T13:56:25+00:00,71662,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 29628
-
-STOP =29,528","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29628.0, ""stop_level"": 29528.0, ""target_level"": null}",trade_eroeffnet
-2026-09-04T13:57:03+00:00,71663,CLOSED ALL NASDAQ,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-04T13:59:42+00:00,71664,"🇬🇧 FTSE 100 INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-04T14:01:27+00:00,71665,FTSE plus 6 scalp,,gemini_fehler
 2026-09-04T14:02:51+00:00,71666,STOPPED OUT OF DOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-04T14:03:35+00:00,71667,trades during the session,,gemini_fehler
@@ -1320,3 +1268,4 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""di
 2026-09-11T13:30:23+00:00,71928,+26.7,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-11T13:30:52+00:00,71929,no open orders,,gemini_fehler
 2026-09-11T13:30:56+00:00,71930,no open positions,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T14:01:09+00:00,71931,SRS long orders,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
