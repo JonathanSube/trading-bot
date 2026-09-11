@@ -1286,3 +1286,5 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 29384.3
 
 STOP = 29317.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29384.3, ""stop_level"": 29317.5, ""target_level"": null}",levels_aktualisiert
+2026-09-11T12:54:17+00:00,71918,moving SL up,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T12:54:31+00:00,71919,"SL in Nas to 29367, in Dow to 52494.7","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal

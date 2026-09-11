@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "last_message_id": 71917,
+  "last_message_id": 71919,
   "initial_equity": 10000.12,
   "total_pnl": -3071.498400000008,
   "total_trades": 76,
@@ -44,8 +44,8 @@
     ]
   },
   "telegram_update_offset": 700987115,
-  "last_channel_message_at": "2026-09-11T12:50:45+00:00",
-  "last_poll_at": "2026-09-11T12:53:49.587238+00:00",
+  "last_channel_message_at": "2026-09-11T12:54:31+00:00",
+  "last_poll_at": "2026-09-11T12:54:51.465851+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
