@@ -1,7 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-04T13:25:39+00:00,71649,"Good morning America, 
-
-I am live in a few minutes",,gemini_fehler
 2026-09-04T13:29:46+00:00,71651,https://youtube.com/live/NbOUXRCZWZI?feature=share,,gemini_fehler
 2026-09-04T13:31:20+00:00,71654,LIVE ON ALL 3,,gemini_fehler
 2026-09-04T13:31:24+00:00,71655,"🇺🇸 DOW JONES INDEX
@@ -1311,3 +1308,4 @@ A: Please spend a minute looking for the answer yourself before asking.
 I'm genuinely happy to answer questions, but I'm not a personal search engine. If the answer is in a pinned post, one Google search away, or explained in the manual, you'll often find it just as quickly as I would.
 Remember: I don't know those URLs by heart either. If you ask me for one, I have to stop what I'm doing, search for it, and send it to you. At that point we're both spending the same amount of time, except only one of us chose to.
 Save the DMs for questions that actually require experience or judgement. I'm always happy to help with those.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T13:29:46+00:00,71925,"might need amend, watch youtube","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
