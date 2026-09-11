@@ -13,16 +13,16 @@
         "signal": {
           "direction": "long",
           "entry_price": 52547.57,
-          "stop": 52284.83215,
-          "target": 53073.045699999995,
-          "risk": 262.7378499999977,
+          "stop": 52464.63579891063,
+          "target": 52713.438402178734,
+          "risk": 82.93420108936698,
           "entry_timestamp": "2026-09-11T08:51:04.221915-04:00"
         },
         "order_id": 42792998,
         "qty": 0.72,
         "source_message_id": 71916,
         "entry_fill": 52547.57,
-        "last_seen_edit_date": null
+        "last_seen_edit_date": "2026-09-11T12:51:07+00:00"
       }
     ],
     "NAS100": [
@@ -30,22 +30,22 @@
         "signal": {
           "direction": "long",
           "entry_price": 29389.48,
-          "stop": 29242.5326,
-          "target": 29683.3748,
-          "risk": 146.94740000000093,
+          "stop": 29322.668224187746,
+          "target": 29523.103551624507,
+          "risk": 66.81177581225347,
           "entry_timestamp": "2026-09-11T08:51:06.494220-04:00"
         },
         "order_id": 42793007,
         "qty": 1.29,
         "source_message_id": 71917,
         "entry_fill": 29389.48,
-        "last_seen_edit_date": null
+        "last_seen_edit_date": "2026-09-11T12:51:27+00:00"
       }
     ]
   },
   "telegram_update_offset": 700987115,
   "last_channel_message_at": "2026-09-11T12:50:45+00:00",
-  "last_poll_at": "2026-09-11T12:51:02.711255+00:00",
+  "last_poll_at": "2026-09-11T12:51:42.648153+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
