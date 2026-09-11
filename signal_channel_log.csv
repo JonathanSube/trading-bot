@@ -1,6 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-04T07:10:04+00:00,71639,CLOSED FTSE AND DAX,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-04T07:10:36+00:00,71640,more or less breakeven on both,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-04T07:15:00+00:00,71641,"🇩🇪  GERMAN DAX INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -1241,3 +1239,7 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 25443
 
 STOP = 25483","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25443.0, ""stop_level"": 25483.0, ""target_level"": null}",trade_eroeffnet
+2026-09-11T07:13:16+00:00,71903,"CLOSE TRADE ALERT 
+
+🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-11T07:13:18+00:00,71904,-16,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
