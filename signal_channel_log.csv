@@ -1294,3 +1294,20 @@ STOP = 29317.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ
 2026-09-11T12:55:13+00:00,71921,"CLOSE TRADE ALERT 
 
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-11T13:07:07+00:00,71923,"Top 4 FAQs for New Members
+1) Q: Where can I find documentation on the Expresso strategy?
+A: Tom has not yet published official documentation. During my first appearance on his YouTube channel, he asked me to explain how I understand and apply the Expresso technique. Feel free to watch that session if you're interested. It reflects my own interpretation and application of the strategy.
+For additional educational material, visit Tom's Resource Channel:
+https://t.me/+pE7iNRn7iSo4ZTA0
+2) Q: How can I contact you or Tom?
+A: Comments and live chat are intentionally disabled on YouTube and in this Telegram group. If you have a question, please send either Tom or me a private message on Telegram.
+3) Q: What software are you using?
+A: Tom uses several custom-built tools.
+The chart trading tool (Trade From Chart / TFC) is a donation-based (but free) extension for the Trade Nation platform and is available here:
+https://t.me/+lQ2MINASISU5ZDU0
+The price action research tool you occasionally see us use is a private tool and is currently not available to the public.
+4) Q: Can you post the link to the Expresso video? Can you tell me how to install TFC?
+A: Please spend a minute looking for the answer yourself before asking.
+I'm genuinely happy to answer questions, but I'm not a personal search engine. If the answer is in a pinned post, one Google search away, or explained in the manual, you'll often find it just as quickly as I would.
+Remember: I don't know those URLs by heart either. If you ask me for one, I have to stop what I'm doing, search for it, and send it to you. At that point we're both spending the same amount of time, except only one of us chose to.
+Save the DMs for questions that actually require experience or judgement. I'm always happy to help with those.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
