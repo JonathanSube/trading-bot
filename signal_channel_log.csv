@@ -1,15 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-03T20:41:48+00:00,71630,"Good evening, 
-
-I went for a long ride and I feel great now. I think I was dehydrated and not eaten enough. I will see you for the EU session tomorrow morning. Good night
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-04T05:47:43+00:00,71631,"good morning 
-
-❤️","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-04T05:48:08+00:00,71632,"https://t.me/c/1238535538/71500
-
- see you in an hour","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-04T06:55:57+00:00,71634,https://youtube.com/live/Pxa03Iogf5E?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-04T06:56:01+00:00,71635,LIVE ON ALL 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-04T07:00:22+00:00,71636,"🇩🇪  GERMAN DAX INDEX
@@ -1224,3 +1213,32 @@ STOP = 52056.4","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"",
 2026-09-10T14:35:58+00:00,71891,"CLOSE TRADE ALERT 
 
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-11T05:47:00+00:00,71896,"Good morning,
+
+I’ll start today’s European session at 08:55 CEST, 5 minutes before the DAX open.
+
+I’ll be flying solo today and throughout next week, covering both the European and US sessions.
+
+Once I’m live on Tom’s YouTube channel, I’ll share the link here.
+
+YouTube can have some latency. A low-latency audio feed is also available:
+https://divergent.uk/tom/
+
+If your connection allows it, you can combine the YouTube video with the Divergent audio for the best experience.
+
+Comments are disabled both on YouTube and in this Telegram group, in line with Tom’s policy. If I answer questions during the stream, they usually reach me via private Telegram messages.
+
+Disclaimer
+
+I trade live using a real account. This is not financial advice.
+
+Trading involves risk, and past performance is not indicative of future results. Always do your own research.
+
+This stream and its recordings are for educational purposes only and are governed by the terms set out at:
+https://tradertom.com/disclaimer/
+
+See you at 08:55 CEST.
+
+Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T06:54:39+00:00,71898,https://youtube.com/live/ORWP-5p1Rfs?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T06:54:46+00:00,71899,LIVE on ALL 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
