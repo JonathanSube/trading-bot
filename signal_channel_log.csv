@@ -1,6 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-04T14:02:51+00:00,71666,STOPPED OUT OF DOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-04T14:03:35+00:00,71667,trades during the session,,gemini_fehler
 2026-09-04T14:16:59+00:00,71668,closed my 1/2 nasdaq,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-04T14:20:31+00:00,71669,"🇺🇸 NASDAQ INDEX
 SOLD SHORT 🔻 = 100%
@@ -1269,3 +1267,5 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""di
 2026-09-11T13:30:56+00:00,71930,no open positions,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-11T14:01:09+00:00,71931,SRS long orders,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-11T14:02:20+00:00,71932,deleting Nasdaq order,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T14:05:51+00:00,71933,deleting Dow order,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T14:05:58+00:00,71934,Happy Capital Preservation Friday,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
