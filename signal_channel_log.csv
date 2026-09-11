@@ -1234,3 +1234,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 25489
 
 STOP = 25449","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25489.0, ""stop_level"": 25449.0, ""target_level"": null}",levels_aktualisiert
+2026-09-11T07:08:40+00:00,71901,stopped out -40,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
