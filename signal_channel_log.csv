@@ -1,24 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-04T14:16:59+00:00,71668,closed my 1/2 nasdaq,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-04T14:20:31+00:00,71669,"🇺🇸 NASDAQ INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 29,536
-
-STOP =29,636","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 29536.0, ""stop_level"": 29636.0, ""target_level"": null}",trade_eroeffnet
-2026-09-04T14:26:54+00:00,71670,"🇺🇸 NASDAQ INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 29517.8
-
-STOP = 29617","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 29517.8, ""stop_level"": 29617.0, ""target_level"": null}",trade_eroeffnet
-2026-09-04T14:28:52+00:00,71671,CLOSING NASDAQ AND CALLING IT A DAY... NASDAQ SMALL PROFIT,,gemini_fehler
-2026-09-04T14:29:14+00:00,71672,It was lovely to trade with you this week. I am back next week.,,gemini_fehler
-2026-09-04T14:31:08+00:00,71673,"I will make a decision over the weekend if we are trading EU on Monday.... 
-
-Stay tuned... 
-
-lots of love and best wishes for a great weekend...",,gemini_fehler
 2026-09-04T14:45:49+00:00,71675,FUCK SAKE... just seen NASDAQ,,gemini_fehler
 2026-09-06T14:27:59+00:00,71676,"SPECIAL ANNOUNCEMENT
 
@@ -1269,3 +1249,4 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""di
 2026-09-11T14:02:20+00:00,71932,deleting Nasdaq order,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-11T14:05:51+00:00,71933,deleting Dow order,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-11T14:05:58+00:00,71934,Happy Capital Preservation Friday,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-11T14:43:07+00:00,71936,Have a lovely weekend,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
