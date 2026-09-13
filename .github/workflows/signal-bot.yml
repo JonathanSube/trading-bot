@@ -1,19 +1,20 @@
 name: Signal Bot
 
 on:
-  schedule:
-    # Fallback-Takt wie beim ORB-Bot (.github/workflows/trading-bot.yml) -
-    # native GitHub-Schedules laufen unzuverlaessig nach (siehe
-    # trading-bot-spec.md, Betriebsvorfaelle), Haupt-Auslöser ist der
-    # externe cron-job.org-Trigger auf workflow_dispatch, idealerweise
-    # dichter getaktet fuer zeitnahe Signalreaktion. Minuetlich, 06:00-21:59
-    # UTC deckt alle vier Instrument-Sessions inkl. 5-Minuten-Vorlauf ab
-    # (DAX/FTSE ab ~06:55 UTC im Sommer, NASDAQ/DOW ab ~13:25 UTC im Sommer,
-    # bis zum US-Handelsschluss ~21:00 UTC im Winter) - siehe SESSIONS/
-    # PRE_SESSION_LEAD_MINUTES in scripts/run_signal_bot.py, die das
-    # tatsaechliche Ein-/Ausschalten pro Instrument und Lauf DST-sicher
-    # entscheiden.
-    - cron: "* 6-21 * * 1-5"
+  # Automatischer Takt (Cron + externer cron-job.org-Trigger auf
+  # workflow_dispatch) DEAKTIVIERT seit 13.09.2026 (Nutzerwunsch: Bot laeuft
+  # jetzt dauerhaft auf dem Homeserver statt hier, siehe
+  # scripts/run_signal_bot.py::run_forever() und deploy/README.md).
+  # NIEMALS wieder aktivieren, solange der Homeserver-Dienst laeuft - zwei
+  # gleichzeitig pollende Prozesse auf demselben Telegram-/cTrader-Konto
+  # koennten sich Nachrichten/Positionen gegenseitig wegschnappen bzw.
+  # doppelt reagieren (siehe die Doppelkauf-Vorfaelle in trading-bot-spec.md).
+  # workflow_dispatch bleibt fuer einen bewussten manuellen Einzellauf
+  # (z.B. Notfall, falls der Homeserver ausfaellt) erhalten.
+  #
+  # Ehemals:
+  #   schedule:
+  #     - cron: "* 6-21 * * 1-5"
   workflow_dispatch: {}
 
 concurrency:

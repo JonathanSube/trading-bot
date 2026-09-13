@@ -21,6 +21,15 @@ REST-Aufrufe (siehe tradingbot/ctrader.py). Der bestehende Telegram-Abruf
 (zuvor per eigenem `asyncio.run(...)`) laeuft jetzt im selben Event-Loop
 mit.
 
+Laeuft seit dem 13.09.2026 als Dauerprozess auf dem Homeserver
+(`run_forever()`, per systemd, siehe deploy/) statt als von aussen
+(cron-job.org) alle ~60 Sekunden neu gestarteter Kurzlauf ueber GitHub
+Actions - Reaktionstakt jetzt POLL_INTERVAL_SECONDS (3s) statt ~60s, der
+eigentliche Ablauf pro Durchlauf (_run()) ist unveraendert. Der
+GitHub-Actions-Trigger in .github/workflows/signal-bot.yml ist deshalb
+deaktiviert (nur noch manuell per workflow_dispatch startbar) - NIEMALS
+gleichzeitig mit dem Homeserver-Dienst laufen lassen, siehe deploy/README.md.
+
 Ablauf pro Lauf:
 1. Kill-Switch pruefen
 2. Zustand laden, cTrader-Session oeffnen (Access-Token holen, verbinden,
@@ -44,7 +53,9 @@ Ablauf pro Lauf:
 11. Zustand speichern
 """
 
+import asyncio
 import os
+import subprocess
 import sys
 import time as time_module
 from datetime import datetime, time, timedelta, timezone
@@ -134,6 +145,24 @@ SIGNAL_RISK_PCT = 0.03
 # Instrument steigt dadurch bewusst bis auf das MAX_POSITIONS_PER_SYMBOL-
 # fache von SIGNAL_RISK_PCT, das ist der explizit gewuenschte Tradeoff.
 MAX_POSITIONS_PER_SYMBOL = 4
+
+# --- Dauerbetrieb auf dem Homeserver (Nutzerwunsch 13.09.2026) ---
+# Ersetzt den bisherigen externen ~60-Sekunden-Trigger (cron-job.org auf
+# workflow_dispatch, siehe .github/workflows/signal-bot.yml) durch eine
+# dauerhaft laufende Schleife (run_forever() unten), die alle
+# POLL_INTERVAL_SECONDS einen Durchlauf macht, OHNE die cTrader-Verbindung
+# zwischendurch zu trennen. Der eigentliche Ablauf pro Durchlauf (_run())
+# ist dabei komplett unveraendert.
+POLL_INTERVAL_SECONDS = 3
+# Wie oft der lokale Zustand zusaetzlich nach GitHub gepusht wird - NICHT
+# fuer die eigene Funktion noetig (der Zustand bleibt jetzt durchgehend
+# lokal erhalten), sondern ausschliesslich, damit die bestehende
+# Fernueberwachung (liest signal_state.json/signal_channel_log.csv per
+# `git fetch` aus dem GitHub-Repo) weiter funktioniert. Bei jedem der
+# POLL_INTERVAL_SECONDS-Durchlaeufe zu pushen wuerde bei 3 Sekunden Takt zu
+# einer Flut von Commits fuehren - dieselbe Kadenz wie beim bisherigen
+# externen Trigger reicht fuer die Ueberwachung voellig aus.
+GIT_PUSH_MIN_INTERVAL_SECONDS = 60
 
 
 def _log_and_clear(state: SignalBotState, symbol: str, trade: OpenSignalTrade, now: datetime,
@@ -523,7 +552,7 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         # Aufrufe unten, die genau dafuer jetzt nach jeder Nachricht statt
         # nur am Ende des Laufs passieren).
         if i > 0 and _fast_parse(text) is None:
-            time_module.sleep(GEMINI_CALL_DELAY_SECONDS)
+            await asyncio.sleep(GEMINI_CALL_DELAY_SECONDS)
 
         # JEDE ausgewertete Nachricht wird protokolliert (nicht nur die,
         # die zu einem Trade fuehren) - Nutzerwunsch (28.08.2026): die
@@ -753,6 +782,100 @@ async def _try_new_signals(session: CTraderSession, state: SignalBotState,
         save_state(state, STATE_PATH)
 
 
+def _git(*args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True)
+
+
+def _push_state_to_git() -> None:
+    """Gleiche Commit-/Retry-Logik wie zuvor im jetzt deaktivierten
+    GitHub-Actions-Schritt "Zustand und Protokoll zurückschreiben" (siehe
+    .github/workflows/signal-bot.yml) - unveraendert uebernommen, nur von
+    Bash nach Python portiert, damit die bestehende Fernueberwachung
+    weiter funktioniert (siehe GIT_PUSH_MIN_INTERVAL_SECONDS oben). Rein
+    lokale Laeufe ohne konfiguriertes Git-Remote scheitern hier still -
+    das Sichern nach GitHub ist ein Best-Effort-Zusatz, kein Grund, den
+    Bot deswegen anzuhalten."""
+    for f in ("signal_state.json", "signal_trades.csv", "signal_channel_log.csv"):
+        if (ROOT / f).exists():
+            _git("add", f)
+    if _git("diff", "--staged", "--quiet").returncode == 0:
+        return  # nichts geaendert seit dem letzten Push
+
+    _git("commit", "-m", f"Signal-Bot-Lauf {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}")
+    for attempt in range(1, 6):
+        if _git("push").returncode == 0:
+            return
+        print(f"[git-sync] Push abgelehnt (Versuch {attempt}), hole aktuellen Stand und versuche erneut...")
+        _git("fetch", "origin", "master")
+        _git("rebase", "-X", "theirs", "origin/master")
+        time_module.sleep(2)
+    print("[git-sync] Push nach 5 Versuchen weiterhin fehlgeschlagen - Zustand bleibt nur lokal gesichert.")
+
+
+_last_git_push_monotonic: float | None = None
+
+
+def _maybe_push_state_to_git(loop_start_monotonic: float) -> None:
+    global _last_git_push_monotonic
+    if (_last_git_push_monotonic is not None
+            and loop_start_monotonic - _last_git_push_monotonic < GIT_PUSH_MIN_INTERVAL_SECONDS):
+        return
+    _last_git_push_monotonic = loop_start_monotonic
+    try:
+        _push_state_to_git()
+    except Exception as e:
+        print(f"[git-sync] Fehler beim Sichern nach GitHub (Zustand bleibt lokal erhalten): {e}")
+
+
+async def run_forever() -> None:
+    """Dauerbetrieb auf dem Homeserver statt einzelner, von aussen
+    (bisher: cron-job.org) getriggerter Kurzlaeufe - siehe die
+    POLL_INTERVAL_SECONDS-Erklaerung oben. Haelt EINE cTrader-Verbindung
+    offen und ruft _run() alle POLL_INTERVAL_SECONDS auf; _run() selbst
+    ist dabei WORTWOERTLICH derselbe Code wie zuvor pro Einzellauf.
+
+    Kill-Switch wird bewusst VOR dem Verbindungsaufbau geprueft (wie zuvor
+    in main()) und zusaetzlich bei jedem Durchlauf innerhalb der offenen
+    Verbindung - wird er waehrenddessen gesetzt, trennt der Bot die
+    Verbindung komplett, statt nur untaetig verbunden zu bleiben.
+
+    Ein unerwarteter Fehler wird wie zuvor gemeldet, der Zustand gesichert
+    und die Exception erneut geworfen - das beendet den Prozess komplett
+    (ueber run_ctrader() unten), ein systemd-Service mit `Restart=always`
+    (siehe deploy/signal-bot.service) startet ihn dann neu und baut die
+    Verbindung frisch auf. Bewusst KEIN selbstgebauter Reconnect-Mechanismus
+    hier - das entspricht genau dem bisherigen Verhalten (Absturz -> naechster
+    externer Trigger startet neu), nur dass jetzt systemd statt GitHub Actions
+    der "externe Trigger" ist."""
+    state = load_state(STATE_PATH)
+    while True:
+        kill_switch = check_kill_switch(KILL_SWITCH_PATH)
+        if kill_switch is not None:
+            print(f"Kill-Switch aktiv: {kill_switch.reason}. Warte, bis er entfernt wird.")
+            await asyncio.sleep(POLL_INTERVAL_SECONDS)
+            continue
+
+        async with ctrader_session() as session:
+            while True:
+                kill_switch = check_kill_switch(KILL_SWITCH_PATH)
+                if kill_switch is not None:
+                    print(f"Kill-Switch aktiv: {kill_switch.reason}. Trenne Verbindung.")
+                    break
+
+                loop_start = time_module.monotonic()
+                now = datetime.now(NY)
+                try:
+                    await _run(session, state, now)
+                except Exception as e:
+                    print(f"Unerwarteter Fehler: {e}")
+                    send_notification(f"Signal-Bot-Fehler: {e}")
+                    save_state(state, STATE_PATH)
+                    _maybe_push_state_to_git(loop_start)
+                    raise
+                _maybe_push_state_to_git(loop_start)
+                await asyncio.sleep(POLL_INTERVAL_SECONDS)
+
+
 async def main() -> None:
     now = datetime.now(NY)
 
@@ -849,5 +972,9 @@ async def _run(session: CTraderSession, state: SignalBotState, now: datetime) ->
 
 
 if __name__ == "__main__":
-    # bewusst run_ctrader() statt asyncio.run() - siehe tradingbot/ctrader.py
-    run_ctrader(main())
+    # bewusst run_ctrader() statt asyncio.run() - siehe tradingbot/ctrader.py.
+    # run_forever() statt main() (Nutzerwunsch 13.09.2026, Umzug vom
+    # ~60-Sekunden-GitHub-Actions-Trigger auf Dauerbetrieb per systemd auf
+    # dem Homeserver, siehe deploy/) - main() bleibt fuer einen manuellen
+    # Einzellauf erhalten.
+    run_ctrader(run_forever())

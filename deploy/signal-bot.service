@@ -1,0 +1,20 @@
+[Unit]
+Description=Signal-Bot (Dauerbetrieb, Homeserver)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Anpassen: Pfad zum geklonten Repo auf dem Homeserver.
+WorkingDirectory=/home/USERNAME/trading-bot
+# Anpassen: Pfad zum venv-Python (siehe deploy/README.md, Schritt 2).
+ExecStart=/home/USERNAME/trading-bot/.venv/bin/python -u scripts/run_signal_bot.py
+Restart=always
+RestartSec=5
+# Kein eigener Reconnect-Code im Skript (siehe run_forever()-Docstring in
+# scripts/run_signal_bot.py) - ein Absturz beendet den Prozess komplett,
+# systemd startet ihn neu und baut die cTrader-Verbindung frisch auf,
+# genau wie zuvor der externe ~60-Sekunden-Trigger.
+
+[Install]
+WantedBy=multi-user.target
