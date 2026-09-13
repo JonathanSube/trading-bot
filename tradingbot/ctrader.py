@@ -53,9 +53,11 @@ import socket as _socket
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import nacl.public
 import requests
+from dotenv import set_key
 
 from twisted.internet import asyncioreactor
 from twisted.internet.error import ReactorAlreadyInstalledError
@@ -216,6 +218,25 @@ def _persist_secret(secret_name: str, value: str) -> None:
         print(f"[cTrader] Speichern von {secret_name} fehlgeschlagen: {exc!r}")
 
 
+_ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
+
+
+def _persist_local_env(key: str, value: str) -> None:
+    """Ergaenzung zu _persist_secret() oben (die nur GitHub-Actions-Secrets
+    aktualisiert, auf dem Homeserver mangels GH_SECRETS_PAT ein No-Op ist):
+    schreibt zusaetzlich direkt in die lokale .env. Noetig, weil cTrader den
+    Refresh-Token bei JEDEM Tausch rotiert (siehe _exchange_refresh_token) -
+    ohne das hier waere der in der .env hinterlegte Token nach dem ersten
+    Token-Tausch bereits veraltet, und der naechste Prozess-Neustart (Absturz,
+    Reboot, Deploy) wuerde mit ACCESS_DENIED fehlschlagen und einen erneuten
+    manuellen Browser-Login (scripts/ctrader_authorize.py) noetig machen -
+    genau das soll der Dauerbetrieb ja vermeiden."""
+    if not _ENV_PATH.exists():
+        return
+    set_key(str(_ENV_PATH), key, value)
+    os.environ[key] = value
+
+
 async def get_access_token() -> str:
     """Liefert einen gueltigen Access-Token - aus dem Zwischenspeicher
     (CTRADER_ACCESS_TOKEN/CTRADER_ACCESS_TOKEN_EXPIRES_AT-Secrets), falls
@@ -294,6 +315,7 @@ async def _exchange_refresh_token() -> str:
     for key in ("refreshToken", "refresh_token"):
         if key in data:
             _persist_secret("CTRADER_REFRESH_TOKEN", data[key])
+            _persist_local_env("CTRADER_REFRESH_TOKEN", data[key])
             break
 
     # Feldname unverifiziert (help.ctrader.com nicht abrufbar) - live
