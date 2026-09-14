@@ -1284,3 +1284,4 @@ STOP =28849.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"
 2026-09-14T15:46:12+00:00,71967,"CLOSE TRADE ALERT 
 
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-14T15:46:30+00:00,71968,"+41,3","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
