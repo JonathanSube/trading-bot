@@ -1323,3 +1323,7 @@ STOP = 52467.6","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"",
 2026-09-14T16:24:00+00:00,71982,"STOP LOSS ALERT 
 
 🇺🇸 MOVING STOP TO BREAKEVEN in DOW INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-14T16:24:50+00:00,71984,closing half of remaining half,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-14T16:25:29+00:00,71985,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
