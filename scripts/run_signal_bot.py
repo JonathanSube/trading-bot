@@ -936,6 +936,21 @@ async def _run(session: CTraderSession, state: SignalBotState, now: datetime) ->
         state.consecutive_api_errors += 1
         print(f"API-Fehler beim Kontoabruf: {e}")
         save_state(state, STATE_PATH)
+        if state.consecutive_api_errors >= API_ERROR_LIMIT:
+            # Session ist vermutlich tot (z.B. Verbindungsabbruch) und
+            # get_account_info() wuerde auf ihr immer wieder scheitern -
+            # ohne dies hier waere der Sicherheitsschalter unten (Zeile
+            # ~952) fuer diesen Fehlerpfad unerreichbar (return oben kommt
+            # zuerst), der Bot bliebe also fuer immer in dieser Schleife
+            # haengen (live beobachtet 14.09.2026: 2077 Fehler in Folge
+            # nach einem naechtlichen Netzwerkausfall). Erzwingt stattdessen
+            # das im run_forever()-Docstring beschriebene Verhalten: Exception
+            # weiterreichen, Prozess beenden, systemd (Restart=always) baut
+            # die Verbindung frisch auf.
+            raise RuntimeError(
+                f"{state.consecutive_api_errors} API-Fehler beim Kontoabruf in Folge "
+                f"(zuletzt: {e}) - erzwinge Neustart fuer frische Verbindung."
+            ) from e
         return
 
     equity = float(account["balance"])
