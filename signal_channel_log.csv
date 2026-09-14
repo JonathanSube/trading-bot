@@ -1253,3 +1253,9 @@ ENTRY = 28903.4
 STOP =28851.6","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 28903.4, ""stop_level"": 28851.6, ""target_level"": null}",levels_aktualisiert
 2026-09-14T15:37:05+00:00,71961,stopped out,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-14T15:37:13+00:00,71962,-51,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-14T15:40:20+00:00,71963,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
