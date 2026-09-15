@@ -1,0 +1,11 @@
+[Unit]
+Description=Signal-Bot Gesundheitscheck (headless Claude Code, behebt kleine Bugs selbststaendig)
+After=signal-bot.service
+
+[Service]
+Type=oneshot
+User=jonathan
+WorkingDirectory=/home/jonathan/programmieren/trading-bot
+ExecStart=/home/jonathan/programmieren/trading-bot/deploy/run_health_check.sh
+StandardOutput=append:/home/jonathan/programmieren/trading-bot/health_check.log
+StandardError=append:/home/jonathan/programmieren/trading-bot/health_check.log

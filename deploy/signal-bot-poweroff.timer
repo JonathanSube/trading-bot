@@ -1,0 +1,9 @@
+[Unit]
+Description=Taeglicher Signal-Bot Homeserver Shutdown um 19 Uhr (werktags)
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 19:00:00 Europe/Berlin
+Persistent=false
+
+[Install]
+WantedBy=timers.target

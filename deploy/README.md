@@ -102,6 +102,44 @@ sudo systemctl status signal-bot
 journalctl -u signal-bot -f
 ```
 
+## 7) Server-Betriebszeiten (Nutzerwunsch 15.09.2026)
+
+Der Homeserver läuft nicht durchgehend, sondern nur werktags ca.
+08:50-19:00 Uhr (Europe/Berlin) - außerhalb dieses Fensters ist Handel
+ohnehin nicht sinnvoll (19 Uhr liegt bewusst vor dem NASDAQ/DOW-
+Handelsschluss um 22 Uhr, siehe Nutzerentscheidung). Zwei systemd-Timer
+regeln das:
+
+- `signal-bot-poweroff.timer` löst werktags um 19 Uhr
+  `deploy/schedule_poweroff.py` aus, das per `rtcwake -m off -t <epoch>`
+  herunterfährt und gleichzeitig einen BIOS-Weckalarm für 08:50 Uhr des
+  nächsten Werktags setzt (Wochenenden werden übersprungen). Live getestet
+  auf diesem MSI-Board (MS-7996) am 15.09.2026 - BIOS-Wake funktioniert.
+- `signal-bot-check.timer` löst werktags um 09:00, 13:30 und 18:30 Uhr
+  `deploy/run_health_check.sh` aus - ruft Claude Code headless
+  (`--dangerously-skip-permissions`, da niemand interaktiv antworten kann)
+  mit dem Prompt aus `deploy/health_check_prompt.txt` auf, der denselben
+  Gesundheitscheck macht, den zuvor eine interaktive Chat-Session stündlich
+  gemacht hat - überlebt dadurch auch den täglichen Shutdown/Neustart.
+  Protokoll landet in `health_check.log` im Repo-Root.
+
+Installation (einmalig, braucht sudo):
+
+```bash
+sudo cp deploy/signal-bot-poweroff.service deploy/signal-bot-poweroff.timer \
+        deploy/signal-bot-check.service deploy/signal-bot-check.timer \
+        /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now signal-bot-poweroff.timer signal-bot-check.timer
+```
+
+Kontrollieren:
+
+```bash
+systemctl list-timers signal-bot-*
+journalctl -u signal-bot-poweroff -u signal-bot-check
+```
+
 ## Stoppen (Kill-Switch, ohne den Dienst anzuhalten)
 
 Wie bisher: eine leere Datei `STOP` im Repo-Root anlegen - der Bot merkt

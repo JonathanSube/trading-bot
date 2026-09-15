@@ -1,0 +1,11 @@
+[Unit]
+Description=Signal-Bot Gesundheitscheck 3x taeglich (werktags, waehrend der Server-Betriebszeit)
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 09:00:00 Europe/Berlin
+OnCalendar=Mon..Fri *-*-* 13:30:00 Europe/Berlin
+OnCalendar=Mon..Fri *-*-* 18:30:00 Europe/Berlin
+Persistent=false
+
+[Install]
+WantedBy=timers.target

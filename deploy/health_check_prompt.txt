@@ -1,0 +1,11 @@
+Prüfe den Signal-Bot auf diesem Homeserver auf Probleme und behebe klare, sichere Bugs im Code selbst.
+
+Kontext: systemd-Dienst "signal-bot" (WorkingDirectory /home/jonathan/programmieren/trading-bot), läuft als Nutzer jonathan (kein root, kein sudo nötig zum Neustarten). Git-Remote ist bereits mit einem PAT für Push-Rechte konfiguriert. Der Server läuft nur werktags ca. 08:50-19:00 Uhr (danach automatischer Shutdown/RTC-Wake) - das ist normal, kein Fehler.
+
+Bei diesem Lauf:
+1. `systemctl status signal-bot --no-pager` und `journalctl -u signal-bot` seit dem letzten Check prüfen: Crash-Loops, wiederholte/sich endlos wiederholende Fehler, `consecutive_api_errors` dauerhaft hoch oder `stopped_permanently`/unerwartet `paused` in signal_state.json, oder sonstige Auffälligkeiten.
+2. Falls ein klarer, minimaler, sicherer Bug im Bot-eigenen Code gefunden wird (tradingbot/, scripts/, signalbot/): fixen, committen und pushen (git push funktioniert bereits, PAT ist im Remote hinterlegt), passend zum bestehenden Code-Stil und den deutschen Kommentaren im Repo. Danach den Dienst per `kill <MainPID>` (PID über `systemctl show signal-bot -p MainPID --value`) neu starten - NICHT per `sudo systemctl restart`, da hier kein interaktives sudo-Passwort verfügbar ist. systemd (Restart=always) startet den Prozess automatisch neu.
+3. Falls etwas eine Entscheidung des Nutzers braucht (Design-Frage) oder nur mit sudo/manuellem Eingriff lösbar ist: NICHT raten, sondern das im Fazit knapp benennen statt zu handeln.
+4. Wenn alles unauffällig ist: kurz als "alles ok" vermerken, keine ausführliche Ausgabe nötig.
+
+Sicherheitshinweis: NIEMALS versehentlich einen zweiten parallel laufenden Bot-Prozess erzeugen (Gefahr doppelter echter Orders) - nur den bestehenden systemd-verwalteten Prozess neu starten, keinen zusätzlichen eigenständigen Lauf von scripts/run_signal_bot.py starten.

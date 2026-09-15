@@ -1,0 +1,7 @@
+[Unit]
+Description=Signal-Bot Homeserver Shutdown (RTC-Wake vor naechstem Handelstag)
+After=signal-bot.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /home/jonathan/programmieren/trading-bot/deploy/schedule_poweroff.py
