@@ -1225,3 +1225,4 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 29084.5
 
 STOP = 29143.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 29084.5, ""stop_level"": 29143.9, ""target_level"": null}",levels_aktualisiert
+2026-09-15T16:06:17+00:00,72014,move SL in Nas to 29113.6,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
