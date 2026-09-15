@@ -1,9 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-08T08:14:03+00:00,71712,"UPDATE
-
-The US session will go ahead as planned. Thank you for your patience.
-
-Tom",,gemini_fehler
 2026-09-08T13:18:19+00:00,71713,"🚨
 
 🚨
@@ -91,11 +86,6 @@ ENTRY = 25841.8
 
 STOP =25791.8","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25841.8, ""stop_level"": 25791.8, ""target_level"": null}",kurs_nicht_ladbar
 2026-09-09T07:01:45+00:00,71735,deleting short order,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T08:14:03+00:00,71712,"UPDATE
-
-The US session will go ahead as planned. Thank you for your patience.
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T13:18:19+00:00,71713,"🚨
 
 🚨
@@ -176,11 +166,6 @@ See you at 08:55 CEST.
 Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T06:54:55+00:00,71731,https://youtube.com/live/SJz1yIiaBII?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T06:55:08+00:00,71732,Live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T08:14:03+00:00,71712,"UPDATE
-
-The US session will go ahead as planned. Thank you for your patience.
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T13:18:19+00:00,71713,"🚨
 
 🚨
@@ -298,11 +283,6 @@ STOP = 25800","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", "
 2026-09-09T07:43:37+00:00,71748,"STOP LOSS ALERT 
 
 🇩🇪 MOVING STOP TO BREAKEVEN in DAX INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T08:14:03+00:00,71712,"UPDATE
-
-The US session will go ahead as planned. Thank you for your patience.
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T13:18:19+00:00,71713,"🚨
 
 🚨
@@ -1329,3 +1309,4 @@ https://tradertom.com/disclaimer/
 See you at 08:55 CEST.
 
 Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-15T08:55:39+00:00,71990,I am running late. Will be there only in 5 minutes,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
