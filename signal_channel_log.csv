@@ -1226,3 +1226,12 @@ ENTRY = 29084.5
 
 STOP = 29143.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 29084.5, ""stop_level"": 29143.9, ""target_level"": null}",levels_aktualisiert
 2026-09-15T16:06:17+00:00,72014,move SL in Nas to 29113.6,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-15T16:06:51+00:00,72015,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-15T16:07:20+00:00,72016,"STOP LOSS ALERT 
+
+🇺🇸 MOVING STOP TO BREAKEVEN in NASDAQ INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-15T16:07:48+00:00,72017,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
