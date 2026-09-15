@@ -1,34 +1,16 @@
 {
   "version": 1,
-  "last_message_id": 71994,
+  "last_message_id": 71996,
   "initial_equity": 10000.12,
-  "total_pnl": 76.79019999999625,
-  "total_trades": 8,
+  "total_pnl": 44.525199999996246,
+  "total_trades": 9,
   "consecutive_api_errors": 0,
   "stopped_permanently": false,
   "paused": false,
-  "open_trades": {
-    "GER40": [
-      {
-        "signal": {
-          "direction": "short",
-          "entry_price": 25316.6,
-          "stop": 25366.61066721451,
-          "target": 25216.578665570974,
-          "risk": 50.01066721451207,
-          "entry_timestamp": "2026-09-15T03:18:45.850042-04:00"
-        },
-        "order_id": 43045647,
-        "qty": 2.39,
-        "source_message_id": 71994,
-        "entry_fill": 25316.6,
-        "last_seen_edit_date": "2026-09-15T09:19:32+00:00"
-      }
-    ]
-  },
+  "open_trades": {},
   "telegram_update_offset": 700987115,
-  "last_channel_message_at": "2026-09-15T09:18:44+00:00",
-  "last_poll_at": "2026-09-15T07:21:08.141016+00:00",
+  "last_channel_message_at": "2026-09-15T09:21:51+00:00",
+  "last_poll_at": "2026-09-15T07:22:23.071937+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
