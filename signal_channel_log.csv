@@ -1312,3 +1312,9 @@ Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direc
 2026-09-15T08:55:39+00:00,71990,I am running late. Will be there only in 5 minutes,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T09:03:17+00:00,71992,https://youtube.com/live/Me26DTQgV80?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T09:03:21+00:00,71993,LIVE on ALL 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-15T09:18:44+00:00,71994,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
