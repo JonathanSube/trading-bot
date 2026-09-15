@@ -1235,3 +1235,6 @@ STOP = 29143.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ
 2026-09-15T16:07:48+00:00,72017,"CLOSE TRADE ALERT 
 
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-15T16:08:10+00:00,72018,"no open orders, no open positions","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-15T16:08:47+00:00,72019,Nasdaq trades. The 20 point loss was a trade I took by myself.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-15T16:09:13+00:00,72020,Dow trades,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
