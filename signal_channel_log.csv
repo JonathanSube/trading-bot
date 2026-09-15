@@ -1,9 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-08T14:03:45+00:00,71720,STOPPED OUT OF DOW.... MINUS 125,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-08T14:31:05+00:00,71722,I am done for the day. Rough one :). I am back Thursday. Andi is here tomorrow. Andi will then take over Friday and he will run the channel the whole next week.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T14:40:14+00:00,71723,"I have had some concerning messages about my trading today. Yes, it is real money. I had to let a friend of mine trade my bigger account. I wanted to trade the size I trade on that account. It would seem that I am taking a double blow today as my friend, as per my instructions, also lost. 
-
-Yes, it stings to lose 50+ dollars live, but I have made a decision a long time ago to display my trading, warts and all.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T16:01:38+00:00,71724,"I have been answering questions regarding trading size. I don't normally show you my bigger size, and it just happened you saw it today, and it just so happened that was a day where things did not quite go well. I want to show you a FTSE trade I am currently in. Maybe it will go much lower. Maybe it will not. The thing about trading size is that over time you become less sensitive to the stress of the amounts. I think I may have shocked a few of you today. I hope you are ok, and that you can sleep well tonight. 
 
 Stay strong - goals are for dreamers, process is for achievers.
@@ -44,11 +39,6 @@ ENTRY = 25841.8
 
 STOP =25791.8","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25841.8, ""stop_level"": 25791.8, ""target_level"": null}",kurs_nicht_ladbar
 2026-09-09T07:01:45+00:00,71735,deleting short order,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T14:03:45+00:00,71720,STOPPED OUT OF DOW.... MINUS 125,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-08T14:31:05+00:00,71722,I am done for the day. Rough one :). I am back Thursday. Andi is here tomorrow. Andi will then take over Friday and he will run the channel the whole next week.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T14:40:14+00:00,71723,"I have had some concerning messages about my trading today. Yes, it is real money. I had to let a friend of mine trade my bigger account. I wanted to trade the size I trade on that account. It would seem that I am taking a double blow today as my friend, as per my instructions, also lost. 
-
-Yes, it stings to lose 50+ dollars live, but I have made a decision a long time ago to display my trading, warts and all.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T16:01:38+00:00,71724,"I have been answering questions regarding trading size. I don't normally show you my bigger size, and it just happened you saw it today, and it just so happened that was a day where things did not quite go well. I want to show you a FTSE trade I am currently in. Maybe it will go much lower. Maybe it will not. The thing about trading size is that over time you become less sensitive to the stress of the amounts. I think I may have shocked a few of you today. I hope you are ok, and that you can sleep well tonight. 
 
 Stay strong - goals are for dreamers, process is for achievers.
@@ -82,11 +72,6 @@ See you at 08:55 CEST.
 Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T06:54:55+00:00,71731,https://youtube.com/live/SJz1yIiaBII?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T06:55:08+00:00,71732,Live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T14:03:45+00:00,71720,STOPPED OUT OF DOW.... MINUS 125,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-08T14:31:05+00:00,71722,I am done for the day. Rough one :). I am back Thursday. Andi is here tomorrow. Andi will then take over Friday and he will run the channel the whole next week.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T14:40:14+00:00,71723,"I have had some concerning messages about my trading today. Yes, it is real money. I had to let a friend of mine trade my bigger account. I wanted to trade the size I trade on that account. It would seem that I am taking a double blow today as my friend, as per my instructions, also lost. 
-
-Yes, it stings to lose 50+ dollars live, but I have made a decision a long time ago to display my trading, warts and all.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T16:01:38+00:00,71724,"I have been answering questions regarding trading size. I don't normally show you my bigger size, and it just happened you saw it today, and it just so happened that was a day where things did not quite go well. I want to show you a FTSE trade I am currently in. Maybe it will go much lower. Maybe it will not. The thing about trading size is that over time you become less sensitive to the stress of the amounts. I think I may have shocked a few of you today. I hope you are ok, and that you can sleep well tonight. 
 
 Stay strong - goals are for dreamers, process is for achievers.
@@ -157,11 +142,6 @@ STOP = 25800","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", "
 2026-09-09T07:43:37+00:00,71748,"STOP LOSS ALERT 
 
 🇩🇪 MOVING STOP TO BREAKEVEN in DAX INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T14:03:45+00:00,71720,STOPPED OUT OF DOW.... MINUS 125,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-08T14:31:05+00:00,71722,I am done for the day. Rough one :). I am back Thursday. Andi is here tomorrow. Andi will then take over Friday and he will run the channel the whole next week.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T14:40:14+00:00,71723,"I have had some concerning messages about my trading today. Yes, it is real money. I had to let a friend of mine trade my bigger account. I wanted to trade the size I trade on that account. It would seem that I am taking a double blow today as my friend, as per my instructions, also lost. 
-
-Yes, it stings to lose 50+ dollars live, but I have made a decision a long time ago to display my trading, warts and all.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T16:01:38+00:00,71724,"I have been answering questions regarding trading size. I don't normally show you my bigger size, and it just happened you saw it today, and it just so happened that was a day where things did not quite go well. I want to show you a FTSE trade I am currently in. Maybe it will go much lower. Maybe it will not. The thing about trading size is that over time you become less sensitive to the stress of the amounts. I think I may have shocked a few of you today. I hope you are ok, and that you can sleep well tonight. 
 
 Stay strong - goals are for dreamers, process is for achievers.
@@ -1215,3 +1195,5 @@ https://tradertom.com/disclaimer/
 See you at 15:25 CEST.
 
 Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-15T15:26:04+00:00,72004,https://youtube.com/live/BSUCKcAS1Fo?feature=sharel,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-15T15:26:13+00:00,72005,live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
