@@ -1343,3 +1343,4 @@ STOP = 25363.1","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"",
 2026-09-15T09:36:37+00:00,71998,"CLOSE TRADE ALERT 
 
 🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-15T12:32:09+00:00,72001,See you for the US session,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
