@@ -1,9 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-08T16:01:38+00:00,71724,"I have been answering questions regarding trading size. I don't normally show you my bigger size, and it just happened you saw it today, and it just so happened that was a day where things did not quite go well. I want to show you a FTSE trade I am currently in. Maybe it will go much lower. Maybe it will not. The thing about trading size is that over time you become less sensitive to the stress of the amounts. I think I may have shocked a few of you today. I hope you are ok, and that you can sleep well tonight. 
-
-Stay strong - goals are for dreamers, process is for achievers.
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T19:22:01+00:00,71725,"I think the hardest lesson to learn is to let winners run. Especially after a rough day, like today, and then later —- through patience and grit you have fought your way back to close to breakeven on the day. You wouldn't be human if you weren't a little tempted to let the cash register ring.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T05:35:58+00:00,71726,"Good morning,
 
@@ -39,11 +34,6 @@ ENTRY = 25841.8
 
 STOP =25791.8","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25841.8, ""stop_level"": 25791.8, ""target_level"": null}",kurs_nicht_ladbar
 2026-09-09T07:01:45+00:00,71735,deleting short order,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T16:01:38+00:00,71724,"I have been answering questions regarding trading size. I don't normally show you my bigger size, and it just happened you saw it today, and it just so happened that was a day where things did not quite go well. I want to show you a FTSE trade I am currently in. Maybe it will go much lower. Maybe it will not. The thing about trading size is that over time you become less sensitive to the stress of the amounts. I think I may have shocked a few of you today. I hope you are ok, and that you can sleep well tonight. 
-
-Stay strong - goals are for dreamers, process is for achievers.
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T19:22:01+00:00,71725,"I think the hardest lesson to learn is to let winners run. Especially after a rough day, like today, and then later —- through patience and grit you have fought your way back to close to breakeven on the day. You wouldn't be human if you weren't a little tempted to let the cash register ring.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T05:35:58+00:00,71726,"Good morning,
 
@@ -72,11 +62,6 @@ See you at 08:55 CEST.
 Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T06:54:55+00:00,71731,https://youtube.com/live/SJz1yIiaBII?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T06:55:08+00:00,71732,Live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T16:01:38+00:00,71724,"I have been answering questions regarding trading size. I don't normally show you my bigger size, and it just happened you saw it today, and it just so happened that was a day where things did not quite go well. I want to show you a FTSE trade I am currently in. Maybe it will go much lower. Maybe it will not. The thing about trading size is that over time you become less sensitive to the stress of the amounts. I think I may have shocked a few of you today. I hope you are ok, and that you can sleep well tonight. 
-
-Stay strong - goals are for dreamers, process is for achievers.
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T19:22:01+00:00,71725,"I think the hardest lesson to learn is to let winners run. Especially after a rough day, like today, and then later —- through patience and grit you have fought your way back to close to breakeven on the day. You wouldn't be human if you weren't a little tempted to let the cash register ring.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T05:35:58+00:00,71726,"Good morning,
 
@@ -142,11 +127,6 @@ STOP = 25800","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", "
 2026-09-09T07:43:37+00:00,71748,"STOP LOSS ALERT 
 
 🇩🇪 MOVING STOP TO BREAKEVEN in DAX INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-08T16:01:38+00:00,71724,"I have been answering questions regarding trading size. I don't normally show you my bigger size, and it just happened you saw it today, and it just so happened that was a day where things did not quite go well. I want to show you a FTSE trade I am currently in. Maybe it will go much lower. Maybe it will not. The thing about trading size is that over time you become less sensitive to the stress of the amounts. I think I may have shocked a few of you today. I hope you are ok, and that you can sleep well tonight. 
-
-Stay strong - goals are for dreamers, process is for achievers.
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-08T19:22:01+00:00,71725,"I think the hardest lesson to learn is to let winners run. Especially after a rough day, like today, and then later —- through patience and grit you have fought your way back to close to breakeven on the day. You wouldn't be human if you weren't a little tempted to let the cash register ring.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-09T05:35:58+00:00,71726,"Good morning,
 
@@ -1220,3 +1200,15 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 52049.6
 
 STOP = 52134.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52049.6, ""stop_level"": 52134.9, ""target_level"": null}",levels_aktualisiert
+2026-09-15T16:02:06+00:00,72011,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-15T14:02:46.816389+00:00,72011,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 52042.1
+
+STOP = 52134.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52042.1, ""stop_level"": 52134.9, ""target_level"": null}",levels_aktualisiert
