@@ -1066,3 +1066,4 @@ STOP = 52059.8","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"",
 2026-09-16T16:22:25+00:00,72060,"CLOSE TRADE ALERT 
 
 🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-16T16:22:43+00:00,72061,+63,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
