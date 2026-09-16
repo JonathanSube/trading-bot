@@ -1,5 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-09T16:07:33+00:00,71804,This pretty much resembles today's trading,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-10T06:00:32+00:00,71805,"Good morning,
 
 I’ll start today’s European session at 08:55 CEST, 5 minutes before the DAX open.
@@ -1034,3 +1033,15 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 51987.2
 
 STOP = 52061.4","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51987.2, ""stop_level"": 52061.4, ""target_level"": null}",levels_aktualisiert
+2026-09-16T16:09:28+00:00,72051,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-16T14:09:58.182204+00:00,72051,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 29157
+
+STOP =29112.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29157.0, ""stop_level"": 29112.3, ""target_level"": null}",levels_aktualisiert
