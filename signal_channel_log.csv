@@ -1021,3 +1021,10 @@ ENTRY = 52054,8
 
 STOP = 51991.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 520548.0, ""stop_level"": 51991.3, ""target_level"": null}",levels_aktualisiert
 2026-09-16T16:01:35+00:00,72048,SL to 989.4,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-16T16:05:43+00:00,72049,Stopped out,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-16T16:05:46+00:00,72050,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
