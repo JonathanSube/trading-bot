@@ -970,3 +970,9 @@ See you at 8:55","{""is_signal"": false, ""action"": null, ""index"": null, ""di
 2026-09-17T08:56:33+00:00,72070,"Look, you are not alone.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-17T08:56:42+00:00,72071,https://youtube.com/live/jKqTQhxV4UQ?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-17T08:56:46+00:00,72072,Live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-17T09:00:22+00:00,72073,"🇩🇪  GERMAN DAX INDEX
+SOLD S
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
