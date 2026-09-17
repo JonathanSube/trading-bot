@@ -978,3 +978,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 29410
 
 STOP = 29332","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29410.0, ""stop_level"": 29332.0, ""target_level"": null}",levels_aktualisiert
+2026-09-17T16:41:27+00:00,72111,SL in Nasdaq to 29375.0,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
