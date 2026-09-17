@@ -966,3 +966,15 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 51799.7
 
 STOP = 51684.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51799.7, ""stop_level"": 51684.3, ""target_level"": null}",levels_aktualisiert
+2026-09-17T16:23:30+00:00,72110,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-17T14:24:01.199467+00:00,72110,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 29410
+
+STOP = 29332","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29410.0, ""stop_level"": 29332.0, ""target_level"": null}",levels_aktualisiert
