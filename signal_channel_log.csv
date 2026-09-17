@@ -936,3 +936,4 @@ SOLD SHORT 🔻 = 50%
 ENTRY = 51759.4
 
 STOP = 51908","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51759.4, ""stop_level"": 51908.0, ""target_level"": null}",levels_aktualisiert
+2026-09-17T15:55:28+00:00,72103,SL to 51799.6,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
