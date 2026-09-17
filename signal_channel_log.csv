@@ -1026,3 +1026,9 @@ ENTRY = 25698.3
 STOP = 25754.6","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25698.3, ""stop_level"": 25754.6, ""target_level"": null}",levels_aktualisiert
 2026-09-17T09:44:59+00:00,72086,closed half,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-17T09:45:31+00:00,72087,-8,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-17T07:45:59.459878+00:00,72085,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 25698.3
+
+STOP = 25755","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25698.3, ""stop_level"": 25755.0, ""target_level"": null}",levels_aktualisiert
