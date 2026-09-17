@@ -1038,3 +1038,21 @@ SOLD SHORT 🔻 = 50%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-17T07:50:03.413288+00:00,72088,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 50%
+
+ENTRY = 25690.2
+
+STOP =25740.2","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25690.2, ""stop_level"": 25740.2, ""target_level"": null}",levels_aktualisiert
+2026-09-17T09:50:23+00:00,72089,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 50%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-17T07:50:48.422847+00:00,72089,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 50%
+
+ENTRY = 25679.2
+
+STOP = 25729.2","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25679.2, ""stop_level"": 25729.2, ""target_level"": null}",levels_aktualisiert
