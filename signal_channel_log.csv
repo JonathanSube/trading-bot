@@ -940,3 +940,15 @@ STOP = 51908","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", "
 2026-09-17T16:00:19+00:00,72104,"CLOSE TRADE ALERT 
 
 🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-17T16:01:27+00:00,72105,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-17T14:02:06.507494+00:00,72105,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 51651.2
+
+STOP = 51798.8","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51651.2, ""stop_level"": 51798.8, ""target_level"": null}",levels_aktualisiert
