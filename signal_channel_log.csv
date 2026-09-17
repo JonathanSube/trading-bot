@@ -909,3 +909,9 @@ See you at 15:25 CEST.
 Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-17T15:24:49+00:00,72096,https://youtube.com/live/y0iAYxCVjNg?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-17T15:24:55+00:00,72097,Live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-17T15:31:52+00:00,72098,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
