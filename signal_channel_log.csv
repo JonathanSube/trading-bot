@@ -915,3 +915,12 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-17T15:33:27+00:00,72099,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-17T15:33:52+00:00,72100,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
