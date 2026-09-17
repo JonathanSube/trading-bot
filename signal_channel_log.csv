@@ -995,3 +995,16 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-17T07:10:42.762724+00:00,72078,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 10752.7
+
+STOP = 10727.7","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10752.7, ""stop_level"": 10727.7, ""target_level"": null}",levels_aktualisiert
+2026-09-17T09:11:02+00:00,72079,"CLOSE TRADE ALERT 
+
+🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-17T09:11:11+00:00,72080,"STOP LOSS ALERT 
+
+🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-17T09:11:18+00:00,72081,closed half of FTSE,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
