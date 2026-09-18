@@ -1020,3 +1020,10 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 51523.3
 
 STOP = 51423.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51523.3, ""stop_level"": 51423.3, ""target_level"": null}",levels_aktualisiert
+2026-09-18T16:04:06+00:00,72155,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-18T16:04:20+00:00,72156,"STOP LOSS ALERT 
+
+🇺🇸 MOVING STOP TO BREAKEVEN in NASDAQ INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-18T16:04:24+00:00,72157,closed half in Nasdaq,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
