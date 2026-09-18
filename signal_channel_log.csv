@@ -964,3 +964,15 @@ See you at 08:55 CEST.
 Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-18T08:54:43+00:00,72122,https://youtube.com/live/9SYYXzLzD80?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-18T08:54:47+00:00,72123,LIVE on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-18T09:01:49+00:00,72125,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-18T09:01:49+00:00,72126,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
