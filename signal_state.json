@@ -1,16 +1,34 @@
 {
   "version": 1,
-  "last_message_id": 72129,
+  "last_message_id": 72131,
   "initial_equity": 10000.12,
   "total_pnl": 163.96349999999788,
   "total_trades": 37,
   "consecutive_api_errors": 0,
   "stopped_permanently": false,
   "paused": false,
-  "open_trades": {},
+  "open_trades": {
+    "UK100": [
+      {
+        "signal": {
+          "direction": "long",
+          "entry_price": 10786.79,
+          "stop": 10761.774485301621,
+          "target": 10836.82102939676,
+          "risk": 25.015514698379775,
+          "entry_timestamp": "2026-09-18T03:07:38.200777-04:00"
+        },
+        "order_id": 43237231,
+        "qty": 5.65,
+        "source_message_id": 72130,
+        "entry_fill": 10786.79,
+        "last_seen_edit_date": "2026-09-18T09:08:17+00:00"
+      }
+    ]
+  },
   "telegram_update_offset": 700987115,
-  "last_channel_message_at": "2026-09-18T09:07:18+00:00",
-  "last_poll_at": "2026-09-18T07:07:32.220560+00:00",
+  "last_channel_message_at": "2026-09-18T09:08:35+00:00",
+  "last_poll_at": "2026-09-18T07:08:33.748481+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
