@@ -1029,3 +1029,15 @@ STOP = 10777.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE""
 
 🇬🇧 CLOSING FTSE INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-18T09:34:46+00:00,72139,-4,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-18T09:43:36+00:00,72140,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-18T07:44:01.423111+00:00,72140,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 25588.2
+
+STOP =25638.2","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25588.2, ""stop_level"": 25638.2, ""target_level"": null}",levels_aktualisiert
