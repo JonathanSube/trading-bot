@@ -996,3 +996,4 @@ STOP = 10755.1","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE""
 2026-09-18T09:10:08+00:00,72132,"STOP LOSS ALERT 
 
 🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-18T09:16:31+00:00,72133,Stopped out for zero in the FTSE.,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
