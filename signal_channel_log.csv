@@ -1041,3 +1041,7 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 25588.2
 
 STOP =25638.2","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25588.2, ""stop_level"": 25638.2, ""target_level"": null}",levels_aktualisiert
+2026-09-18T09:46:46+00:00,72141,"CLOSE TRADE ALERT 
+
+🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-18T09:46:52+00:00,72142,+1,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
