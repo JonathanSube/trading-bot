@@ -993,3 +993,6 @@ ENTRY = 10780.1
 
 STOP = 10755.1","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10780.1, ""stop_level"": 10755.1, ""target_level"": null}",levels_aktualisiert
 2026-09-18T09:08:35+00:00,72131,sl to 10770.1,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-18T09:10:08+00:00,72132,"STOP LOSS ALERT 
+
+🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
