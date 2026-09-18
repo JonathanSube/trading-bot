@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "last_message_id": 72153,
+  "last_message_id": 72154,
   "initial_equity": 10000.12,
   "total_pnl": 95.52049999998559,
   "total_trades": 41,
@@ -40,12 +40,27 @@
         "source_message_id": 72153,
         "entry_fill": 51581.78,
         "last_seen_edit_date": "2026-09-18T15:54:57+00:00"
+      },
+      {
+        "signal": {
+          "direction": "short",
+          "entry_price": 51549.78,
+          "stop": 51649.83139422358,
+          "target": 51349.67721155283,
+          "risk": 100.0513942235848,
+          "entry_timestamp": "2026-09-18T09:57:28.598328-04:00"
+        },
+        "order_id": 43272828,
+        "qty": 1.17,
+        "source_message_id": 72154,
+        "entry_fill": 51549.78,
+        "last_seen_edit_date": "2026-09-18T15:57:41+00:00"
       }
     ]
   },
   "telegram_update_offset": 700987115,
-  "last_channel_message_at": "2026-09-18T15:54:32+00:00",
-  "last_poll_at": "2026-09-18T13:57:19.241185+00:00",
+  "last_channel_message_at": "2026-09-18T15:57:20+00:00",
+  "last_poll_at": "2026-09-18T13:58:31.061631+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
