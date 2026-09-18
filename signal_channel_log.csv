@@ -1,5 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-11T14:43:07+00:00,71936,Have a lovely weekend,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-14T08:04:47+00:00,71937,"Good morning,
 
 I’ll start today’s European session at 08:55 CEST, 5 minutes before the DAX open.
@@ -982,3 +981,5 @@ https://tradertom.com/disclaimer/
 See you at 15:25 CEST.
 
 Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-18T15:24:42+00:00,72147,https://youtube.com/live/kOtu4L-cOEQ?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-18T15:24:46+00:00,72148,live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
