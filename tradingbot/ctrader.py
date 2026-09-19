@@ -108,6 +108,7 @@ from ctrader_open_api.messages.OpenApiMessages_pb2 import (
     ProtoOATraderReq,
 )
 from ctrader_open_api.messages.OpenApiModelMessages_pb2 import (
+    ProtoOAExecutionType,
     ProtoOAOrderType,
     ProtoOATradeSide,
     ProtoOATrendbarPeriod,
@@ -352,6 +353,11 @@ class CTraderSession:
     account_id: int
     access_token: str
     _symbol_ids: dict[str, int] | None = field(default=None, repr=False)
+    # positionId -> Future, aufgeloest von _on_message_received() in
+    # _connect_and_authenticate() sobald das unaufgeforderte ProtoOAExecutionEvent
+    # mit dem echten Fill (ORDER_FILLED) fuer diese Position eintrifft - siehe
+    # close_position()-Docstring zur Begruendung.
+    _pending_close_fills: dict = field(default_factory=dict, repr=False)
 
 
 def _protocol_send(client: Client, protocol, message, response_timeout: int = 10):
@@ -564,6 +570,28 @@ async def _connect_and_authenticate(access_token: str):
             account_id=0, access_token=access_token,
         )
 
+        def _on_message_received(_client, message):
+            # Fuer close_position() unten: Client._received() (siehe
+            # ctrader_open_api/client.py) ruft diesen Callback fuer JEDE
+            # eingehende Nachricht auf, auch fuer unaufgeforderte Server-Events
+            # ohne passende clientMsgId (die sonst spurlos verworfen wuerden).
+            # Damit laesst sich das verspaetete Fill-Event fuer einen
+            # Positions-Close abfangen, siehe dortige Docstring.
+            try:
+                payload = Protobuf.extract(message)
+            except Exception:
+                return
+            if type(payload).__name__ != "ProtoOAExecutionEvent":
+                return
+            if payload.executionType != ProtoOAExecutionType.ORDER_FILLED:
+                return
+            position_id = payload.deal.positionId
+            future = session._pending_close_fills.get(position_id)
+            if future is not None and not future.done():
+                future.set_result(payload)
+
+        client.setMessageReceivedCallback(_on_message_received)
+
         app_auth_req = ProtoOAApplicationAuthReq()
         app_auth_req.clientId = os.environ["CTRADER_CLIENT_ID"]
         app_auth_req.clientSecret = os.environ["CTRADER_CLIENT_SECRET"]
@@ -732,6 +760,9 @@ async def get_open_positions(session: CTraderSession) -> dict[str, list[dict]]:
     return result
 
 
+FILL_EVENT_TIMEOUT_SECONDS = 8
+
+
 async def close_position(session: CTraderSession, position_id: int, volume: float) -> float:
     """Fuer Session-Ende-Zwangsschluss, Sicherheitsschalter-Stopps und
     Kanal-Schliess-Anweisungen. Das Schliessen selbst live bestaetigt
@@ -744,30 +775,46 @@ async def close_position(session: CTraderSession, position_id: int, volume: floa
     ProtoOAClosePositionReq die sofortige "Order angenommen"-Bestaetigung
     (orderStatus ORDER_STATUS_ACCEPTED, executedVolume 0, KEIN
     deal.executionPrice). Der eigentliche Fill kommt als separates,
-    unaufgefordertes Server-Event NACH dieser Antwort und wird hier (noch)
-    nicht abgewartet - deshalb schlaegt die deal.executionPrice-Suche unten
-    zuverlaessig fehl, nicht nur in Randfaellen. scripts/run_signal_bot.py
-    faengt das ab (Fallback auf den aktuellen Marktkurs statt frueher den
-    Entry-Preis, siehe dortiger Docstring zu _close_one_open - der
-    Entry-Preis-Fallback hatte IMMER exakt 0,00 PnL geloggt). Ein
-    korrekter Fix muesste das nachfolgende ProtoOAExecutionEvent gezielt
-    abwarten (per positionId/Order-Status korrelieren, nicht per
-    clientMsgId) - bisher nicht umgesetzt, da der Marktkurs-Fallback fuer
-    die Trade-Log-Genauigkeit ausreicht und keine Sicherheitsfrage ist
-    (das Schliessen selbst funktioniert nachweislich)."""
-    req = ProtoOAClosePositionReq()
-    req.ctidTraderAccountId = session.account_id
-    req.positionId = position_id
-    req.volume = int(volume * 100)
-    resp = await _send(session, req)
-    # Diagnose (31.08.2026): die Order wurde live nachweislich angenommen
-    # (keine Fehlerantwort, siehe _send()) - nur die erwartete
-    # deal.executionPrice-Struktur stimmte nicht. Volle Antwort mitloggen,
-    # um die tatsaechlichen Feldnamen zu finden statt weiter zu raten.
-    print(f"[cTrader] close_position()-Antwort: {resp}")
-    deal = getattr(resp, "deal", None)
-    if deal is not None and getattr(deal, "executionPrice", None):
-        return float(deal.executionPrice)
+    unaufgefordertes Server-Event NACH dieser Antwort.
+
+    FIX (16.09.2026, Nutzer meldete reale Kontostand-Abweichung von cTrader:
+    +216 Fusion Markets vs. +304 im lokalen Trade-Log ueber 44 Trades - der
+    bisherige Marktkurs-Fallback in scripts/run_signal_bot.py verzerrte den
+    geloggten P&L systematisch, da er Spread/Slippage zwischen Anfrage und
+    echtem Fill ignoriert): wartet jetzt gezielt (per positionId statt
+    clientMsgId korreliert, siehe _on_message_received() in
+    _connect_and_authenticate()) auf das nachfolgende ProtoOAExecutionEvent
+    mit dem echten Fill, bevor auf den Marktkurs-Fallback zurueckgefallen
+    wird. Der Marktkurs-Fallback in scripts/run_signal_bot.py bleibt als
+    letzte Absicherung bestehen, falls das Fill-Event ausnahmsweise nicht
+    innerhalb von FILL_EVENT_TIMEOUT_SECONDS eintrifft."""
+    fill_future = asyncio.get_event_loop().create_future()
+    session._pending_close_fills[position_id] = fill_future
+    try:
+        req = ProtoOAClosePositionReq()
+        req.ctidTraderAccountId = session.account_id
+        req.positionId = position_id
+        req.volume = int(volume * 100)
+        resp = await _send(session, req)
+        # Diagnose (31.08.2026): die Order wurde live nachweislich angenommen
+        # (keine Fehlerantwort, siehe _send()) - nur die erwartete
+        # deal.executionPrice-Struktur stimmte nicht. Volle Antwort mitloggen,
+        # um die tatsaechlichen Feldnamen zu finden statt weiter zu raten.
+        print(f"[cTrader] close_position()-Antwort: {resp}")
+        deal = getattr(resp, "deal", None)
+        if deal is not None and getattr(deal, "executionPrice", None):
+            return float(deal.executionPrice)
+
+        try:
+            fill_event = await asyncio.wait_for(fill_future, timeout=FILL_EVENT_TIMEOUT_SECONDS)
+        except asyncio.TimeoutError:
+            pass
+        else:
+            print(f"[cTrader] Fill-Event fuer Position {position_id} abgewartet: {fill_event.deal}")
+            return float(fill_event.deal.executionPrice)
+    finally:
+        session._pending_close_fills.pop(position_id, None)
+
     raise RuntimeError(
         "Ausstiegspreis nicht in der Schliess-Bestaetigung gefunden (siehe "
         "tradingbot/ctrader.py::close_position, UNVERIFIZIERT) - Aufrufer "
