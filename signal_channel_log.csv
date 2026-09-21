@@ -1081,3 +1081,4 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 25450.2
 
 STOP = 25515.6","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25450.2, ""stop_level"": 25515.6, ""target_level"": null}",levels_aktualisiert
+2026-09-21T09:46:23+00:00,72182,SL to 25500,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
