@@ -1063,3 +1063,6 @@ ENTRY = 10702.7
 
 STOP = 10677.7","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10702.7, ""stop_level"": 10677.7, ""target_level"": null}",levels_aktualisiert
 2026-09-21T09:23:46+00:00,72176,move SL in FTSE to 10688.4,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-21T09:28:19+00:00,72177,"CLOSE TRADE ALERT 
+
+🇬🇧 CLOSING FTSE INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
