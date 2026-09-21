@@ -1050,3 +1050,15 @@ ENTRY = 25505.2
 
 STOP = 25459.2","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25505.2, ""stop_level"": 25459.2, ""target_level"": null}",levels_aktualisiert
 2026-09-21T09:11:28+00:00,72174,stopped out -46,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-21T09:13:49+00:00,72175,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-21T07:14:21.022580+00:00,72175,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 10702.7
+
+STOP = 10677.7","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10702.7, ""stop_level"": 10677.7, ""target_level"": null}",levels_aktualisiert
