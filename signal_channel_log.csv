@@ -1,44 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-14T08:04:47+00:00,71937,"Good morning,
-
-I’ll start today’s European session at 08:55 CEST, 5 minutes before the DAX open.
-
-I’ll be flying solo again today and throughout the rest of this week, covering both the European and US sessions.
-
-Once I’m live on Tom’s YouTube channel, I’ll share the link here.
-
-YouTube can have some latency. A low-latency audio feed is also available:
-https://divergent.uk/tom/
-
-If your connection allows it, you can combine the YouTube video with the Divergent audio for the best experience.
-
-Comments are disabled both on YouTube and in this Telegram group, in line with Tom’s policy. If I answer questions during the stream, they usually reach me via private Telegram messages.
-
-Disclaimer
-
-I trade live using a real account. This is not financial advice.
-
-Trading involves risk, and past performance is not indicative of future results. Always do your own research.
-
-This stream and its recordings are for educational purposes only and are governed by the terms set out at:
-https://tradertom.com/disclaimer/
-
-See you at 08:55 CEST.
-
-Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-14T08:50:00+00:00,71938,"Ladies and Gentlemen, I have slept maybe 3 hours. 
-
-My daughter is slightly ill and has kept us awake for most of the night. 
-
-I will show up, but I am not prepared. So today, I will take the opportunity to walk you through a part of my preparation. 
-
-Well - the technical part. I will tell you what I would regularly do on top of that. 
-
-I will trade the Expresso, then we do the prep.
-
-And then let's see if there is an opportunity to take more trades this morning.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-14T08:54:45+00:00,71940,https://youtube.com/live/LmOk1Vnz4GA?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-14T08:54:49+00:00,71941,Live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-14T09:00:25+00:00,71942,"🇩🇪  GERMAN DAX INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -1031,3 +991,68 @@ STOP = 51423.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"",
 2026-09-18T16:07:35+00:00,72159,"CLOSE TRADE ALERT 
 
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-20T11:19:19+00:00,72162,"SCHEDULE NEXT WEEK
+
+Good morning,
+
+There are some changes to next week’s schedule. I am working very hard behind the scenes to create a new experience for you, but it is taking a little longer than I had scheduled. 
+
+Next week there will be some disruptions. Here is the schedule for the upcoming week:
+
+Monday:   Andi is doing the EU session. There will be no US session
+
+Tuesday:  Tom both sessions
+
+Wednesday:  Tom both sessions
+
+Thursday:  No sessions
+
+Friday:  No sessions
+
+The reason there are no sessions Thursday and Friday is because I am travelling to Frankfurt for the World of Trading show. I am trading live on Friday morning at the show, and then later in the day I am giving a talk about scalping the DAX index. Andi will join me in Frankfurt, hence there is no one to run the live trading channel. 
+
+If you happen to be around Friday for the show in Frankfurt, please come up and say hi to me.
+
+
+FRIENDLY BEAR CONFERENCE
+
+In other news, I am travelling to Los Angeles in October for the Friendly Bear conference, where I will be presenting with Price Action Rose and David Capablanca. 
+
+If you are interested: https://www.friendlybearuniversity.com/conference
+
+I am no longer participating in the Al Brooks event in Orlando. The event has been postponed. It means the USA trip will cause little disruption to the live trading here. 
+
+Thank you for your understanding. 
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-21T07:02:37+00:00,72163,"Good morning,
+
+I’ll start today’s European session at 08:55 CEST, 5 minutes before the DAX cash open.
+
+I’m flying solo again today and throughout the rest of the week, covering both the European and US sessions.
+
+Once I’m live on Tom’s YouTube channel, I’ll share the link here.
+
+For those who prefer less latency, the low-latency audio feed is available here:
+https://divergent.uk/tom/
+
+You can combine the YouTube video with the Divergent audio if your connection allows it.
+
+Comments are disabled on YouTube and in this Telegram group. If you have a question that might be useful to discuss on stream, send me a private Telegram message.
+
+Disclaimer
+
+I trade live using a real account. This is not financial advice, and please do not copy my trades.
+
+There will be winning trades. There will be losing trades. Both are part of trading.
+
+Trading involves risk, and past performance is not indicative of future results. Always do your own research.
+
+Full disclaimer:
+https://tradertom.com/disclaimer/
+
+See you at 08:55 CEST.
+
+Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-21T08:55:38+00:00,72165,LIVE on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-21T08:55:45+00:00,72166,https://youtube.com/live/ZqgFhx8Xq3U?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
