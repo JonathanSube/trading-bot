@@ -1078,3 +1078,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 25509.7
 
 STOP = 25459.0","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25509.7, ""stop_level"": 25459.0, ""target_level"": null}",levels_aktualisiert
+2026-09-21T09:31:04+00:00,72179,"closed FTSE for a scratch, now it broke higher 🙈","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
