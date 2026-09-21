@@ -1043,3 +1043,9 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-21T07:06:30.293336+00:00,72173,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 25505.2
+
+STOP = 25459.2","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25505.2, ""stop_level"": 25459.2, ""target_level"": null}",levels_aktualisiert
