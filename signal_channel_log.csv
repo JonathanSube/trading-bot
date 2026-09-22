@@ -1,6 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-15T15:26:04+00:00,72004,https://youtube.com/live/BSUCKcAS1Fo?feature=sharel,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-15T15:26:13+00:00,72005,live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T15:29:48+00:00,72006,expresso nas orders,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T15:31:19+00:00,72007,"🇺🇸 NASDAQ INDEX
 SOLD SHORT 🔻 = 100%
@@ -967,3 +965,4 @@ Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direc
 2026-09-22T15:15:07+00:00,72212,"See you in 10-15min
 
 Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-22T15:26:59+00:00,72214,https://youtube.com/live/9VCx2wM6g5s?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
