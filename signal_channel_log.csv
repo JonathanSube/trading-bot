@@ -967,3 +967,9 @@ STOP = 25,530","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", 
 🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-22T09:55:07+00:00,72199,CLOSING MOST OF MY POSITION...,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-22T09:55:50+00:00,72200,CLOSING MOST OF THE DAX,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-22T10:00:02+00:00,72201,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 50%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
