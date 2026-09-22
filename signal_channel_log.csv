@@ -973,3 +973,9 @@ SOLD SHORT 🔻 = 50%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-22T08:00:34.508601+00:00,72201,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 50%
+
+ENTRY = 25,464
+
+STOP = 25,525","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25464.0, ""stop_level"": 25525.0, ""target_level"": null}",levels_aktualisiert
