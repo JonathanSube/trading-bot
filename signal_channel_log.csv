@@ -1,7 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-15T09:36:37+00:00,71998,"CLOSE TRADE ALERT 
-
-🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-15T12:32:09+00:00,72001,See you for the US session,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T13:58:20+00:00,72002,"Good afternoon,
 
@@ -940,3 +937,15 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 10731
 
 STOP = 10756","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10731.0, ""stop_level"": 10756.0, ""target_level"": null}",levels_aktualisiert
+2026-09-22T09:44:32+00:00,72195,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-22T07:44:51.717117+00:00,72195,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 10725
+
+STOP = 10745","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10725.0, ""stop_level"": 10745.0, ""target_level"": null}",levels_aktualisiert
