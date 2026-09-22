@@ -936,3 +936,15 @@ ENTRY = 51,963
 
 STOP = 52088","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51963.0, ""stop_level"": 52088.0, ""target_level"": null}",levels_aktualisiert
 2026-09-22T16:13:15+00:00,72216,I have issues with Telegram cutting out...,,gemini_fehler
+2026-09-22T16:16:34+00:00,72217,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 50%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-22T14:17:04.433961+00:00,72217,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 50%
+
+ENTRY = 51,881
+
+STOP =  52006","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51881.0, ""stop_level"": 52006.0, ""target_level"": null}",levels_aktualisiert
