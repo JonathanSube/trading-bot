@@ -1,44 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-15T12:32:09+00:00,72001,See you for the US session,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-15T13:58:20+00:00,72002,"Good afternoon,
-
-European session done. Time to cross the Atlantic. 🇺🇸
-
-I’ll start today’s US session at 15:25 CEST, 5 minutes before the US cash open.
-
-I’m still flying solo and will continue to cover both the European and US sessions throughout the week.
-
-And since apparently I’m responsible for entertainment as well as trading:
-
-German joke of the day:
-
-Two traders meet.
-One says: “How’s trading?”
-The other replies: “Can’t complain.”
-“Profitable?”
-“No. I’m German. We can always complain.” 🇩🇪
-
-Once I’m live on Tom’s YouTube channel, I’ll share the link here.
-
-YouTube can have some latency. Low-latency audio is also available:
-https://divergent.uk/tom/
-
-If your connection allows it, you can combine the YouTube video with the Divergent audio for the best experience.
-
-Comments are disabled both on YouTube and in this Telegram group. Questions can be sent to me via private Telegram message.
-
-Disclaimer
-
-I trade live using a real account. This is not financial advice, and please do not copy my trades.
-
-Trading involves risk, and past performance is not indicative of future results. Always do your own research.
-
-Full disclaimer:
-https://tradertom.com/disclaimer/
-
-See you at 15:25 CEST.
-
-Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T15:26:04+00:00,72004,https://youtube.com/live/BSUCKcAS1Fo?feature=sharel,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T15:26:13+00:00,72005,live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T15:29:48+00:00,72006,expresso nas orders,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
@@ -58,24 +18,12 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-15T13:51:26.315521+00:00,72010,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 52049.6
-
-STOP = 52134.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52049.6, ""stop_level"": 52134.9, ""target_level"": null}",levels_aktualisiert
 2026-09-15T16:02:06+00:00,72011,"🇺🇸 DOW JONES INDEX
 SOLD SHORT 🔻 = 100%
 
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-15T14:02:46.816389+00:00,72011,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 52042.1
-
-STOP = 52134.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 52042.1, ""stop_level"": 52134.9, ""target_level"": null}",levels_aktualisiert
 2026-09-15T16:03:55+00:00,72012,SL on 1st position to 52082.9,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T16:04:13+00:00,72013,"🇺🇸 NASDAQ INDEX
 SOLD SHORT 🔻 = 100%
@@ -83,12 +31,6 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-15T14:05:06.869439+00:00,72013,"🇺🇸 NASDAQ INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 29084.5
-
-STOP = 29143.9","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 29084.5, ""stop_level"": 29143.9, ""target_level"": null}",levels_aktualisiert
 2026-09-15T16:06:17+00:00,72014,move SL in Nas to 29113.6,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T16:06:51+00:00,72015,"CLOSE TRADE ALERT 
 
@@ -987,3 +929,41 @@ I am speaking at the London event.","{""is_signal"": false, ""action"": null, ""
 2026-09-22T10:35:22+00:00,72205,https://www.wot-messe.de/home/,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-22T10:36:09+00:00,72206,"If you come to Frankfurt on Friday, I will buy you a kale juice :)","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-22T10:40:31+00:00,72208,lets call it a morning,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-22T15:14:57+00:00,72210,Hi,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-22T15:14:59+00:00,72211,"🚨
+
+🚨
+
+Good morning America,
+
+I will start streaming at 15:30 European time/09:30 Eastern Time - when the US markets open. 
+
+Once I am live on YouTube, I will copy the URL and post it here in Telegram. Click on link and you will see me live with live account and charts.
+
+Latency Banished with Audio Feed
+YouTube can have latency, depending on where you live in the world, or the strength of your internet connection. Therefore, I also offer an “audio only” feed, which you can listen to, or combine with YouTube. Latency is 0.5 seconds or less. The feed is found here:
+
+https://divergent.uk/tom/
+
+The audio goes live at 15.30 CET/ 09:30 EST as well. If you click on “settings” on the ""divergent.uk/tom"" website, you will see there are 5 servers to select from. Pick anyone that has audio, and if you get disconnected, pick another one. 
+
+Telegram Stream Connection
+You can also simply tune in here in Telegram. An icon will appear at the top of your Telegram app, when I am live streaming. Telegram DOES HAVE latency. 
+
+Disclaimer
+I trade live, with a real account and real money. There is no fucking about with fake accounts or pretending. I win. I lose. It is all on display. However, by being here, or on YouTube/Divergent, you agree to abide by the following conditions:
+
+https://t.me/c/1238535538/50930
+
+Additionally, you acknowledge the stipulations set out on the website TraderTom.Com:
+
+https://tradertom.com/disclaimer/
+
+I will see you in at 15:30 Central European Time. 
+
+Stay strong and thank you for being here. 
+
+Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-22T15:15:07+00:00,72212,"See you in 10-15min
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
