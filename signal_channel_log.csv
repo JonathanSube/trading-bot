@@ -1,14 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-15T09:18:44+00:00,71994,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-15T09:21:49+00:00,71995,"CLOSE TRADE ALERT 
-
-🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-15T09:21:51+00:00,71996,-18,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-15T09:33:21+00:00,71997,"🇩🇪  GERMAN DAX INDEX
 SOLD SHORT 🔻 = 100%
 
@@ -932,3 +922,9 @@ Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direc
 2026-09-22T09:10:03+00:00,72192,"IF TELEGRAM is playing up, use this link:
 
 https://streaming.tradertom.com/","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-22T09:31:04+00:00,72193,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
