@@ -984,3 +984,4 @@ STOP = 25,525","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", 
 I am speaking at the London event.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-22T10:32:37+00:00,72203,CLOSING DAX,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-22T10:33:41+00:00,72204,These are the trades for this morning.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-22T10:35:22+00:00,72205,https://www.wot-messe.de/home/,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
