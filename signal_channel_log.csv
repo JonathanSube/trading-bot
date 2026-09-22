@@ -965,3 +965,4 @@ STOP = 25,530","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", 
 2026-09-22T09:50:52+00:00,72198,"STOP LOSS ALERT 
 
 🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-22T09:55:07+00:00,72199,CLOSING MOST OF MY POSITION...,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
