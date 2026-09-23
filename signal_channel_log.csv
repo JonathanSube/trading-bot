@@ -1014,3 +1014,15 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 30,641
 
 STOP = 30741","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30641.0, ""stop_level"": 30741.0, ""target_level"": null}",levels_aktualisiert
+2026-09-23T15:38:25+00:00,72256,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-23T13:38:43.627605+00:00,72256,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 51,775
+
+STOP = 51,675","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51775.0, ""stop_level"": 51675.0, ""target_level"": null}",levels_aktualisiert
