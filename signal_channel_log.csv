@@ -1016,3 +1016,9 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 25,540
 
 STOP = 25,620","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25540.0, ""stop_level"": 25620.0, ""target_level"": null}",levels_aktualisiert
+2026-09-23T10:15:53+00:00,72243,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 10738
+
+STOP = 10760","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10738.0, ""stop_level"": 10760.0, ""target_level"": null}",trade_eroeffnet
