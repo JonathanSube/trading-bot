@@ -1,6 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-16T15:26:33+00:00,72041,https://youtube.com/live/UGeLF43K3v0?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-16T15:26:36+00:00,72042,live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T15:30:29+00:00,72044,"🇺🇸 DOW JONES INDEX
 SOLD SHORT 🔻 = 100%
 
@@ -1001,3 +999,4 @@ It is still a losing morning. I started at 176k. I went to 156k. Now it is at 16
 I will see you at the US session.","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-23T13:54:20+00:00,72250,GOALS REACHED.... CLOSING EVERYTHING ELSE,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-23T15:24:19+00:00,72251,The US session is about to start. The T&C are here: https://t.me/c/1238535538/72211,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-23T15:28:41+00:00,72253,https://youtube.com/live/3gWkUE7A_hM?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
