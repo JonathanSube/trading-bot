@@ -1,8 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-16T09:53:52+00:00,72035,"CLOSE TRADE ALERT 
-
-🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-16T09:54:04+00:00,72036,-18,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T11:10:16+00:00,72038,"Two small losses. Expresso didn't work. Took my loss early. ANTI on the SRS - I had the best intentions and explained you my reasoning for taking it - was clearly the wrong direction. As soon as I realized that, I got out.  Thank you for being here.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T13:19:51+00:00,72039,"Good afternoon,
 
@@ -1006,3 +1002,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",maximum_positionen_erreicht
+2026-09-23T10:06:13+00:00,72240,STOPPED OUT OF DAX MINUS 80,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
