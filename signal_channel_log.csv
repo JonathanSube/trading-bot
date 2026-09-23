@@ -1044,3 +1044,15 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 51,711
 
 STOP = 51,586","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51711.0, ""stop_level"": 51586.0, ""target_level"": null}",levels_aktualisiert
+2026-09-23T16:04:27+00:00,72260,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-23T14:04:46.483440+00:00,72260,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 51,717
+
+STOP = 51,592","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51717.0, ""stop_level"": 51592.0, ""target_level"": null}",levels_aktualisiert
