@@ -17,12 +17,6 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-16T13:54:34.685890+00:00,72047,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 52054,8
-
-STOP = 51991.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 520548.0, ""stop_level"": 51991.3, ""target_level"": null}",levels_aktualisiert
 2026-09-16T16:01:35+00:00,72048,SL to 989.4,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T16:05:43+00:00,72049,Stopped out,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-16T16:05:46+00:00,72050,"🇺🇸 DOW JONES INDEX
@@ -31,24 +25,12 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-16T14:06:25.439366+00:00,72050,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 51987.2
-
-STOP = 52061.4","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51987.2, ""stop_level"": 52061.4, ""target_level"": null}",levels_aktualisiert
 2026-09-16T16:09:28+00:00,72051,"🇺🇸 NASDAQ INDEX
 BOUGHT LONG ⬆️️ = 100%
 
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-16T14:09:58.182204+00:00,72051,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 29157
-
-STOP =29112.3","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 29157.0, ""stop_level"": 29112.3, ""target_level"": null}",levels_aktualisiert
 2026-09-16T16:13:16+00:00,72052,Stopped out of the nasdaq -44.7,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-16T16:13:25+00:00,72053,"🇺🇸 DOW JONES INDEX
 SOLD SHORT 🔻 = 100%
@@ -56,12 +38,6 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-16T14:13:56.828188+00:00,72053,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 51959.8
-
-STOP = 52059.8","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51959.8, ""stop_level"": 52059.8, ""target_level"": null}",levels_aktualisiert
 2026-09-16T16:17:24+00:00,72054,Status so far. 2 open positions,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T16:20:24+00:00,72055,Sl to BE on first. 2nd stop on 1st entray,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T16:21:09+00:00,72057,closed second entry,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
@@ -1024,3 +1000,4 @@ It is still a losing morning. I started at 176k. I went to 156k. Now it is at 16
 
 I will see you at the US session.","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-23T13:54:20+00:00,72250,GOALS REACHED.... CLOSING EVERYTHING ELSE,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-23T15:24:19+00:00,72251,The US session is about to start. The T&C are here: https://t.me/c/1238535538/72211,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
