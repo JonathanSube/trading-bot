@@ -1,10 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-16T16:09:28+00:00,72051,"🇺🇸 NASDAQ INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-16T16:13:16+00:00,72052,Stopped out of the nasdaq -44.7,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-16T16:13:25+00:00,72053,"🇺🇸 DOW JONES INDEX
 SOLD SHORT 🔻 = 100%
@@ -1062,3 +1056,6 @@ ENTRY = 51,828
 
 STOP = 51,600","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51828.0, ""stop_level"": 51600.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T16:07:36+00:00,72262,CLOSED LAST TWO,,gemini_fehler
+2026-09-23T16:11:58+00:00,72263,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
