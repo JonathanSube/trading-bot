@@ -1,11 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-16T16:13:16+00:00,72052,Stopped out of the nasdaq -44.7,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-16T16:13:25+00:00,72053,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-16T16:17:24+00:00,72054,Status so far. 2 open positions,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T16:20:24+00:00,72055,Sl to BE on first. 2nd stop on 1st entray,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T16:21:09+00:00,72057,closed second entry,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
@@ -1059,3 +1052,8 @@ STOP = 51,600","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", 
 2026-09-23T16:11:58+00:00,72263,"CLOSE TRADE ALERT 
 
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-23T16:14:46+00:00,72265,"I AM ALL DONE... I turned a very crap day into a very good day. Thank you for watching. This channel is now closed until Monday. I hope to see you in Frankfurt.
+
+Kind regards
+
+Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
