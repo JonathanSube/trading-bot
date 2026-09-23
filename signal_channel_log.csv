@@ -1,8 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-16T15:34:18+00:00,72045,"CLOSE TRADE ALERT 
-
-🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-16T15:34:21+00:00,72046,+8,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T15:53:58+00:00,72047,"🇺🇸 DOW JONES INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -1006,3 +1002,15 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 51,761
 
 STOP = 51636","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51761.0, ""stop_level"": 51636.0, ""target_level"": null}",levels_aktualisiert
+2026-09-23T15:34:52+00:00,72255,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-23T13:35:15.167138+00:00,72255,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 30,641
+
+STOP = 30741","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30641.0, ""stop_level"": 30741.0, ""target_level"": null}",levels_aktualisiert
