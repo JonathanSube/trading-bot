@@ -1,5 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-16T11:10:16+00:00,72038,"Two small losses. Expresso didn't work. Took my loss early. ANTI on the SRS - I had the best intentions and explained you my reasoning for taking it - was clearly the wrong direction. As soon as I realized that, I got out.  Thank you for being here.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T13:19:51+00:00,72039,"Good afternoon,
 
 Europe has had its turn. Now let’s see what our American friends have prepared for us. 🇺🇸
@@ -1048,3 +1047,10 @@ ENTRY = 25,525
 STOP = 25,610","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25525.0, ""stop_level"": 25610.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T10:33:22+00:00,72246,"I will stop streaming now, and I will update you on the positions via Telegram.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-23T10:50:44+00:00,72248,well looking better now.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-23T11:57:58+00:00,72249,"Somehow I have managed to claw a huge chuck back of my losses this morning. I have closed almost all my FTSE here at 10720, and I have closed almost all of my DAX here at 24,470. 
+
+I decided to close because I didn't approve of my trading today. Usually doing it right is more important than the profit, but I need to balance that against the knowledge that you are with me and having really bad mornings is not our idea of good trading. 
+
+It is still a losing morning. I started at 176k. I went to 156k. Now it is at 169,928. To me this is still a loss but it feels like a victory too. 
+
+I will see you at the US session.","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
