@@ -1026,3 +1026,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 51,775
 
 STOP = 51,675","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51775.0, ""stop_level"": 51675.0, ""target_level"": null}",levels_aktualisiert
+2026-09-23T15:39:42+00:00,72257,CLEAR THE DECK CLOSED ALL,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
