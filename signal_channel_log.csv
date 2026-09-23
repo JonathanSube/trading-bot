@@ -1061,3 +1061,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 51,828
 
 STOP = 51,600","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51828.0, ""stop_level"": 51600.0, ""target_level"": null}",levels_aktualisiert
+2026-09-23T16:07:36+00:00,72262,CLOSED LAST TWO,,gemini_fehler
