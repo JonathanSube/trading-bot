@@ -1,10 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-16T09:41:53+00:00,72034,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 25464
-
-STOP = 25421.8","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25464.0, ""stop_level"": 25421.8, ""target_level"": null}",trade_eroeffnet
 2026-09-16T09:53:52+00:00,72035,"CLOSE TRADE ALERT 
 
 🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
@@ -956,3 +950,16 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 25,571
 
 STOP = 25,671","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25571.0, ""stop_level"": 25671.0, ""target_level"": null}",levels_aktualisiert
+2026-09-23T09:46:22+00:00,72233,I have CLOSED my FTSE position for minus 20. I have flipped LONG now,"{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-23T09:46:29+00:00,72234,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-23T07:46:55.442672+00:00,72234,"🇬🇧 FTSE 100 INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 10751
+
+STOP = 10725","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10751.0, ""stop_level"": 10725.0, ""target_level"": null}",levels_aktualisiert
