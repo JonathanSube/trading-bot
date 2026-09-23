@@ -1,39 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-16T07:08:45+00:00,72022,"Good morning,
-
-Another day, another DAX open. 🇩🇪
-
-I’ll start today’s European session at 08:55 CEST, 5 minutes before the DAX cash open.
-
-I’m flying solo again today and throughout the rest of the week, covering both the European and US sessions.
-
-Once I’m live on Tom’s YouTube channel, I’ll share the link here.
-
-For those who prefer less latency, the low-latency audio feed is available here:
-https://divergent.uk/tom/
-
-You can combine the YouTube video with the Divergent audio if your connection allows it.
-
-Comments are disabled on YouTube and in this Telegram group. If you have a question that might be useful to discuss on stream, send me a private Telegram message.
-
-Disclaimer
-
-I trade live using a real account. This is not financial advice, and please do not copy my trades.
-
-There will be winning trades. There will be losing trades. Both are part of trading.
-
-Trading involves risk, and past performance is not indicative of future results. Always do your own research.
-
-Full disclaimer:
-https://tradertom.com/disclaimer/
-
-Coffee ready. Charts ready. Whether the DAX is ready to behave itself remains to be seen.
-
-See you at 08:55 CEST.
-
-Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-16T08:55:24+00:00,72024,https://youtube.com/live/fHwrudTzXuQ?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-16T08:55:31+00:00,72025,Live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-16T09:01:56+00:00,72026,"🇩🇪  GERMAN DAX INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -970,3 +935,15 @@ Tom",,gemini_fehler
 today there are 100 days to New Year. 
 
 100 Day Challenge anyone?",,gemini_fehler
+2026-09-22T22:31:28+00:00,72225,"⚠️TFC users⚠️
+Update is out. Fixed issue with pending orders.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-23T08:49:00+00:00,72226,"GOOD MORNING,
+
+I will be with you shortly. I just need to download and install the new TFC,
+
+T & C for being here: https://t.me/c/1238535538/72188
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-23T08:55:11+00:00,72228,https://youtube.com/live/45pjQxZ8MMw?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-23T08:56:10+00:00,72229,https://streaming.tradertom.com/,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-23T08:56:13+00:00,72230,ZERO LATENCY,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
