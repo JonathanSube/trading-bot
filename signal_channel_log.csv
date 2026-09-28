@@ -1,8 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-21T08:55:38+00:00,72165,LIVE on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-21T08:55:45+00:00,72166,https://youtube.com/live/ZqgFhx8Xq3U?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-21T08:56:37+00:00,72168,Lost connection on Telegram.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-21T08:56:55+00:00,72170,Now it should work,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-21T09:05:34+00:00,72173,"🇩🇪  GERMAN DAX INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -510,3 +506,4 @@ I will see you in 10min
 Kind regards
 
 Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-28T08:57:49+00:00,72270,https://youtube.com/live/Qp1SDWXUTj4?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
