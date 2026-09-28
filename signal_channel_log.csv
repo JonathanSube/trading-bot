@@ -548,3 +548,9 @@ ENTRY =
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-28T15:33:21+00:00,72294,"changed long order, in case I need to flip (Karaoke Expresso)",,gemini_fehler
 2026-09-28T15:35:50+00:00,72295,"closed half, reduced exposure",,gemini_fehler
+2026-09-28T15:36:33+00:00,72297,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
