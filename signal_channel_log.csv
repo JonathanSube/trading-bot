@@ -508,3 +508,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 25,411
 
 STOP = 25,375","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25411.0, ""stop_level"": 25375.0, ""target_level"": null}",levels_aktualisiert
+2026-09-28T09:26:34+00:00,72278,closed half of it just to ensure I am getting something for my troubles... this is range bound behavior.... just like Friday,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
