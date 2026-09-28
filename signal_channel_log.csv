@@ -555,3 +555,4 @@ ENTRY =
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-28T15:37:32+00:00,72298,deleting long order,,gemini_fehler
+2026-09-28T15:42:54+00:00,72299,Stopped out on second,,gemini_fehler
