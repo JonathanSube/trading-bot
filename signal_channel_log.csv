@@ -629,3 +629,5 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""di
 2026-09-28T16:11:49+00:00,72315,"CLOSE TRADE ALERT 
 
 🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-28T16:13:42+00:00,72316,both stopps in the dow to 528,,gemini_fehler
+2026-09-28T16:14:16+00:00,72317,Nasdaq result,,gemini_fehler
