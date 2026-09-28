@@ -546,3 +546,4 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-28T15:33:21+00:00,72294,"changed long order, in case I need to flip (Karaoke Expresso)",,gemini_fehler
