@@ -637,3 +637,4 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""di
 🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-28T16:22:10+00:00,72320,"closed first entry for -15. Have to reduce exposure, no follow through on the breakout-attempt. Could be trapped in a range",,gemini_fehler
 2026-09-28T16:22:35+00:00,72321,Closed half on second entry for -50 (25 full points),,gemini_fehler
+2026-09-28T16:24:02+00:00,72322,Moved SL in DOW to 51546.9,,gemini_fehler
