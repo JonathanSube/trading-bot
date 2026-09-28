@@ -640,3 +640,4 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""di
 2026-09-28T16:24:02+00:00,72322,Moved SL in DOW to 51546.9,,gemini_fehler
 2026-09-28T16:44:23+00:00,72323,got stopped out in the DOW.,,gemini_fehler
 2026-09-28T16:47:07+00:00,72324,Status: Dow. Not good.,,gemini_fehler
+2026-09-28T16:48:04+00:00,72325,Status: Nasdaq. Better.,,gemini_fehler
