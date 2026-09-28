@@ -1,60 +1,13 @@
 {
   "version": 1,
-  "last_message_id": 72313,
+  "last_message_id": 72315,
   "initial_equity": 10000.12,
-  "total_pnl": -596.9161999999984,
-  "total_trades": 79,
+  "total_pnl": -456.22369999999967,
+  "total_trades": 83,
   "consecutive_api_errors": 0,
   "stopped_permanently": false,
   "paused": false,
   "open_trades": {
-    "NAS100": [
-      {
-        "signal": {
-          "direction": "short",
-          "entry_price": 30320.79,
-          "stop": 30472.393949999998,
-          "target": 30017.582100000007,
-          "risk": 151.60394999999698,
-          "entry_timestamp": "2026-09-28T10:05:51.390387-04:00"
-        },
-        "order_id": 44151785,
-        "qty": 1.85,
-        "source_message_id": 72308,
-        "entry_fill": 30320.79,
-        "last_seen_edit_date": null
-      },
-      {
-        "signal": {
-          "direction": "short",
-          "entry_price": 30298.79,
-          "stop": 30450.283949999997,
-          "target": 29995.802100000008,
-          "risk": 151.4939499999964,
-          "entry_timestamp": "2026-09-28T10:10:12.488497-04:00"
-        },
-        "order_id": 44151983,
-        "qty": 1.85,
-        "source_message_id": 72310,
-        "entry_fill": 30298.79,
-        "last_seen_edit_date": null
-      },
-      {
-        "signal": {
-          "direction": "short",
-          "entry_price": 30288.92,
-          "stop": 30440.364599999994,
-          "target": 29986.030800000008,
-          "risk": 151.44459999999526,
-          "entry_timestamp": "2026-09-28T10:10:59.541737-04:00"
-        },
-        "order_id": 44151997,
-        "qty": 1.85,
-        "source_message_id": 72312,
-        "entry_fill": 30288.92,
-        "last_seen_edit_date": null
-      }
-    ],
     "US30": [
       {
         "signal": {
@@ -89,8 +42,8 @@
     ]
   },
   "telegram_update_offset": 700987115,
-  "last_channel_message_at": "2026-09-28T16:10:59+00:00",
-  "last_poll_at": "2026-09-28T14:11:20.126068+00:00",
+  "last_channel_message_at": "2026-09-28T16:11:49+00:00",
+  "last_poll_at": "2026-09-28T14:12:26.596165+00:00",
   "telegram_peer_id": -1001238535538,
   "telegram_peer_access_hash": -364740171264383777
 }
