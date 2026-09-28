@@ -596,3 +596,9 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-28T16:07:49+00:00,72309,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
