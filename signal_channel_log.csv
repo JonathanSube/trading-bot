@@ -1,27 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-21T09:28:19+00:00,72177,"CLOSE TRADE ALERT 
-
-🇬🇧 CLOSING FTSE INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-21T09:28:33+00:00,72178,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-21T09:31:04+00:00,72179,"closed FTSE for a scratch, now it broke higher 🙈","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-21T09:40:02+00:00,72180,Stopped out -50,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-21T09:41:39+00:00,72181,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-21T09:46:23+00:00,72182,SL to 25500,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-21T09:53:38+00:00,72183,"CLOSE TRADE ALERT 
-
-🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-21T09:53:52+00:00,72184,-35,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-21T09:54:06+00:00,72185,Status,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-21T21:16:44+00:00,72187,"Good evening
 
 I will see you tomorrow morning for the EU session.
@@ -509,3 +486,8 @@ ENTRY = 25,411
 
 STOP = 25,375","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25411.0, ""stop_level"": 25375.0, ""target_level"": null}",levels_aktualisiert
 2026-09-28T09:26:34+00:00,72278,closed half of it just to ensure I am getting something for my troubles... this is range bound behavior.... just like Friday,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-28T10:16:56+00:00,72280,"Taking it easy this morning in a trading range environment...
+
+Andi is up next for the US session. I am back tomorrow.
+
+Tom ❤️","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
