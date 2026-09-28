@@ -534,3 +534,15 @@ Karaoke Andi",,gemini_fehler
 2026-09-28T15:25:59+00:00,72287,Telegram not working...,,gemini_fehler
 2026-09-28T15:26:27+00:00,72290,"OK, Telegram works now",,gemini_fehler
 2026-09-28T15:28:58+00:00,72291,Expresso orders so far,,gemini_fehler
+2026-09-28T15:30:33+00:00,72292,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-28T15:30:34+00:00,72293,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
