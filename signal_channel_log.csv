@@ -581,3 +581,7 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 30320.5
 
 STOP = 30395.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30320.5, ""stop_level"": 30395.5, ""target_level"": null}",levels_aktualisiert
+2026-09-28T16:02:55+00:00,72303,"CLOSE TRADE ALERT 
+
+🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-28T16:03:17+00:00,72304,Scratch. Want to wait for a clear push through resistance and go rather long SRS,,gemini_fehler
