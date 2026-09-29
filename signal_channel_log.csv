@@ -1,210 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-21T21:16:44+00:00,72187,"Good evening
-
-I will see you tomorrow morning for the EU session.
-
-Thank you Andi for all your hard work.
-
-❤️","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T08:56:21+00:00,72188,"🚨
-
-🚨
-
-Good morning,
-
-I will start streaming at 9am European time.
-
-Once I am live on YouTube, I will copy the URL and post it here in Telegram. Click on link and you will see me live with live account and charts.
-
-Latency Banished with Audio Feed
-YouTube can have latency, depending on where you live in the world, or the strength of your internet connection. Therefore, I also offer an “audio only” feed, which you can listen to, or combine with YouTube. Latency is 0.5 seconds or less. The feed is found here:
-
-https://divergent.uk/tom/
-
-The audio goes live at 9am as well. If you click on “settings” on the ""divergent.uk/tom"" website, you will see there are 5 servers to select from. Pick anyone that has audio, and if you get disconnected, pick another one. 
-
-Telegram Stream Connection
-You can also simply tune in here in Telegram. An icon will appear at the top of your Telegram app, when I am live streaming. Telegram DOES HAVE latency. 
-
-Disclaimer
-I trade live, with a real account and real money. There is no fucking about with fake accounts or pretending. I win. I lose. It is all on display. However, by being here, or on YouTube/Divergent, you agree to abide by the following conditions:
-
-https://t.me/c/1238535538/50930
-
-Additionally, you acknowledge the stipulations set out on the website TraderTom.Com:
-
-https://tradertom.com/disclaimer/
-
-I will see you in at 9am Central European Time. 
-
-Stay strong and thank you for being here. 
-
-Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T08:59:28+00:00,72190,https://youtube.com/live/ditc4G-SLWs?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T09:08:58+00:00,72191,It seems I was muted for a while. I am not sure how that happened. Maybe I leaned against the mic control and it turned volume off.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T09:10:03+00:00,72192,"IF TELEGRAM is playing up, use this link:
-
-https://streaming.tradertom.com/","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T09:31:04+00:00,72193,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-22T07:31:35.745089+00:00,72193,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 10735
-
-STOP = 10760","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10735.0, ""stop_level"": 10760.0, ""target_level"": null}",levels_aktualisiert
-2026-09-22T09:33:22+00:00,72194,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-22T07:33:45.171161+00:00,72194,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 10731
-
-STOP = 10756","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10731.0, ""stop_level"": 10756.0, ""target_level"": null}",levels_aktualisiert
-2026-09-22T09:44:32+00:00,72195,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-22T07:44:51.717117+00:00,72195,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 10725
-
-STOP = 10745","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10725.0, ""stop_level"": 10745.0, ""target_level"": null}",levels_aktualisiert
-2026-09-22T09:49:48+00:00,72196,FTSE - CLOSING LAST ENTRY and 2nd LAST ENTRY - overall plus but last entry lost...,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-22T09:50:11+00:00,72197,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-22T07:50:29.579496+00:00,72197,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 25,486
-
-STOP = 25,530","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25486.0, ""stop_level"": 25530.0, ""target_level"": null}",levels_aktualisiert
-2026-09-22T09:50:52+00:00,72198,"STOP LOSS ALERT 
-
-🇬🇧 MOVING STOP TO BREAKEVEN in FTSE INDEX now","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T09:55:07+00:00,72199,CLOSING MOST OF MY POSITION...,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-22T09:55:50+00:00,72200,CLOSING MOST OF THE DAX,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-22T10:00:02+00:00,72201,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 50%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-22T08:00:34.508601+00:00,72201,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 50%
-
-ENTRY = 25,464
-
-STOP = 25,525","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25464.0, ""stop_level"": 25525.0, ""target_level"": null}",levels_aktualisiert
-2026-09-22T10:29:06+00:00,72202,"https://proptradingexpo.com/
-
-I am speaking at the London event.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T10:32:37+00:00,72203,CLOSING DAX,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-22T10:33:41+00:00,72204,These are the trades for this morning.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T10:35:22+00:00,72205,https://www.wot-messe.de/home/,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T10:36:09+00:00,72206,"If you come to Frankfurt on Friday, I will buy you a kale juice :)","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T10:40:31+00:00,72208,lets call it a morning,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T15:14:57+00:00,72210,Hi,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T15:14:59+00:00,72211,"🚨
-
-🚨
-
-Good morning America,
-
-I will start streaming at 15:30 European time/09:30 Eastern Time - when the US markets open. 
-
-Once I am live on YouTube, I will copy the URL and post it here in Telegram. Click on link and you will see me live with live account and charts.
-
-Latency Banished with Audio Feed
-YouTube can have latency, depending on where you live in the world, or the strength of your internet connection. Therefore, I also offer an “audio only” feed, which you can listen to, or combine with YouTube. Latency is 0.5 seconds or less. The feed is found here:
-
-https://divergent.uk/tom/
-
-The audio goes live at 15.30 CET/ 09:30 EST as well. If you click on “settings” on the ""divergent.uk/tom"" website, you will see there are 5 servers to select from. Pick anyone that has audio, and if you get disconnected, pick another one. 
-
-Telegram Stream Connection
-You can also simply tune in here in Telegram. An icon will appear at the top of your Telegram app, when I am live streaming. Telegram DOES HAVE latency. 
-
-Disclaimer
-I trade live, with a real account and real money. There is no fucking about with fake accounts or pretending. I win. I lose. It is all on display. However, by being here, or on YouTube/Divergent, you agree to abide by the following conditions:
-
-https://t.me/c/1238535538/50930
-
-Additionally, you acknowledge the stipulations set out on the website TraderTom.Com:
-
-https://tradertom.com/disclaimer/
-
-I will see you in at 15:30 Central European Time. 
-
-Stay strong and thank you for being here. 
-
-Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T15:15:07+00:00,72212,"See you in 10-15min
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T15:26:59+00:00,72214,https://youtube.com/live/9VCx2wM6g5s?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-22T16:08:13+00:00,72215,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 50%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-22T14:08:31.146988+00:00,72215,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 50%
-
-ENTRY = 51,963
-
-STOP = 52088","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51963.0, ""stop_level"": 52088.0, ""target_level"": null}",levels_aktualisiert
-2026-09-22T16:13:15+00:00,72216,I have issues with Telegram cutting out...,,gemini_fehler
-2026-09-22T16:16:34+00:00,72217,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 50%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-22T14:17:04.433961+00:00,72217,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 50%
-
-ENTRY = 51,881
-
-STOP =  52006","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51881.0, ""stop_level"": 52006.0, ""target_level"": null}",levels_aktualisiert
-2026-09-22T16:21:45+00:00,72218,CLOSED THE DOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-22T16:22:28+00:00,72219,PLUS about 150 ish,,gemini_fehler
-2026-09-22T16:24:37+00:00,72221,"STATUS
-
-130 points profit in total",,gemini_fehler
-2026-09-22T16:24:45+00:00,72222,"I am here tomorrow. See you then.
-
-Tom",,gemini_fehler
-2026-09-22T16:26:39+00:00,72223,"APOLOGIES FOR THE SHORT SESSION
-
-I have an issue with TradeFromChart, where the order placement is not working. I am investigating. 
-
-The sessions today were profitable. It is nice to be here with you trading again. 
-
-See you tomorrow
-
-Tom",,gemini_fehler
-2026-09-22T16:59:26+00:00,72224,"USELESS FACT
-
-today there are 100 days to New Year. 
-
-100 Day Challenge anyone?",,gemini_fehler
 2026-09-22T22:31:28+00:00,72225,"⚠️TFC users⚠️
 Update is out. Fixed issue with pending orders.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-23T08:49:00+00:00,72226,"GOOD MORNING,
@@ -641,3 +435,160 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""di
 2026-09-28T16:44:23+00:00,72323,got stopped out in the DOW.,,gemini_fehler
 2026-09-28T16:47:07+00:00,72324,Status: Dow. Not good.,,gemini_fehler
 2026-09-28T16:48:04+00:00,72325,Status: Nasdaq. Better.,,gemini_fehler
+2026-09-29T08:55:00+00:00,72328,"Good morning, 
+
+I will start trading momentarily.
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T08:59:17+00:00,72330,https://youtube.com/live/uWt9ehh6GLo?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T09:23:27+00:00,72331,"🇬🇧 FTSE 100 INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 10737
+
+STOP = 10757","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10737.0, ""stop_level"": 10757.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T09:26:40+00:00,72332,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 25,417
+
+STOP = 25380","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25417.0, ""stop_level"": 25380.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T09:28:00+00:00,72333,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 25,428
+
+STOP = 25,400","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25428.0, ""stop_level"": 25400.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T09:33:45+00:00,72334,CLOSED 1 DAX for 40,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-29T09:33:50+00:00,72335,CLOSED FTSE for MINUS 8,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-29T09:35:02+00:00,72336,CLOSED MOST OF DAX,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-29T09:38:40+00:00,72340,the shit I let out :)))),"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T10:01:15+00:00,72341,STOPPED OUT OF DAX FOR ZERO on the last small position left. I must say  this market looks a lot less buoyant now. I will see you later.,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-29T15:05:41+00:00,72342,"🚨
+
+🚨
+
+Hail, America!
+
+I shall lift my sword at 15:30 European time/09:30 Eastern Time - when the US markets open. 
+
+Once the beacon burns on YouTube, I shall cast the rune (URL) here in Telegram. Strike the link and behold me live, with my account and charts.
+
+The Lag-Slaying Audio Feed
+YouTube may be slow, like a drunk in the longhouse, depending on your lands or the strength of your connection. Thus, I offer an “audio only” feed, to hear my voice or mix with the sight. The lag is banished, under 0.5 seconds. Find the treasure here:
+
+https://divergent.uk/tom/
+
+The sound awakens at 15.30 CET/ 09:30 EST. If you strike “settings” on the ""divergent.uk/tom"" site, you shall see 5 thrones (servers) to choose from. Pick one with voice, and if the bond breaks, choose another.
+
+The Telegram Path
+You may also listen here in Telegram. A sigil will rise at the top of your app when I stream. Yet, Telegram carries the weight of latency.
+
+The Oath
+I trade in the real, with true coin. No fake masks, no pretense. I win. I lose. It is all shown. But by standing here, or on YouTube/Divergent, you swear to follow these laws:
+
+https://t.me/c/1238535538/50930
+
+Also, you accept the terms set on the hall of TraderTom.Com:
+
+https://tradertom.com/disclaimer/
+
+I shall meet you at 15:30 Central European Time.
+
+Stand firm and give thanks for your presence.
+
+Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T15:28:05+00:00,72344,https://youtube.com/live/QBp_VzzaniA?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T15:28:39+00:00,72345,I should be live on all 3,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T15:33:04+00:00,72346,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 51,430
+
+STOP = 51,305","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51430.0, ""stop_level"": 51305.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T15:34:52+00:00,72347,TOOK MY LOSS.. very bad entry on my part,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-29T15:35:11+00:00,72348,MINUS 80,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T15:35:53+00:00,72349,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 30,322
+
+STOP = 30,422","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30322.0, ""stop_level"": 30422.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T15:36:26+00:00,72350,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 51,432
+
+STOP = 51,557","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51432.0, ""stop_level"": 51557.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T15:37:48+00:00,72351,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 51385
+
+STOP = 51510","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51385.0, ""stop_level"": 51510.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T15:40:56+00:00,72352,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 30,299
+
+STOP = 30399","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30299.0, ""stop_level"": 30399.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T15:43:03+00:00,72353,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 30,270
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30270.0, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-09-29T15:43:25+00:00,72354,"30,370","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T15:44:27+00:00,72355,CLOSED NASDAQ,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-29T15:45:56+00:00,72356,CLOSED DOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-29T15:46:09+00:00,72358,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 30,303
+
+STOP = 30,403","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30303.0, ""stop_level"": 30403.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T15:51:26+00:00,72359,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 51,390
+
+STOP = 51,515","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51390.0, ""stop_level"": 51515.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T16:03:11+00:00,72360,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 51.376
+
+STOP = 51,501","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51.376, ""stop_level"": 51501.0, ""target_level"": null}",volumen_zu_klein
+2026-09-29T16:05:09+00:00,72361,CLOSED ONE DOW ENTRY FOR PLUS 15,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-29T16:05:47+00:00,72362,CLOSED NASDAQ MINUS 50,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-29T16:13:36+00:00,72363,CLOSED DOW... nothing made I think on that one. I will post audit after,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-09-29T16:15:27+00:00,72364,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 51,392
+
+STOP = 51,517","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51392.0, ""stop_level"": 51517.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T16:17:33+00:00,72365,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY =  30366
+
+STOP = 30466","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30366.0, ""stop_level"": 30466.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T16:19:31+00:00,72366,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY =51,375 
+
+STOP = 51,500","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 51375.0, ""stop_level"": 51500.0, ""target_level"": null}",trade_eroeffnet
+2026-09-29T16:21:48+00:00,72367,all closed,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-29T16:22:47+00:00,72368,I need 5min to get some hot water,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T17:01:42+00:00,72369,"I'll do EU, Tom US","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T17:01:47+00:00,72370,"TOMORROW
+
+ANDI = EU
+
+TOM = US","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T17:01:58+00:00,72371,"thank you for today. It was fun.
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-29T17:05:34+00:00,72373,KILLING IT IN SP500 😁😁😁,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
