@@ -1,32 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-23T10:06:13+00:00,72240,STOPPED OUT OF DAX MINUS 80,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-23T10:14:40+00:00,72241,CLOSING ALL FTSE....,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-23T10:15:24+00:00,72242,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T10:15:53+00:00,72243,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 10738
-
-STOP = 10760","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10738.0, ""stop_level"": 10760.0, ""target_level"": null}",trade_eroeffnet
-2026-09-23T10:17:28+00:00,72244,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T10:30:35+00:00,72245,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T10:33:22+00:00,72246,"I will stop streaming now, and I will update you on the positions via Telegram.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-23T10:50:44+00:00,72248,well looking better now.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-23T11:57:58+00:00,72249,"Somehow I have managed to claw a huge chuck back of my losses this morning. I have closed almost all my FTSE here at 10720, and I have closed almost all of my DAX here at 24,470. 
 
 I decided to close because I didn't approve of my trading today. Usually doing it right is more important than the profit, but I need to balance that against the knowledge that you are with me and having really bad mornings is not our idea of good trading. 
@@ -589,3 +561,5 @@ STOP = 10702.2","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE""
 
 🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-30T09:52:51+00:00,72400,+15,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-30T11:05:47+00:00,72402,"It was an absolute pleasure. Thank you for being here with me. I am personally short the DAX from 416, I believe there is more downside to be expected. But I can't manage that position for you. 
+Tom will trade the US session with you. See you next week!","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
