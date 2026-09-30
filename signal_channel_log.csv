@@ -1,23 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-23T09:49:51+00:00,72236,CLOSED DAX EARLY... MINUS 35,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-23T09:50:56+00:00,72237,"🇬🇧 FTSE 100 INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T09:51:37+00:00,72238,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T09:52:04+00:00,72239,"🇬🇧 FTSE 100 INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",maximum_positionen_erreicht
 2026-09-23T10:06:13+00:00,72240,STOPPED OUT OF DAX MINUS 80,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-23T10:14:40+00:00,72241,CLOSING ALL FTSE....,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-23T10:15:24+00:00,72242,"🇩🇪  GERMAN DAX INDEX
@@ -604,3 +585,7 @@ STOP = 10702.2","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE""
 
 🇬🇧 CLOSING FTSE INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-30T09:49:45+00:00,72398,Scratch,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-30T09:52:49+00:00,72399,"CLOSE TRADE ALERT 
+
+🇩🇪 CLOSING DAX INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-30T09:52:51+00:00,72400,+15,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
