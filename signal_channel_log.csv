@@ -612,3 +612,6 @@ STOP = 30,580","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"
 2026-09-30T16:48:25+00:00,72421,"I will manage the open positions here in Telegram. I will post the trades, pretty much all of which were losers.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-30T16:54:37+00:00,72422,STOPPED OUF OF NASDAQ,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-30T16:54:48+00:00,72423,STOPPED OUT OF DOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-09-30T16:56:11+00:00,72424,"I remember fondly this yesterday..... 
+
+oh well... I will add up the losses and post here.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
