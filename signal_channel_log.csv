@@ -582,3 +582,4 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 51,413
 
 STOP = 51,288","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51413.0, ""stop_level"": 51288.0, ""target_level"": null}",levels_aktualisiert
+2026-09-30T15:52:11+00:00,72410,I was 300% short NASDAQ. I pushed for more in the trading range. I got it wrong and closed for a loss,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
