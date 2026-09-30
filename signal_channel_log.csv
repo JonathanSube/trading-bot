@@ -546,3 +546,9 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 30,503
 
 STOP = 30549","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30503.0, ""stop_level"": 30549.0, ""target_level"": null}",levels_aktualisiert
+2026-09-30T15:46:01+00:00,72407,"🇺🇸 NASDAQ INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 
+
+STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
