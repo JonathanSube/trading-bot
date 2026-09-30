@@ -1,14 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-22T22:31:28+00:00,72225,"⚠️TFC users⚠️
-Update is out. Fixed issue with pending orders.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-23T08:49:00+00:00,72226,"GOOD MORNING,
-
-I will be with you shortly. I just need to download and install the new TFC,
-
-T & C for being here: https://t.me/c/1238535538/72188
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-23T08:55:11+00:00,72228,https://youtube.com/live/45pjQxZ8MMw?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-23T08:56:10+00:00,72229,https://streaming.tradertom.com/,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-23T08:56:13+00:00,72230,ZERO LATENCY,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-23T09:24:28+00:00,72231,"🇬🇧 FTSE 100 INDEX
@@ -17,24 +7,12 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T07:25:08.969586+00:00,72231,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 10730
-
-STOP = 10751","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10730.0, ""stop_level"": 10751.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T09:35:20+00:00,72232,"🇩🇪  GERMAN DAX INDEX
 SOLD SHORT 🔻 = 100%
 
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T07:35:43.868210+00:00,72232,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 25,571
-
-STOP = 25,671","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25571.0, ""stop_level"": 25671.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T09:46:22+00:00,72233,I have CLOSED my FTSE position for minus 20. I have flipped LONG now,"{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
 2026-09-23T09:46:29+00:00,72234,"🇬🇧 FTSE 100 INDEX
 BOUGHT LONG ⬆️️ = 100%
@@ -42,24 +20,12 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T07:46:55.442672+00:00,72234,"🇬🇧 FTSE 100 INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 10751
-
-STOP = 10725","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10751.0, ""stop_level"": 10725.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T09:47:35+00:00,72235,"🇬🇧 FTSE 100 INDEX
 BOUGHT LONG ⬆️️ = 100%
 
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T07:47:55.828895+00:00,72235,"🇬🇧 FTSE 100 INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 10755
-
-STOP = 10730","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10755.0, ""stop_level"": 10730.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T09:49:51+00:00,72236,CLOSED DAX EARLY... MINUS 35,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
 2026-09-23T09:50:56+00:00,72237,"🇬🇧 FTSE 100 INDEX
 BOUGHT LONG ⬆️️ = 100%
@@ -67,24 +33,12 @@ BOUGHT LONG ⬆️️ = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T07:51:21.863909+00:00,72237,"🇬🇧 FTSE 100 INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 10757
-
-STOP = 10730","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""long"", ""entry_level"": 10757.0, ""stop_level"": 10730.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T09:51:37+00:00,72238,"🇩🇪  GERMAN DAX INDEX
 BOUGHT LONG ⬆️️ = 100%
 
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T07:51:56.136468+00:00,72238,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 25,621
-
-STOP = 25,570","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25621.0, ""stop_level"": 25570.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T09:52:04+00:00,72239,"🇬🇧 FTSE 100 INDEX
 BOUGHT LONG ⬆️️ = 100%
 
@@ -99,12 +53,6 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T08:15:41.243968+00:00,72242,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 25,540
-
-STOP = 25,620","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25540.0, ""stop_level"": 25620.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T10:15:53+00:00,72243,"🇬🇧 FTSE 100 INDEX
 SOLD SHORT 🔻 = 100%
 
@@ -117,24 +65,12 @@ SOLD SHORT 🔻 = 100%
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T08:17:43.344468+00:00,72244,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 10734
-
-STOP =10755","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10734.0, ""stop_level"": 10755.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T10:30:35+00:00,72245,"🇩🇪  GERMAN DAX INDEX
 SOLD SHORT 🔻 = 100%
 
 ENTRY = 
 
 STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-23T08:30:58.338405+00:00,72245,"🇩🇪  GERMAN DAX INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 25,525
-
-STOP = 25,610","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25525.0, ""stop_level"": 25610.0, ""target_level"": null}",levels_aktualisiert
 2026-09-23T10:33:22+00:00,72246,"I will stop streaming now, and I will update you on the positions via Telegram.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-23T10:50:44+00:00,72248,well looking better now.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-23T11:57:58+00:00,72249,"Somehow I have managed to claw a huge chuck back of my losses this morning. I have closed almost all my FTSE here at 10720, and I have closed almost all of my DAX here at 24,470. 
@@ -600,3 +536,35 @@ Must be a new record!!!!","{""is_signal"": false, ""action"": null, ""index"": n
 2026-09-29T17:31:24+00:00,72377,"Adding to winners has changed my life. I make more money when I make it, and it keeps me from adding to losing trades and it keeps me from taking profit too soon most of the time.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-29T17:31:51+00:00,72378,It is not an act I put on for you. It is how I trade - irrespectively of you watching or not.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-09-29T18:33:19+00:00,72379,"Once you get used to ADDING, the next challenge is knowing when to exit.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-30T08:31:22+00:00,72380,"Good morning, Europe! 🇪🇺
+
+The coffee is strong, the charts are open, and the DAX will soon begin its daily attempt to separate traders from their money.
+
+I’ll start streaming at 08:55 CEST, 5 minutes before the DAX cash open.
+Once the machinery is running and YouTube confirms that I do, in fact, exist, I’ll post the link here in Telegram.
+
+The Faster Path
+YouTube comes with some latency. For those who prefer to hear my questionable decisions almost as quickly as I make them, there is a low-latency audio feed:
+https://divergent.uk/tom/
+If your connection allows it, combine the YouTube video with the Divergent audio for the best experience.
+
+Questions
+Comments and chat are disabled both here and on YouTube. If you have a question that might be useful to discuss on stream, send me a private message on Telegram.
+Thoughtful questions are always welcome.
+Questions answered by Google, the pinned messages or the manual may be subjected to German levels of customer service. 🇩🇪
+
+The Serious Bit
+I trade live using a real account. You will see winners, losers, good decisions and occasionally decisions whose brilliance becomes considerably less obvious five minutes later.
+
+This is not financial advice. Please do not copy my trades.
+Trading involves risk, and past performance is not indicative of future results. Always do your own research.
+By watching or listening, you accept the terms set out here:
+https://tradertom.com/disclaimer/
+
+Coffee ready.
+Charts ready.
+
+Whether the DAX intends to cooperate remains entirely outside my jurisdiction.
+See you at 08:55 CEST.
+Karaoke Andi","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-09-30T08:55:25+00:00,72382,https://youtube.com/live/DZJt68zwJwI?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
