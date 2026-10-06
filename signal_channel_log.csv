@@ -1,227 +1,4 @@
 kanal_zeitstempel,nachricht_id,text,geparst_json,aktion
-2026-09-24T19:36:38+00:00,72266,"Should you find yourself in Frankfurt, consider  visiting the DAX ;-) Deutsche Börse has a visitors center from which you can overlook the floor. Pretty cool, huh? You need to reserve ahead of time and bring your ID.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-28T08:48:13+00:00,72269,"Good morning, 
-
-I hope you had a restful weekend. I was in Frankfurt Friday for ""live trading"" (I will explain what I mean during the stream today), and then a talk about scalping DAX. 
-
-Thank you to everyone who attended from the channel and who came up afterwards to say hi to Andi and I. 
-
-CHANGE THIS WEEK
-
-This week will see a small change. 
-
-MONDAY (today) I am doing EU, but Andi is doing US. 
-
-Then Wednesday I will do the US instead of Andi. 
-
-The rest of the week is as normal. 
-
-I will see you in 10min 
-
-Kind regards
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-28T08:57:49+00:00,72270,https://youtube.com/live/Qp1SDWXUTj4?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-28T08:59:14+00:00,72274,TELEGRAM NOT WORKING,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-28T08:59:25+00:00,72275,WORKING,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-28T08:59:31+00:00,72276,LIVE ON ALL 3 OUTLETS,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-28T09:23:57+00:00,72277,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T07:24:36.862645+00:00,72277,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 25,411
-
-STOP = 25,375","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25411.0, ""stop_level"": 25375.0, ""target_level"": null}",levels_aktualisiert
-2026-09-28T09:26:34+00:00,72278,closed half of it just to ensure I am getting something for my troubles... this is range bound behavior.... just like Friday,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-28T10:16:56+00:00,72280,"Taking it easy this morning in a trading range environment...
-
-Andi is up next for the US session. I am back tomorrow.
-
-Tom ❤️","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-28T10:23:03+00:00,72281,"LETS REMIND OURSELVES OF THE WORDS OF THE GREAT MASTER HIMSELF :
-
-https://www.youtube.com/shorts/XoxD7L62IiY","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-28T10:25:20+00:00,72282,"DAMN I miss him
-
-Stay strong everyone - and please look after yourself
-
-❤️❤️❤️❤️❤️❤️❤️❤️","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-28T14:30:33+00:00,72284,"Good afternoon,
-
-I swapped US sessions with Tom (he'll do Wednesday) 🇺🇸
-
-I’ll start today’s US session at 15:25 CEST, 5 minutes before the US cash open.
-
-I’m flying solo again and will continue covering both the European and US sessions throughout the rest of the week.
-
-Once I’m live on Tom’s YouTube channel, I’ll share the link here.
-
-For those who prefer less latency, the low-latency audio feed is available here:
-https://divergent.uk/tom/
-
-You can combine the YouTube video with the Divergent audio if your connection allows it.
-
-Comments are disabled on YouTube and in this Telegram group. If you have a question that might be useful to discuss on stream, send me a private Telegram message.
-
-Disclaimer
-
-I trade live using a real account. This is not financial advice, and please do not copy my trades.
-
-There will be winning trades. There will be losing trades. And occasionally there will be trades where five minutes later we stare at the chart wondering why we thought that was such a magnificent idea.
-
-Trading involves risk, and past performance is not indicative of future results. Always do your own research.
-
-Full disclaimer:
-https://tradertom.com/disclaimer/
-
-See you at 15:25 CEST.
-
-Karaoke Andi",,gemini_fehler
-2026-09-28T15:25:55+00:00,72286,https://youtube.com/live/opAyT-Zdr4M?feature=share,,gemini_fehler
-2026-09-28T15:25:59+00:00,72287,Telegram not working...,,gemini_fehler
-2026-09-28T15:26:27+00:00,72290,"OK, Telegram works now",,gemini_fehler
-2026-09-28T15:28:58+00:00,72291,Expresso orders so far,,gemini_fehler
-2026-09-28T15:30:33+00:00,72292,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T15:30:34+00:00,72293,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T15:33:21+00:00,72294,"changed long order, in case I need to flip (Karaoke Expresso)",,gemini_fehler
-2026-09-28T15:35:50+00:00,72295,"closed half, reduced exposure",,gemini_fehler
-2026-09-28T15:36:33+00:00,72297,"🇺🇸 DOW JONES INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T15:37:32+00:00,72298,deleting long order,,gemini_fehler
-2026-09-28T15:42:54+00:00,72299,Stopped out on second,,gemini_fehler
-2026-09-28T15:44:18+00:00,72300,stopped out on first,,gemini_fehler
-2026-09-28T15:48:10+00:00,72301,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T13:48:55.342053+00:00,72301,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 51581
-
-STOP =51481","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51581.0, ""stop_level"": 51481.0, ""target_level"": null}",levels_aktualisiert
-2026-09-28T15:50:55+00:00,72302,"🇺🇸 NASDAQ INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T13:51:32.675226+00:00,72302,"🇺🇸 NASDAQ INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 30320.5
-
-STOP = 30395.5","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": 30320.5, ""stop_level"": 30395.5, ""target_level"": null}",levels_aktualisiert
-2026-09-28T16:02:55+00:00,72303,"CLOSE TRADE ALERT 
-
-🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-28T16:03:17+00:00,72304,Scratch. Want to wait for a clear push through resistance and go rather long SRS,,gemini_fehler
-2026-09-28T16:03:40+00:00,72305,"CLOSE TRADE ALERT 
-
-🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-28T16:03:43+00:00,72306,-15,,gemini_fehler
-2026-09-28T16:03:57+00:00,72307,Same: want to rather have a clear sell short signal on the SRS,,gemini_fehler
-2026-09-28T16:05:49+00:00,72308,"🇺🇸 NASDAQ INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T16:07:49+00:00,72309,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T16:10:01+00:00,72310,"🇺🇸 NASDAQ INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T16:10:51+00:00,72312,"🇺🇸 NASDAQ INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T16:10:59+00:00,72313,"🇺🇸 DOW JONES INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T16:11:24+00:00,72314,"🇺🇸 NASDAQ INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 
-
-STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""short"", ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
-2026-09-28T16:11:49+00:00,72315,"CLOSE TRADE ALERT 
-
-🇺🇸 CLOSING NASDAQ INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-28T16:13:42+00:00,72316,both stopps in the dow to 528,,gemini_fehler
-2026-09-28T16:14:16+00:00,72317,Nasdaq result,,gemini_fehler
-2026-09-28T16:17:42+00:00,72318,Dow is under water...,,gemini_fehler
-2026-09-28T16:21:42+00:00,72319,"closed first entry  CLOSE TRADE ALERT 
-
-🇺🇸 CLOSING DOW INDEX trade now","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-28T16:22:10+00:00,72320,"closed first entry for -15. Have to reduce exposure, no follow through on the breakout-attempt. Could be trapped in a range",,gemini_fehler
-2026-09-28T16:22:35+00:00,72321,Closed half on second entry for -50 (25 full points),,gemini_fehler
-2026-09-28T16:24:02+00:00,72322,Moved SL in DOW to 51546.9,,gemini_fehler
-2026-09-28T16:44:23+00:00,72323,got stopped out in the DOW.,,gemini_fehler
-2026-09-28T16:47:07+00:00,72324,Status: Dow. Not good.,,gemini_fehler
-2026-09-28T16:48:04+00:00,72325,Status: Nasdaq. Better.,,gemini_fehler
-2026-09-29T08:55:00+00:00,72328,"Good morning, 
-
-I will start trading momentarily.
-
-Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-29T08:59:17+00:00,72330,https://youtube.com/live/uWt9ehh6GLo?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-29T09:23:27+00:00,72331,"🇬🇧 FTSE 100 INDEX
-SOLD SHORT 🔻 = 100%
-
-ENTRY = 10737
-
-STOP = 10757","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10737.0, ""stop_level"": 10757.0, ""target_level"": null}",trade_eroeffnet
-2026-09-29T09:26:40+00:00,72332,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 25,417
-
-STOP = 25380","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25417.0, ""stop_level"": 25380.0, ""target_level"": null}",trade_eroeffnet
-2026-09-29T09:28:00+00:00,72333,"🇩🇪  GERMAN DAX INDEX
-BOUGHT LONG ⬆️️ = 100%
-
-ENTRY = 25,428
-
-STOP = 25,400","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25428.0, ""stop_level"": 25400.0, ""target_level"": null}",trade_eroeffnet
-2026-09-29T09:33:45+00:00,72334,CLOSED 1 DAX for 40,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-29T09:33:50+00:00,72335,CLOSED FTSE for MINUS 8,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
-2026-09-29T09:35:02+00:00,72336,CLOSED MOST OF DAX,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
-2026-09-29T09:38:40+00:00,72340,the shit I let out :)))),"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
-2026-09-29T10:01:15+00:00,72341,STOPPED OUT OF DAX FOR ZERO on the last small position left. I must say  this market looks a lot less buoyant now. I will see you later.,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
 2026-09-29T15:05:41+00:00,72342,"🚨
 
 🚨
@@ -615,3 +392,162 @@ STOP = 30,580","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"
 2026-09-30T16:56:11+00:00,72424,"I remember fondly this yesterday..... 
 
 oh well... I will add up the losses and post here.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T10:16:13+00:00,72525,This morning's trades....,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T12:47:16+00:00,72526,"I am absolutely aware this is a small position, and it was never intended to be a Swing The Bat trade. I am posting it because I think we should begin to consider taking signals in the US during EU hours.
+
+There are points to be made.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T15:26:44+00:00,72527,"https://t.me/c/1238535538/72512
+
+About to go live","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T15:31:45+00:00,72528,I have issue with OBS...,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T15:33:46+00:00,72530,https://youtube.com/live/AluYp2LdCUY?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T15:34:23+00:00,72531,ALL 3 ARE WORKING,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T15:37:18+00:00,72532,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 51,025
+
+STOP = 505825","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51025.0, ""stop_level"": 505825.0, ""target_level"": null}",volumen_zu_klein
+2026-10-05T15:41:32+00:00,72533,"🇺🇸 NASDAQ INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 30,926
+
+STOP = 30826","{""is_signal"": true, ""action"": ""open"", ""index"": ""NASDAQ"", ""direction"": ""long"", ""entry_level"": 30926.0, ""stop_level"": 30826.0, ""target_level"": null}",trade_eroeffnet
+2026-10-05T15:46:25+00:00,72534,"CLOSED DOW,,,MINUS 150 or 140...","{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-10-05T15:53:49+00:00,72535,"🇺🇸 DOW JONES INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 50864
+
+STOP = 51014","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""short"", ""entry_level"": 50864.0, ""stop_level"": 51014.0, ""target_level"": null}",trade_eroeffnet
+2026-10-05T16:02:27+00:00,72536,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 50,954
+
+STOP = 50,804","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 50954.0, ""stop_level"": 50804.0, ""target_level"": null}",trade_eroeffnet
+2026-10-05T16:03:24+00:00,72537,STOPPED MSELF OUT OF DOW FOR MINUS 80,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-10-05T16:05:37+00:00,72538,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 50,988
+
+STOP = 50838","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 50988.0, ""stop_level"": 50838.0, ""target_level"": null}",trade_eroeffnet
+2026-10-05T16:07:22+00:00,72539,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 51,039
+
+STOP = 51,889","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51039.0, ""stop_level"": 51889.0, ""target_level"": null}",trade_eroeffnet
+2026-10-05T16:10:22+00:00,72540,CLOSED DOW ALL OF IT,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-10-05T16:10:35+00:00,72541,PLUS 225 in DOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",schliessung_ohne_position
+2026-10-05T16:13:17+00:00,72542,CLOSED NASDAQ... need a 5min break... need to throw something at someone,"{""is_signal"": true, ""action"": ""close"", ""index"": ""NASDAQ"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-10-05T16:16:57+00:00,72544,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 51,101
+
+STOP = 50,951","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51101.0, ""stop_level"": 50951.0, ""target_level"": null}",trade_eroeffnet
+2026-10-05T16:18:15+00:00,72545,"🇺🇸 DOW JONES INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 51,104
+
+STOP = 50,951","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direction"": ""long"", ""entry_level"": 51104.0, ""stop_level"": 50951.0, ""target_level"": null}",trade_eroeffnet
+2026-10-05T16:21:07+00:00,72546,CLOSING MY DOW NOW,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DOW"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-10-05T16:21:28+00:00,72547,"LADIES AND GENTS
+
+I just need a 10min break,.","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T17:02:31+00:00,72550,I am done for today. I am back tomorrow. Thank you for being part of today. It was rough and yet it ended well.,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T18:17:55+00:00,72551,When Tom calls you while you are on a job...,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T18:18:28+00:00,72552,:))))),"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T18:18:49+00:00,72553,you photoshopped those bombs???????????????????,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-05T18:37:47+00:00,72554,AI was a little generous 😂,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T08:39:53+00:00,72555,Remember when I played the AUTOBAHN song for you yesterday???,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T08:40:42+00:00,72556,YOUTUBE disapproved. :))),"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T08:46:26+00:00,72557,"🚨
+🚨
+Good morning,
+
+Streaming starts at 9am European time.
+
+
+📺📺 YouTube 📺📺
+
+Once live on YouTube, I will post the URL here. Click to watch me live with account and charts.
+
+
+
+⚠️⚠️ NEW LINK TO AUDIO ⚠️⚠️
+
+Low-Latency Audio Feed
+To avoid YouTube latency, use the audio-only feed (latency ≤0.5s) or combine it with YouTube:
+
+https://streaming.tradertom.com/
+
+
+
+📱📱 Telegram Stream  📱📱
+
+Tune in directly via the Telegram app icon when live. Note: Telegram has latency.
+
+
+🤩 Disclaimer 🤩
+
+I trade live with real money. No fake accounts. Wins and losses are public. 
+
+By participating, you agree to:  https://t.me/c/1238535538/50930  And the stipulations at: https://tradertom.com/disclaimer/
+
+See you at 9am Central European Time.
+
+Stay strong.
+
+Tom Hougaard","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T08:56:59+00:00,72559,https://youtube.com/live/144yrzacR0A?feature=share,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T09:02:59+00:00,72560,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 25,386
+
+STOP = 25,286","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25386.0, ""stop_level"": 25286.0, ""target_level"": null}",trade_eroeffnet
+2026-10-06T09:05:27+00:00,72561,"Because the HOURLY trend is so strongly higher, I decided to follow the trend and do an ANTI EXPRESSO","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T09:07:50+00:00,72562,"STOP LOSS TO 25,337","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T09:09:47+00:00,72563,"I have placed a sell short order at 10,666 in FTSE","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10666.0, ""stop_level"": null, ""target_level"": null}",trade_eroeffnet
+2026-10-06T09:10:17+00:00,72564,"🇬🇧 FTSE 100 INDEX
+🔻SOLD SHORT  = 100%
+
+ENTRY = 10,566.6
+
+STOP = 10,601","{""is_signal"": true, ""action"": ""open"", ""index"": ""FTSE"", ""direction"": ""short"", ""entry_level"": 10566.6, ""stop_level"": 10601.0, ""target_level"": null}",trade_eroeffnet
+2026-10-06T09:16:42+00:00,72565,"🇩🇪  GERMAN DAX INDEX
+BOUGHT LONG ⬆️️ = 100%
+
+ENTRY = 25,470
+
+STOP = 25,370","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""long"", ""entry_level"": 25470.0, ""stop_level"": 25370.0, ""target_level"": null}",trade_eroeffnet
+2026-10-06T09:30:00+00:00,72566,"CLOSED DAX
+
+MINUS 12 in total... completely messed that trade up","{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-10-06T09:31:27+00:00,72567,"🇩🇪  GERMAN DAX INDEX
+SOLD SHORT 🔻 = 100%
+
+ENTRY = 25,394
+
+STOP = 25,494","{""is_signal"": true, ""action"": ""open"", ""index"": ""DAX"", ""direction"": ""short"", ""entry_level"": 25394.0, ""stop_level"": 25494.0, ""target_level"": null}",trade_eroeffnet
+2026-10-06T09:45:58+00:00,72569,The two trades this morning and my NIKKEI LOSS 😡,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T09:46:14+00:00,72570,THE TWO OPEN TRADES,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T09:50:14+00:00,72571,DAX STOPPED OUT,"{""is_signal"": true, ""action"": ""close"", ""index"": ""DAX"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-10-06T10:06:00+00:00,72572,I DECIDED TO CLOSE THE FTSE TO GIVE MYSELF A BREAK..,"{""is_signal"": true, ""action"": ""close"", ""index"": ""FTSE"", ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",trade_geschlossen
+2026-10-06T13:35:05+00:00,72573,"Dear everyone, 
+
+I may have to be late for the US session. My appointment is running late. I apologise, and I will update you as well as I can.
+
+Kind regards
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-06T15:00:47+00:00,72574,"UPDATE
+
+I am unable to run the US session until much later today. I am not sure the ""opening surge"" will be long gone. I suspect it will. I think the US session is a write off. I am very sorry.  I will see you tomorrow.
+
+Tom","{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
