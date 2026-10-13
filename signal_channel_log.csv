@@ -380,3 +380,4 @@ STOP =","{""is_signal"": true, ""action"": ""open"", ""index"": ""DOW"", ""direc
 2026-10-13T21:43:48+00:00,72847,America - Home of the Free and the Brave,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-10-13T21:46:04+00:00,72848,Living The Dream,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
 2026-10-13T21:47:06+00:00,72849,Taking a Break in America,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
+2026-10-13T21:49:15+00:00,72850,!,"{""is_signal"": false, ""action"": null, ""index"": null, ""direction"": null, ""entry_level"": null, ""stop_level"": null, ""target_level"": null}",kein_signal
